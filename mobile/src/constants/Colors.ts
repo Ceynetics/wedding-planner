@@ -23,6 +23,18 @@ export const Colors = {
     inputBackground: '#F1F5F9',
     success: '#10B981',
     warning: '#F59E0B',
+
+    // colors for guest cards
+    statusPending: '#F59E0B',
+    statusPendingBg: '#FFFBEB',
+    statusConfirmed: '#10B981',
+    statusConfirmedBg: '#ECFDF5',
+    statusError: '#EF4444',
+    statusErrorBg: '#FEF2F2',
+    brideTag: '#F472B6',
+    brideTagBg: '#FDF2F8',
+    groomTag: '#60A5FA',
+    groomTagBg: '#EFF6FF',
   },
   dark: {
     text: '#ECEDEE',
@@ -40,5 +52,17 @@ export const Colors = {
     inputBackground: '#1E293B',
     success: '#34D399', // Slightly lighter green for dark mode accessibility
     warning: '#FBBF24', // Slightly lighter amber for dark mode accessibility
+
+    // colors for guest cards
+    statusPending: '#FBBF24',
+    statusPendingBg: '#45350B',
+    statusConfirmed: '#34D399',
+    statusConfirmedBg: '#064E3B',
+    statusError: '#F87171',
+    statusErrorBg: '#450A0A',
+    brideTag: '#F472B6',
+    brideTagBg: '#4D1D39',
+    groomTag: '#60A5FA',
+    groomTagBg: '#1E3A8A',
   },
 };

@@ -19,12 +19,12 @@ export function GuestHeader() {
 
     return (
         <View style={styles.outerContainer}>
-            <LinearGradient
+            {/* <LinearGradient
                 colors={gradientColors}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 style={[styles.gradient, { height: 220 + insets.top }]}
-            />
+            /> */}
 
             <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
                 <View style={styles.textContainer}>
