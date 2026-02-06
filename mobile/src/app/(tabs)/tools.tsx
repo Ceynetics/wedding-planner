@@ -1,20 +1,5 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import React from "react";
-import { StyleSheet } from "react-native";
+import ToolsScreen from "@/screens/ToolsScreen";
 
-export default function ToolsScreen() {
-    return (
-        <ThemedView style={styles.container}>
-            <ThemedText type="title">Tools</ThemedText>
-        </ThemedView>
-    );
+export default function ToolsTab() {
+    return <ToolsScreen />;
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-});
