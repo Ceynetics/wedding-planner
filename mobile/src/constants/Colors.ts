@@ -35,6 +35,13 @@ export const Colors = {
     brideTagBg: '#FDF2F8',
     groomTag: '#60A5FA',
     groomTagBg: '#EFF6FF',
+
+    // colors for expenses
+    expenseRed: '#E11D48',
+    expenseRedBg: '#FFF1F2',
+    expensePurple: '#A855F7',
+    expensePink: '#EC4899',
+    expenseBlue: '#3B82F6',
   },
   dark: {
     text: '#ECEDEE',
@@ -64,5 +71,12 @@ export const Colors = {
     brideTagBg: '#4D1D39',
     groomTag: '#60A5FA',
     groomTagBg: '#1E3A8A',
+
+    // colors for expenses
+    expenseRed: '#FB7185',
+    expenseRedBg: '#4C0519',
+    expensePurple: '#C084FC',
+    expensePink: '#F472B6',
+    expenseBlue: '#60A5FA',
   },
 };

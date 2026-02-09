@@ -3,6 +3,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,12 +18,14 @@ export default function ToolsScreen() {
         ? [colors.primary + "40", colors.primary + "10"]
         : [colors.primary + "60", colors.background]) as [string, string, ...string[]];
 
+    const router = useRouter();
+
     const tools = [
         {
             title: "Expenses",
             subtitle: "Manage your all expenses here",
             icon: "wallet-outline" as const,
-            onPress: () => console.log("Expenses pressed"),
+            onPress: () => router.push("/expenses"),
         },
         {
             title: "Seating",
