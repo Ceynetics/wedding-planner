@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
     StyleSheet,
@@ -16,6 +17,7 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ userName }: DashboardHeaderProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const router = useRouter();
 
     return (
         <View style={styles.container}>
@@ -37,6 +39,7 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
                 <TouchableOpacity
                     style={[styles.iconButton, { backgroundColor: colors.card }]}
                     activeOpacity={0.7}
+                    onPress={() => router.push("/notifications")}
                 >
                     <Ionicons name="notifications" size={24} color={colors.primary} />
                     <View style={[styles.badge, { backgroundColor: colors.error }]} />

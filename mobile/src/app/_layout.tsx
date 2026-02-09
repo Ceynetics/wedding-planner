@@ -15,6 +15,7 @@ export default function RootLayout() {
           <Stack.Screen name="seating" />
           <Stack.Screen name="vendors" />
           <Stack.Screen name="files" />
+          <Stack.Screen name="notifications" options={{ animation: "slide_from_right" }} />
         </Stack>
       </SafeAreaProvider>
     </ThemeProvider>
