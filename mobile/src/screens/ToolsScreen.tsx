@@ -31,7 +31,7 @@ export default function ToolsScreen() {
             title: "Seating",
             subtitle: "Plan Table Positions and Seating",
             icon: "table-chair" as const,
-            onPress: () => console.log("Seating pressed"),
+            onPress: () => router.push("/seating"),
         },
         {
             title: "Vendors",
