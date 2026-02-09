@@ -49,7 +49,7 @@ export default function ToolsScreen() {
             title: "Files",
             subtitle: "Add your Bills and Docs Here",
             icon: "folder-open-outline" as const,
-            onPress: () => console.log("Files pressed"),
+            onPress: () => router.push("/files"),
         },
         {
             title: "Calendar",

@@ -14,6 +14,7 @@ export default function RootLayout() {
           <Stack.Screen name="expenses" />
           <Stack.Screen name="seating" />
           <Stack.Screen name="vendors" />
+          <Stack.Screen name="files" />
         </Stack>
       </SafeAreaProvider>
     </ThemeProvider>
