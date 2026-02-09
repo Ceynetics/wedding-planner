@@ -37,7 +37,7 @@ export default function ToolsScreen() {
             title: "Vendors",
             subtitle: "Manage Vendors Easily",
             icon: "account-group-outline" as const,
-            onPress: () => console.log("Vendors pressed"),
+            onPress: () => router.push("/vendors"),
         },
         {
             title: "Invitations",

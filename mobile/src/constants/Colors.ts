@@ -42,6 +42,11 @@ export const Colors = {
     expensePurple: '#A855F7',
     expensePink: '#EC4899',
     expenseBlue: '#3B82F6',
+
+    // colors for vendors
+    vendorContact: '#6366F1',
+    vendorContactBg: '#EEF2FF',
+    starRating: '#F59E0B',
   },
   dark: {
     text: '#ECEDEE',
@@ -78,5 +83,10 @@ export const Colors = {
     expensePurple: '#C084FC',
     expensePink: '#F472B6',
     expenseBlue: '#60A5FA',
+
+    // colors for vendors
+    vendorContact: '#818CF8',
+    vendorContactBg: '#1E1B4B',
+    starRating: '#FBBF24',
   },
 };

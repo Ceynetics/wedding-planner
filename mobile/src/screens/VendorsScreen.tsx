@@ -1,0 +1,176 @@
+import { VendorCard } from "@/components/vendors/VendorCard";
+import { VendorFilters } from "@/components/vendors/VendorFilters";
+import { VendorHeader } from "@/components/vendors/VendorHeader";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { useAppTheme } from "@/context/ThemeContext";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const MOCK_VENDORS = [
+    {
+        id: "1",
+        name: "Lumina Studios",
+        category: "Photography",
+        rating: 4.5,
+        image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop",
+        icon: "camera",
+    },
+    {
+        id: "2",
+        name: "Lumina Studios",
+        category: "Cinematography",
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop",
+        icon: "video",
+    },
+    {
+        id: "3",
+        name: "Lumina Studios",
+        category: "Photography",
+        rating: 4.5,
+        image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop",
+        icon: "camera",
+    },
+];
+
+export default function VendorsScreen() {
+    const { theme } = useAppTheme();
+    const colors = Colors[theme];
+    const insets = useSafeAreaInsets();
+
+    const [activeTab, setActiveTab] = useState<"discover" | "hired">("discover");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const gradientColors = (theme === "light"
+        ? [colors.primary + "40", colors.primary + "10"]
+        : [colors.primary + "60", colors.background]) as [string, string, ...string[]];
+
+    return (
+        <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
+            {/* <LinearGradient
+                colors={gradientColors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={[styles.gradient, { height: 400 + insets.top }]}
+            /> */}
+
+            <VendorHeader activeTab={activeTab} setActiveTab={setActiveTab} />
+
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 + insets.bottom }]}
+            >
+                <VendorFilters
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    onFilterPress={() => console.log("Filter pressed")}
+                />
+
+                <View style={styles.vendorList}>
+                    {MOCK_VENDORS.map((vendor) => (
+                        <VendorCard key={vendor.id} {...vendor} />
+                    ))}
+                </View>
+
+                {/* Pagination */}
+                <View style={[styles.paginationContainer, { backgroundColor: theme === 'light' ? '#F1F5F9' : colors.card }]}>
+                    <TouchableOpacity
+                        style={[styles.pageButton, styles.activePageButton, { backgroundColor: '#21003D' }]}
+                        onPress={() => setCurrentPage(1)}
+                    >
+                        <ThemedText style={styles.activePageText}>1</ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.pageButton} onPress={() => setCurrentPage(2)}>
+                        <ThemedText style={[styles.pageText, { color: colors.secondary }]}>2</ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.pageButton} onPress={() => setCurrentPage(3)}>
+                        <ThemedText style={[styles.pageText, { color: colors.secondary }]}>3</ThemedText>
+                    </TouchableOpacity>
+                    <ThemedText style={[styles.pageText, { color: colors.secondary }]}>...</ThemedText>
+                    <TouchableOpacity style={styles.pageButton}>
+                        <Ionicons name="arrow-forward" size={20} color={colors.secondary} />
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+
+            <TouchableOpacity style={[styles.fab, { backgroundColor: '#21003D' }]}>
+                <MaterialCommunityIcons name="plus-box" size={32} color="#FFFFFF" />
+            </TouchableOpacity>
+        </ThemedView>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    gradient: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+    },
+    scrollContent: {
+        // Space handled by paddingBottom
+    },
+    vendorList: {
+        paddingHorizontal: 24,
+        marginTop: 8,
+    },
+    paginationContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 24,
+        alignSelf: "center",
+        backgroundColor: "rgba(0,0,0,0.03)",
+        paddingHorizontal: 20,
+        height: 64,
+        borderRadius: 32,
+        gap: 8,
+    },
+    pageButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    activePageButton: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    pageText: {
+        fontSize: 16,
+        fontWeight: "600",
+    },
+    activePageText: {
+        fontSize: 16,
+        fontWeight: "700",
+        color: "#FFFFFF",
+    },
+    fab: {
+        position: "absolute",
+        bottom: 40,
+        right: 24,
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        justifyContent: "center",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+        elevation: 8,
+    },
+});
