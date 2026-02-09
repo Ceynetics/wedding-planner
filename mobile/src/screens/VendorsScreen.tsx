@@ -1,6 +1,9 @@
-import { VendorCard } from "@/components/vendors/VendorCard";
-import { VendorFilters } from "@/components/vendors/VendorFilters";
-import { VendorHeader } from "@/components/vendors/VendorHeader";
+import { VendorCard as DiscoverCard } from "@/components/vendors/discover/VendorCard";
+import { VendorFilters as DiscoverFilters } from "@/components/vendors/discover/VendorFilters";
+import { HiredFilters } from "@/components/vendors/hired/HiredFilters";
+import { HiredStats } from "@/components/vendors/hired/HiredStats";
+import { HiredVendorCard } from "@/components/vendors/hired/HiredVendorCard";
+import { VendorHeader } from "@/components/vendors/shared/VendorHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
@@ -11,7 +14,7 @@ import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const MOCK_VENDORS = [
+const MOCK_DISCOVER_VENDORS = [
     {
         id: "1",
         name: "Lumina Studios",
@@ -28,13 +31,24 @@ const MOCK_VENDORS = [
         image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop",
         icon: "video",
     },
+];
+
+const MOCK_HIRED_VENDORS = [
     {
-        id: "3",
-        name: "Lumina Studios",
-        category: "Photography",
-        rating: 4.5,
-        image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop",
-        icon: "camera",
+        id: "1",
+        name: "Blossom Florals",
+        category: "Floral Arrangements & Decor",
+        paidAmount: 5000,
+        totalAmount: 25000,
+        dueDate: "Oct 15",
+    },
+    {
+        id: "2",
+        name: "Blossom Florals",
+        category: "Floral Arrangements & Decor",
+        paidAmount: 5000,
+        totalAmount: 25000,
+        dueDate: "Oct 15",
     },
 ];
 
@@ -45,61 +59,69 @@ export default function VendorsScreen() {
 
     const [activeTab, setActiveTab] = useState<"discover" | "hired">("discover");
     const [searchQuery, setSearchQuery] = useState("");
+    const [activeFilter, setActiveFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
 
     const gradientColors = (theme === "light"
         ? [colors.primary + "40", colors.primary + "10"]
         : [colors.primary + "60", colors.background]) as [string, string, ...string[]];
 
+    const isDiscover = activeTab === "discover";
+
     return (
         <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
-            {/* <LinearGradient
-                colors={gradientColors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={[styles.gradient, { height: 400 + insets.top }]}
-            /> */}
-
             <VendorHeader activeTab={activeTab} setActiveTab={setActiveTab} />
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 + insets.bottom }]}
             >
-                <VendorFilters
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    onFilterPress={() => console.log("Filter pressed")}
-                />
-
-                <View style={styles.vendorList}>
-                    {MOCK_VENDORS.map((vendor) => (
-                        <VendorCard key={vendor.id} {...vendor} />
-                    ))}
-                </View>
-
-                {/* Pagination */}
-                <View style={[styles.paginationContainer, { backgroundColor: theme === 'light' ? '#F1F5F9' : colors.card }]}>
-                    <TouchableOpacity
-                        style={[styles.pageButton, styles.activePageButton, { backgroundColor: '#21003D' }]}
-                        onPress={() => setCurrentPage(1)}
-                    >
-                        <ThemedText style={styles.activePageText}>1</ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.pageButton} onPress={() => setCurrentPage(2)}>
-                        <ThemedText style={[styles.pageText, { color: colors.secondary }]}>2</ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.pageButton} onPress={() => setCurrentPage(3)}>
-                        <ThemedText style={[styles.pageText, { color: colors.secondary }]}>3</ThemedText>
-                    </TouchableOpacity>
-                    <ThemedText style={[styles.pageText, { color: colors.secondary }]}>...</ThemedText>
-                    <TouchableOpacity style={styles.pageButton}>
-                        <Ionicons name="arrow-forward" size={20} color={colors.secondary} />
-                    </TouchableOpacity>
-                </View>
+                {isDiscover ? (
+                    <>
+                        <DiscoverFilters
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            onFilterPress={() => console.log("Filter pressed")}
+                        />
+                        <View style={styles.vendorList}>
+                            {MOCK_DISCOVER_VENDORS.map((vendor) => (
+                                <DiscoverCard key={vendor.id} {...vendor} />
+                            ))}
+                        </View>
+                        {/* Pagination */}
+                        <View style={[styles.paginationContainer, { backgroundColor: colors.paginationBg }]}>
+                            <TouchableOpacity
+                                style={[styles.pageButton, styles.activePageButton, { backgroundColor: colors.emphasis }]}
+                                onPress={() => setCurrentPage(1)}
+                            >
+                                <ThemedText style={styles.activePageText}>1</ThemedText>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.pageButton} onPress={() => setCurrentPage(2)}>
+                                <ThemedText style={[styles.pageText, { color: colors.secondary }]}>2</ThemedText>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.pageButton} onPress={() => setCurrentPage(3)}>
+                                <ThemedText style={[styles.pageText, { color: colors.secondary }]}>3</ThemedText>
+                            </TouchableOpacity>
+                            <ThemedText style={[styles.pageText, { color: colors.secondary }]}>...</ThemedText>
+                            <TouchableOpacity style={styles.pageButton}>
+                                <Ionicons name="arrow-forward" size={20} color={colors.secondary} />
+                            </TouchableOpacity>
+                        </View>
+                    </>
+                ) : (
+                    <>
+                        <HiredStats budget={300000} paid={300000} pending={300000} />
+                        <HiredFilters activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+                        <View style={styles.vendorList}>
+                            {MOCK_HIRED_VENDORS.map((vendor) => (
+                                <HiredVendorCard key={vendor.id} {...vendor} />
+                            ))}
+                        </View>
+                    </>
+                )}
             </ScrollView>
 
-            <TouchableOpacity style={[styles.fab, { backgroundColor: '#21003D' }]}>
+            <TouchableOpacity style={[styles.fab, { backgroundColor: colors.emphasis }]}>
                 <MaterialCommunityIcons name="plus-box" size={32} color="#FFFFFF" />
             </TouchableOpacity>
         </ThemedView>

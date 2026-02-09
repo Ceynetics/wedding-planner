@@ -53,7 +53,7 @@ export function VendorHeader({ activeTab, setActiveTab }: VendorHeaderProps) {
                     <ThemedText
                         style={[
                             styles.tabText,
-                            { color: activeTab === "discover" ? "#FFFFFF" : colors.secondary }
+                            { color: activeTab === "discover" ? colors.primaryContrast : colors.secondary }
                         ]}
                     >
                         Discover
@@ -71,7 +71,7 @@ export function VendorHeader({ activeTab, setActiveTab }: VendorHeaderProps) {
                     <ThemedText
                         style={[
                             styles.tabText,
-                            { color: activeTab === "hired" ? "#FFFFFF" : colors.secondary }
+                            { color: activeTab === "hired" ? colors.primaryContrast : colors.secondary }
                         ]}
                     >
                         Hired

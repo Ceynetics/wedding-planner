@@ -47,6 +47,9 @@ export const Colors = {
     vendorContact: '#6366F1',
     vendorContactBg: '#EEF2FF',
     starRating: '#F59E0B',
+    emphasis: '#21003D',
+    paginationBg: '#F1F5F9',
+    primaryContrast: '#FFFFFF',
   },
   dark: {
     text: '#ECEDEE',
@@ -88,5 +91,8 @@ export const Colors = {
     vendorContact: '#818CF8',
     vendorContactBg: '#1E1B4B',
     starRating: '#FBBF24',
+    emphasis: '#4C1D95', // Slightly lighter but still deep purple for dark mode
+    paginationBg: '#1E293B',
+    primaryContrast: '#FFFFFF',
   },
 };
