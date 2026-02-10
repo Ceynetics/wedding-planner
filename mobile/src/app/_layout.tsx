@@ -8,13 +8,9 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
-          <Stack.Screen name="login" />
-          <Stack.Screen name="register" />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="expenses" />
-          <Stack.Screen name="seating" />
-          <Stack.Screen name="vendors" />
-          <Stack.Screen name="files" />
+          <Stack.Screen name="(tools)" />
           <Stack.Screen name="notifications" options={{ animation: "slide_from_right" }} />
         </Stack>
       </SafeAreaProvider>
