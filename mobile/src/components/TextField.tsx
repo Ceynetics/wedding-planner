@@ -53,14 +53,14 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     inputContainer: {
-        height: 56,
+        minHeight: 56,
         borderRadius: 16,
         paddingHorizontal: 16,
+        paddingVertical: 12, // Added for better multiline spacing
         borderWidth: 1,
-        justifyContent: 'center',
     },
     input: {
         fontSize: 16,
-        height: '100%',
+        flex: 1,
     },
 });

@@ -23,6 +23,7 @@ export const Colors = {
     inputBackground: '#F1F5F9',
     success: '#10B981',
     warning: '#F59E0B',
+    shadow: '#000000',
 
     // colors for guest cards
     statusPending: '#F59E0B',
@@ -67,6 +68,7 @@ export const Colors = {
     inputBackground: '#1E293B',
     success: '#34D399', // Slightly lighter green for dark mode accessibility
     warning: '#FBBF24', // Slightly lighter amber for dark mode accessibility
+    shadow: '#000000',
 
     // colors for guest cards
     statusPending: '#FBBF24',

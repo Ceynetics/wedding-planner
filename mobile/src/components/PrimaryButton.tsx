@@ -8,6 +8,7 @@ import {
     TextStyle,
     TouchableOpacity,
     ViewStyle,
+    StyleProp,
 } from 'react-native';
 
 interface PrimaryButtonProps {
@@ -15,8 +16,8 @@ interface PrimaryButtonProps {
     onPress: () => void;
     loading?: boolean;
     disabled?: boolean;
-    style?: ViewStyle;
-    textStyle?: TextStyle;
+    style?: StyleProp<ViewStyle>;
+    textStyle?: StyleProp<TextStyle>;
 }
 
 export function PrimaryButton({

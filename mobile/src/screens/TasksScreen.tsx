@@ -5,10 +5,12 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function TasksScreen() {
+    const router = useRouter();
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
@@ -91,6 +93,7 @@ export default function TasksScreen() {
             <TouchableOpacity
                 style={[styles.fab, { backgroundColor: "#2D0C4D" }]}
                 activeOpacity={0.8}
+                onPress={() => router.push("/(forms)/tasks/add")}
             >
                 <Ionicons name="add-outline" size={32} color="#FFFFFF" />
             </TouchableOpacity>
