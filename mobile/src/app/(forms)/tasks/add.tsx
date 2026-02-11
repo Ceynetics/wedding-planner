@@ -24,6 +24,19 @@ export default function AddTaskScreen() {
     const [isCompleted, setIsCompleted] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false);
 
+    const labelStyle = {
+        color: colors.emphasis,
+        fontSize: 18,
+        fontWeight: "700" as const,
+        marginBottom: 12,
+        opacity: 1
+    };
+
+    const switchTrackColor = {
+        false: theme === 'dark' ? colors.secondary : colors.border,
+        true: colors.primary
+    };
+
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Stack.Screen options={{ headerShown: false }} />
@@ -38,12 +51,13 @@ export default function AddTaskScreen() {
                     <TextField
                         label="Task Name"
                         placeholder="What needs to be Done ?"
+                        labelStyle={labelStyle}
                     />
                 </View>
 
                 {/* Task Details Card */}
                 <View style={styles.section}>
-                    <ThemedText type="label" style={styles.sectionLabel}>Task Details</ThemedText>
+                    <ThemedText style={labelStyle}>Task Details</ThemedText>
                     <View style={[styles.card, { backgroundColor: colors.card }]}>
                         <TouchableOpacity style={styles.cardItem}>
                             <View style={[styles.iconContainer, { backgroundColor: colors.inputBackground }]}>
@@ -125,8 +139,8 @@ export default function AddTaskScreen() {
                             <Switch
                                 value={isCompleted}
                                 onValueChange={setIsCompleted}
-                                trackColor={{ false: colors.inputBackground, true: colors.primary }}
-                                thumbColor="#FFFFFF"
+                                trackColor={switchTrackColor}
+                                thumbColor={colors.primaryContrast}
                             />
                         </View>
 
@@ -140,8 +154,8 @@ export default function AddTaskScreen() {
                             <Switch
                                 value={isPrivate}
                                 onValueChange={setIsPrivate}
-                                trackColor={{ false: colors.inputBackground, true: colors.primary }}
-                                thumbColor="#FFFFFF"
+                                trackColor={switchTrackColor}
+                                thumbColor={colors.primaryContrast}
                             />
                         </View>
                     </View>
@@ -155,6 +169,7 @@ export default function AddTaskScreen() {
                         multiline
                         numberOfLines={4}
                         style={styles.textArea}
+                        labelStyle={labelStyle}
                     />
                 </View>
 

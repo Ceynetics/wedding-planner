@@ -9,6 +9,7 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(forms)" options={{ presentation: 'modal', headerShown: false }} />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="(tools)" />
           <Stack.Screen name="notifications" options={{ animation: "slide_from_right" }} />
