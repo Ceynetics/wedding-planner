@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
 import React from 'react';
@@ -9,6 +10,7 @@ import {
     TouchableOpacity,
     ViewStyle,
     StyleProp,
+    View,
 } from 'react-native';
 
 interface PrimaryButtonProps {
@@ -18,6 +20,7 @@ interface PrimaryButtonProps {
     disabled?: boolean;
     style?: StyleProp<ViewStyle>;
     textStyle?: StyleProp<TextStyle>;
+    icon?: string;
 }
 
 export function PrimaryButton({
@@ -26,7 +29,8 @@ export function PrimaryButton({
     loading = false,
     disabled = false,
     style,
-    textStyle
+    textStyle,
+    icon
 }: PrimaryButtonProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
@@ -44,9 +48,19 @@ export function PrimaryButton({
             activeOpacity={0.8}
         >
             {loading ? (
-                <ActivityIndicator color="#FFFFFF" />
+                <ActivityIndicator color={colors.primaryContrast} />
             ) : (
-                <Text style={[styles.text, textStyle]}>{title}</Text>
+                <View style={styles.content}>
+                    {icon && (
+                        <Ionicons
+                            name={icon as any}
+                            size={20}
+                            color={colors.primaryContrast}
+                            style={styles.icon}
+                        />
+                    )}
+                    <Text style={[styles.text, { color: colors.primaryContrast }, textStyle]}>{title}</Text>
+                </View>
             )}
         </TouchableOpacity>
     );
@@ -68,8 +82,15 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 4,
     },
+    content: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    icon: {
+        marginRight: 10,
+    },
     text: {
-        color: '#FFFFFF',
         fontSize: 16,
         fontWeight: '700',
         letterSpacing: 0.5,

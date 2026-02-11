@@ -65,7 +65,7 @@ export const Colors = {
     secondary: '#64748B',
     error: '#F87171',
     placeholder: '#64748B',
-    inputBackground: '#1E293B',
+    inputBackground: '#334155',
     success: '#34D399', // Slightly lighter green for dark mode accessibility
     warning: '#FBBF24', // Slightly lighter amber for dark mode accessibility
     shadow: '#000000',

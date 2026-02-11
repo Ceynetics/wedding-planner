@@ -8,11 +8,13 @@ import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ExpensesScreen() {
+    const router = useRouter();
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
@@ -48,10 +50,11 @@ export default function ExpensesScreen() {
 
             {/* Floating Action Button */}
             <TouchableOpacity
-                style={[styles.fab, { backgroundColor: '#2D0C4D' }]}
+                style={[styles.fab, { backgroundColor: colors.emphasis }]}
                 activeOpacity={0.8}
+                onPress={() => router.push("/(forms)/expenses/add" as any)}
             >
-                <Ionicons name="card-outline" size={28} color="#FFFFFF" />
+                <Ionicons name="card-outline" size={28} color={colors.primaryContrast} />
             </TouchableOpacity>
         </ThemedView>
     );
