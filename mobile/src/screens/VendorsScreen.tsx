@@ -10,6 +10,7 @@ import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -56,6 +57,7 @@ export default function VendorsScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
+    const router = useRouter();
 
     const [activeTab, setActiveTab] = useState<"discover" | "hired">("discover");
     const [searchQuery, setSearchQuery] = useState("");
@@ -121,8 +123,11 @@ export default function VendorsScreen() {
                 )}
             </ScrollView>
 
-            <TouchableOpacity style={[styles.fab, { backgroundColor: colors.emphasis }]}>
-                <MaterialCommunityIcons name="plus-box" size={32} color="#FFFFFF" />
+            <TouchableOpacity
+                style={[styles.fab, { backgroundColor: colors.emphasis }]}
+                onPress={() => router.push("/(forms)/vendors/add" as any)}
+            >
+                <MaterialCommunityIcons name="plus" size={32} color="#FFFFFF" />
             </TouchableOpacity>
         </ThemedView>
     );

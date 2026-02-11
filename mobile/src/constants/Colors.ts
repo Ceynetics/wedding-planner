@@ -41,6 +41,7 @@ export const Colors = {
     expenseRed: '#E11D48',
     expenseRedBg: '#FFF1F2',
     expensePurple: '#A855F7',
+    expensePurpleBg: '#F3E8FF',
     expensePink: '#EC4899',
     expenseBlue: '#3B82F6',
 
@@ -86,6 +87,7 @@ export const Colors = {
     expenseRed: '#FB7185',
     expenseRedBg: '#4C0519',
     expensePurple: '#C084FC',
+    expensePurpleBg: '#4C1D95', // Use a deeper purple for dark mode background
     expensePink: '#F472B6',
     expenseBlue: '#60A5FA',
 

@@ -6,6 +6,7 @@ export default function FormsLayout() {
             <Stack.Screen name="tasks/add" />
             <Stack.Screen name="guests/add" />
             <Stack.Screen name="expenses/add" />
+            <Stack.Screen name="vendors/add" />
         </Stack>
     );
 }
