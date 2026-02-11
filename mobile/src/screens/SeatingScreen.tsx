@@ -8,6 +8,7 @@ import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,6 +17,7 @@ export default function SeatingScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
+    const router = useRouter();
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -67,7 +69,10 @@ export default function SeatingScreen() {
                     </ThemedText>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.fab, { backgroundColor: '#21003D' }]}>
+                <TouchableOpacity
+                    style={[styles.fab, { backgroundColor: '#21003D' }]}
+                    onPress={() => router.push("/(forms)/seating/add" as any)}
+                >
                     <Ionicons name="add" size={32} color="#FFFFFF" />
                 </TouchableOpacity>
             </View>

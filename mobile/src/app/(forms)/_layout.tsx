@@ -7,6 +7,7 @@ export default function FormsLayout() {
             <Stack.Screen name="guests/add" />
             <Stack.Screen name="expenses/add" />
             <Stack.Screen name="vendors/add" />
+            <Stack.Screen name="seating/add" />
         </Stack>
     );
 }
