@@ -1,9 +1,8 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 interface StorageDetailsProps {
     used: number;
@@ -19,8 +18,12 @@ export function StorageDetails({ used, total }: StorageDetailsProps) {
     return (
         <View style={[styles.container, { backgroundColor: colors.card }]}>
             <View style={styles.header}>
-                <View style={[styles.iconContainer, { backgroundColor: colors.primary + "15" }]}>
-                    <MaterialCommunityIcons name="folder-zip-outline" size={24} color={colors.primary} />
+                <View style={[styles.iconContainer, { backgroundColor: colors.secondary + "15" }]}>
+                    <Image
+                        source={require("../../../assets/icons/storage.png")}
+                        style={styles.iconImage}
+                        resizeMode="contain"
+                    />
                 </View>
                 <ThemedText style={styles.title}>Storage Details</ThemedText>
             </View>
@@ -65,6 +68,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginRight: 12,
+    },
+    iconImage: {
+        width: 50,
+        height: 50,
     },
     title: {
         fontSize: 18,

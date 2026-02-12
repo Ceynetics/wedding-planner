@@ -23,14 +23,14 @@ export default function Dashboard() {
       title: "Hotel Payments",
       subtitle: "Groom | Hilton Colombo",
       amount: 200000,
-      icon: "business",
+      icon: "business-outline",
     },
     {
       id: "2",
       title: "Wedding Cards",
       subtitle: "Bride | Hemax Creations",
       amount: 50000,
-      icon: "mail",
+      icon: "mail-outline",
     },
   ];
 

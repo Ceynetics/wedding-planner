@@ -15,21 +15,21 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
-    const getIcon = (routeName: string): keyof typeof Ionicons.glyphMap => {
+    const getIcon = (routeName: string, isFocused: boolean): keyof typeof Ionicons.glyphMap => {
         switch (routeName.toLowerCase()) {
             case "index":
             case "dashboard":
-                return "grid";
+                return isFocused ? "grid" : "grid-outline";
             case "tasks":
-                return "list";
+                return isFocused ? "list" : "list-outline";
             case "guests":
-                return "people";
+                return isFocused ? "people" : "people-outline";
             case "tools":
-                return "construct";
+                return isFocused ? "construct" : "construct-outline";
             case "profile":
-                return "person";
+                return isFocused ? "person" : "person-outline";
             default:
-                return "help-circle";
+                return isFocused ? "help-circle" : "help-circle-outline";
         }
     };
 
@@ -96,7 +96,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
                                 activeOpacity={0.7}
                             >
                                 <Ionicons
-                                    name={getIcon(route.name)}
+                                    name={getIcon(route.name, isFocused)}
                                     size={24}
                                     color={isFocused ? colors.primary : colors.tabIconDefault}
                                     style={styles.icon}

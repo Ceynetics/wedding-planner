@@ -18,37 +18,37 @@ export default function ToolsScreen() {
         {
             title: "Expenses",
             subtitle: "Manage your all expenses here",
-            icon: "wallet-outline" as const,
+            imageSource: require("../../assets/icons/money.png"),
             onPress: () => router.push("/expenses"),
         },
         {
             title: "Seating",
             subtitle: "Plan Table Positions and Seating",
-            icon: "table-chair" as const,
+            imageSource: require("../../assets/icons/table.png"),
             onPress: () => router.push("/seating"),
         },
         {
             title: "Vendors",
             subtitle: "Manage Vendors Easily",
-            icon: "account-group-outline" as const,
+            imageSource: require("../../assets/icons/vendor.png"),
             onPress: () => router.push("/vendors"),
         },
         {
             title: "Invitations",
             subtitle: "Customize your Invitations",
-            icon: "email-edit-outline" as const,
+            imageSource: require("../../assets/icons/invitations.png"),
             onPress: () => console.log("Invitations pressed"),
         },
         {
             title: "Files",
             subtitle: "Add your Bills and Docs Here",
-            icon: "folder-open-outline" as const,
+            imageSource: require("../../assets/icons/files.png"),
             onPress: () => router.push("/files"),
         },
         {
             title: "Calendar",
             subtitle: "View your Plans on The Calendar",
-            icon: "calendar-month-outline" as const,
+            imageSource: require("../../assets/icons/calender.png"),
             onPress: () => console.log("Calendar pressed"),
         },
     ];
