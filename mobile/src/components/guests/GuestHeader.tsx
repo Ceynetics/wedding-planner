@@ -2,7 +2,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,11 +10,6 @@ export function GuestHeader() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
-
-    // Use primary color based gradient that respects the theme, matching TaskHeader.tsx
-    const gradientColors = (theme === "light"
-        ? [colors.primary + "40", colors.primary + "10"] // Soft primary gradient
-        : [colors.primary + "60", colors.background]) as [string, string, ...string[]];
 
     return (
         <View style={styles.outerContainer}>
@@ -53,14 +47,6 @@ const styles = StyleSheet.create({
         position: "relative",
         width: "100%",
         marginBottom: -30,
-    },
-    gradient: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        borderBottomLeftRadius: 40,
-        borderBottomRightRadius: 40,
     },
     backgroundArea: {
         position: "absolute",
