@@ -38,7 +38,7 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
                         style={[styles.iconButton, { backgroundColor: colors.card }]}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="calendar-clear" size={24} color={colors.primary} />
+                        <Ionicons name="calendar-outline" size={24} color={colors.primary} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -46,7 +46,7 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
                         activeOpacity={0.7}
                         onPress={() => router.push("/notifications")}
                     >
-                        <Ionicons name="notifications" size={24} color={colors.primary} />
+                        <Ionicons name="notifications-outline" size={24} color={colors.primary} />
                         <View style={[styles.badge, { backgroundColor: colors.error }]} />
                     </TouchableOpacity>
                 </View>

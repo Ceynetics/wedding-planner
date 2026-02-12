@@ -15,15 +15,15 @@ export default function ProfileScreen() {
     const router = useRouter();
 
     const weddingDetails: ProfileMenuItem[] = [
-        { id: "date", label: "Wedding Date", icon: "calendar", onPress: () => { } },
-        { id: "partner", label: "Partner Invite", icon: "heart", onPress: () => { } },
-        { id: "info", label: "Other Info", icon: "folder", onPress: () => { } },
+        { id: "date", label: "Wedding Date", icon: "calendar-outline", onPress: () => { } },
+        { id: "partner", label: "Partner Invite", icon: "heart-outline", onPress: () => { } },
+        { id: "info", label: "Other Info", icon: "folder-outline", onPress: () => { } },
     ];
 
     const accountSecurity: ProfileMenuItem[] = [
-        { id: "email", label: "E-mail", icon: "mail", onPress: () => { } },
+        { id: "email", label: "E-mail", icon: "mail-outline", onPress: () => { } },
         { id: "password", label: "Change Password", icon: "ellipsis-horizontal", onPress: () => { } },
-        { id: "security", label: "Other Security Settings", icon: "shield", onPress: () => { } },
+        { id: "security", label: "Other Security Settings", icon: "shield-outline", onPress: () => { } },
     ];
 
     const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
@@ -32,7 +32,7 @@ export default function ProfileScreen() {
         {
             id: "notifications",
             label: "Push Notifications",
-            icon: "notifications",
+            icon: "notifications-outline",
             type: "switch",
             value: notificationsEnabled,
             onValueChange: setNotificationsEnabled
@@ -40,7 +40,7 @@ export default function ProfileScreen() {
         {
             id: "dark-mode",
             label: "Dark Mode",
-            icon: "sunny",
+            icon: "sunny-outline",
             type: "switch",
             value: theme === "dark",
             onValueChange: toggleTheme

@@ -25,7 +25,7 @@ export function SeatingStats({ totalGuests, totalSeats }: SeatingStatsProps) {
             <StatCard
                 label="Total Seats"
                 value={totalSeats}
-                icon="chair-school"
+                icon="table-furniture"
                 colors={colors}
             />
         </View>

@@ -7,7 +7,7 @@ import {
     View,
 } from 'react-native';
 import { Stack } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AddGuestHeader } from '@/components/guests/form/AddGuestHeader';
 import { TextField } from '@/components/TextField';
 import { Stepper } from '@/components/guests/form/Stepper';
@@ -136,6 +136,7 @@ export default function AddGuestScreen() {
                 {/* VIP Switch Card */}
                 <View style={[styles.card, { backgroundColor: colors.card }]}>
                     <View style={styles.switchRow}>
+                        <MaterialCommunityIcons name="crown" size={24} color={colors.warning} />
                         <ThemedText style={[styles.cardTitle, { color: colors.emphasis }]}>Mark as VIP</ThemedText>
                         <Switch
                             value={isVip}
@@ -150,7 +151,7 @@ export default function AddGuestScreen() {
                 <TouchableOpacity style={[styles.card, styles.interactiveCard, { backgroundColor: colors.card }]}>
                     <View style={styles.cardHeader}>
                         <View style={[styles.iconContainer, { backgroundColor: colors.inputBackground }]}>
-                            <Ionicons name="restaurant" size={20} color={colors.emphasis} />
+                            <MaterialCommunityIcons name="table-furniture" size={20} color={colors.emphasis} />
                         </View>
                         <ThemedText style={[styles.cardItemText, { color: colors.emphasis }]}>Assign a Table</ThemedText>
                         <Ionicons name="chevron-forward" size={20} color={colors.placeholder} />
@@ -256,6 +257,7 @@ const styles = StyleSheet.create({
     switchRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        gap: 10,
     },
     textAreaContainer: {
         minHeight: 120,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Switch, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -25,7 +25,7 @@ export function MarkAsVip({
     return (
         <View style={[styles.card, { backgroundColor: colors.card }]}>
             <View style={styles.content}>
-                <Ionicons name="star" size={24} color={colors.warning} />
+                <MaterialCommunityIcons name="crown" size={24} color={colors.warning} />
                 <ThemedText style={[styles.label, { color: colors.emphasis }]}>
                     Mark as VIP
                 </ThemedText>

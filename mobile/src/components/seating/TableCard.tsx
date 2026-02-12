@@ -24,7 +24,7 @@ export function TableCard({ name, description, currentGuests, maxGuests, isVip }
             <View style={styles.header}>
                 <View style={styles.leftInfo}>
                     <View style={[styles.iconContainer, { backgroundColor: colors.primary + "15" }]}>
-                        <MaterialCommunityIcons name="table-chair" size={24} color={colors.primary} />
+                        <MaterialCommunityIcons name="table-furniture" size={24} color={colors.primary} />
                     </View>
                     <View style={styles.textContainer}>
                         <View style={styles.titleRow}>
