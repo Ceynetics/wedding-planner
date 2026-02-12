@@ -19,12 +19,13 @@ export function GuestHeader() {
 
     return (
         <View style={styles.outerContainer}>
-            {/* <LinearGradient
-                colors={gradientColors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={[styles.gradient, { height: 220 + insets.top }]}
-            /> */}
+            {/* Solid colored background area */}
+            <View
+                style={[styles.backgroundArea, {
+                    backgroundColor: colors.primary,
+                    height: 220 + insets.top
+                }]}
+            />
 
             <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
                 <View style={styles.textContainer}>
@@ -66,6 +67,14 @@ const styles = StyleSheet.create({
         right: 0,
         borderBottomLeftRadius: 40,
         borderBottomRightRadius: 40,
+    },
+    backgroundArea: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
     },
     container: {
         flexDirection: "row",

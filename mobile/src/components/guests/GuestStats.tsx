@@ -16,16 +16,21 @@ export function GuestStats({ total, confirmed, pending }: GuestStatsProps) {
 
     return (
         <View style={styles.container}>
-            <StatCard label="Total" value={total} colors={colors} />
-            <StatCard label="Confirmed" value={confirmed} colors={colors} />
-            <StatCard label="Pending" value={pending} colors={colors} />
+            {/* Floating card container */}
+            <View style={[styles.cardContainer, { backgroundColor: colors.card }]}>
+                <View style={styles.statsGrid}>
+                    <StatCard label="Total" value={total} colors={colors} />
+                    <StatCard label="Confirmed" value={confirmed} colors={colors} />
+                    <StatCard label="Pending" value={pending} colors={colors} />
+                </View>
+            </View>
         </View>
     );
 }
 
 function StatCard({ label, value, colors }: { label: string; value: number; colors: any }) {
     return (
-        <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <View style={[styles.card, { backgroundColor: colors.inputBackground }]}>
             <ThemedText
                 style={styles.value}
                 numberOfLines={1}
@@ -40,23 +45,38 @@ function StatCard({ label, value, colors }: { label: string; value: number; colo
 
 const styles = StyleSheet.create({
     container: {
+        paddingHorizontal: 24,
+        marginTop: 20,
+        marginBottom: 20,
+        zIndex: 2,
+    },
+    cardContainer: {
+        borderRadius: 24,
+        padding: 20,
+        // Premium floating shadow - matching CountdownBanner
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 10,
+    },
+    statsGrid: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingHorizontal: 20,
         gap: 12,
-        marginTop: 20,
     },
     card: {
         flex: 1,
-        height: 120, // Slightly taller as in design
-        borderRadius: 24, // Very rounded
+        height: 120,
+        borderRadius: 24,
         justifyContent: "center",
         alignItems: "center",
-        // Premium subtle shadow
+        padding: 10,
+        // Subtle shadow for individual cards
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 10 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
-        shadowRadius: 20,
+        shadowRadius: 10,
         elevation: 2,
     },
     value: {

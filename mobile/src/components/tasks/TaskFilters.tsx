@@ -29,9 +29,9 @@ export function TaskFilters({
     const colors = Colors[theme];
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.primary + "10" }]}>
+        <View style={[styles.container, { backgroundColor: colors.card }]}>
             {/* Status Toggle (Completed / Remaining) */}
-            <View style={[styles.statusToggleContainer, { backgroundColor: theme === "light" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.2)" }]}>
+            <View style={[styles.statusToggleContainer, { backgroundColor: colors.inputBackground }]}>
                 <TouchableOpacity
                     style={[
                         styles.statusButton,
@@ -71,7 +71,7 @@ export function TaskFilters({
 
             {/* Search and Filter Section */}
             <View style={styles.searchRow}>
-                <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
+                <View style={[styles.searchContainer, { backgroundColor: colors.inputBackground }]}>
                     <Ionicons name="search-outline" size={20} color={colors.secondary} style={styles.searchIcon} />
                     <TextInput
                         placeholder="Search tasks..."
@@ -83,7 +83,7 @@ export function TaskFilters({
                 </View>
 
                 <TouchableOpacity
-                    style={[styles.filterButton, { backgroundColor: colors.card }]}
+                    style={[styles.filterButton, { backgroundColor: colors.inputBackground }]}
                     onPress={onFilterPress}
                     activeOpacity={0.7}
                 >
@@ -98,9 +98,15 @@ const styles = StyleSheet.create({
     container: {
         marginHorizontal: 24,
         padding: 16,
-        borderRadius: 40,
+        borderRadius: 24,
         marginTop: 10,
         gap: 20,
+        // Premium floating shadow - matching CountdownBanner
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 10,
     },
     statusToggleContainer: {
         flexDirection: "row",

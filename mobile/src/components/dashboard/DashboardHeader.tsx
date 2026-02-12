@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface DashboardHeaderProps {
     userName: string;
@@ -18,52 +19,77 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     return (
-        <View style={styles.container}>
-            <View style={styles.textContainer}>
-                <ThemedText style={styles.welcomeText}>Welcome,</ThemedText>
-                <ThemedText type="title" style={styles.userName}>
-                    {userName}
-                </ThemedText>
-            </View>
+        <View style={styles.outerContainer}>
+            {/* Solid colored background area */}
+            <View
+                style={[styles.backgroundArea, {
+                    backgroundColor: colors.primary,
+                    height: 210 + insets.top // Increased height for better coverage
+                }]}
+            />
 
-            <View style={styles.actionContainer}>
-                <TouchableOpacity
-                    style={[styles.iconButton, { backgroundColor: colors.card }]}
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name="calendar-clear" size={24} color={colors.primary} />
-                </TouchableOpacity>
+            <View style={[styles.container]}>
+                <View style={styles.textContainer}>
+                    <ThemedText style={styles.welcomeText}>Welcome,</ThemedText>
+                    <ThemedText type="title" style={styles.userName}>
+                        {userName}
+                    </ThemedText>
+                </View>
 
-                <TouchableOpacity
-                    style={[styles.iconButton, { backgroundColor: colors.card }]}
-                    activeOpacity={0.7}
-                    onPress={() => router.push("/notifications")}
-                >
-                    <Ionicons name="notifications" size={24} color={colors.primary} />
-                    <View style={[styles.badge, { backgroundColor: colors.error }]} />
-                </TouchableOpacity>
+                <View style={styles.actionContainer}>
+                    <TouchableOpacity
+                        style={[styles.iconButton, { backgroundColor: colors.card }]}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="calendar-clear" size={24} color={colors.primary} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.iconButton, { backgroundColor: colors.card }]}
+                        activeOpacity={0.7}
+                        onPress={() => router.push("/notifications")}
+                    >
+                        <Ionicons name="notifications" size={24} color={colors.primary} />
+                        <View style={[styles.badge, { backgroundColor: colors.error }]} />
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    outerContainer: {
+        position: "relative",
+        width: "100%",
+        marginBottom: -30,
+    },
+    backgroundArea: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+    },
     container: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 24,
         paddingTop: 20,
-        paddingBottom: 10,
+        paddingBottom: 140, // Increased to prevent overlap with countdown
+        zIndex: 1,
     },
     textContainer: {
         flex: 1,
     },
     welcomeText: {
         fontSize: 18,
-        opacity: 0.7,
+        opacity: 0.9, // Increased opacity for better visibility
         fontWeight: "500",
     },
     userName: {

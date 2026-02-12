@@ -18,32 +18,35 @@ export function ProfileHeader({ name, email, profileImage, onEditPress }: Profil
 
     return (
         <View style={styles.container}>
-            {/* Background decoration - subtle color section */}
-            <View style={[styles.backgroundDecoration, { backgroundColor: colors.primary + "15" }]} />
+            {/* Solid colored background area */}
+            <View style={[styles.backgroundArea, { backgroundColor: colors.primary }]} />
 
-            <View style={styles.headerContent}>
-                <View style={styles.avatarWrapper}>
-                    <View style={[styles.avatarContainer, { borderColor: colors.primary }]}>
-                        {profileImage ? (
-                            <Image source={{ uri: profileImage }} style={styles.avatar} />
-                        ) : (
-                            <View style={[styles.avatarPlaceholder, { backgroundColor: colors.primary + "20" }]}>
-                                <Ionicons name="person" size={40} color={colors.primary} />
-                            </View>
-                        )}
-                    </View>
-                    <TouchableOpacity
-                        style={[styles.editButton, { backgroundColor: colors.card, borderColor: colors.primary }]}
-                        onPress={onEditPress}
-                        activeOpacity={0.8}
-                    >
-                        <Ionicons name="pencil" size={14} color={colors.primary} />
-                    </TouchableOpacity>
+            {/* User details card floating over the background */}
+            <View style={[styles.card, { backgroundColor: colors.card }]}>
+                {/* Edit button in top-right corner */}
+                <TouchableOpacity
+                    style={[styles.editButton, { backgroundColor: colors.background, borderColor: colors.border }]}
+                    onPress={onEditPress}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name="pencil" size={16} color={colors.primary} />
+                </TouchableOpacity>
+
+                {/* Avatar */}
+                <View style={[styles.avatarContainer, { borderColor: colors.primary }]}>
+                    {profileImage ? (
+                        <Image source={{ uri: profileImage }} style={styles.avatar} />
+                    ) : (
+                        <View style={[styles.avatarPlaceholder, { backgroundColor: colors.primary + "20" }]}>
+                            <Ionicons name="person" size={40} color={colors.primary} />
+                        </View>
+                    )}
                 </View>
 
+                {/* User info */}
                 <View style={styles.infoContainer}>
-                    <ThemedText style={[styles.name, { color: colors.primary }]}>{name}</ThemedText>
-                    <ThemedText style={[styles.email, { color: colors.primary + "99" }]}>{email}</ThemedText>
+                    <ThemedText style={[styles.name, { color: colors.text }]}>{name}</ThemedText>
+                    <ThemedText style={[styles.email, { color: colors.secondary }]}>{email}</ThemedText>
                 </View>
             </View>
         </View>
@@ -53,75 +56,75 @@ export function ProfileHeader({ name, email, profileImage, onEditPress }: Profil
 const styles = StyleSheet.create({
     container: {
         width: "100%",
-        paddingBottom: 20,
-    },
-    backgroundDecoration: {
-        position: "absolute",
-        top: -100, // Extend up beyond safe area
-        left: 0,
-        right: 0,
-        height: 260,
-        borderBottomLeftRadius: 40,
-        borderBottomRightRadius: 40,
-    },
-    headerContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 24,
-        paddingTop: 40,
-        gap: 20,
-    },
-    avatarWrapper: {
         position: "relative",
     },
+    backgroundArea: {
+        width: "100%",
+        height: 180,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+    },
+    card: {
+        marginHorizontal: 24,
+        marginTop: -100, // Negative margin to overlap the background
+        borderRadius: 20,
+        padding: 24,
+        alignItems: "center",
+        position: "relative",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 8,
+    },
+    editButton: {
+        position: "absolute",
+        top: 12,
+        right: 12,
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        borderWidth: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.08,
+        shadowRadius: 2,
+        elevation: 2,
+        zIndex: 10,
+    },
     avatarContainer: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
         borderWidth: 3,
         padding: 3,
-        overflow: "visible",
+        marginBottom: 16,
     },
     avatar: {
         width: "100%",
         height: "100%",
-        borderRadius: 45,
+        borderRadius: 37,
     },
     avatarPlaceholder: {
         width: "100%",
         height: "100%",
-        borderRadius: 45,
+        borderRadius: 37,
         justifyContent: "center",
         alignItems: "center",
-    },
-    editButton: {
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        width: 28,
-        height: 28,
-        borderRadius: 14,
-        borderWidth: 1.5,
-        justifyContent: "center",
-        alignItems: "center",
-        elevation: 4,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
     },
     infoContainer: {
-        flex: 1,
-        justifyContent: "center",
+        alignItems: "center",
     },
     name: {
-        fontSize: 26,
-        fontWeight: "800",
-        letterSpacing: -0.5,
+        fontSize: 20,
+        fontWeight: "700",
+        letterSpacing: -0.3,
+        marginBottom: 4,
     },
     email: {
         fontSize: 14,
         fontWeight: "500",
-        marginTop: 2,
     },
 });
