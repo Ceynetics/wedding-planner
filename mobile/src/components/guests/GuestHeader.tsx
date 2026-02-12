@@ -19,13 +19,7 @@ export function GuestHeader() {
 
     return (
         <View style={styles.outerContainer}>
-            {/* Solid colored background area */}
-            <View
-                style={[styles.backgroundArea, {
-                    backgroundColor: colors.primary,
-                    height: 220 + insets.top
-                }]}
-            />
+            {/* Background is now handled by layout */}
 
             <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
                 <View style={styles.textContainer}>

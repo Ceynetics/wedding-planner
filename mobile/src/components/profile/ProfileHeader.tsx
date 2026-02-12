@@ -18,8 +18,8 @@ export function ProfileHeader({ name, email, profileImage, onEditPress }: Profil
 
     return (
         <View style={styles.container}>
-            {/* Solid colored background area */}
-            <View style={[styles.backgroundArea, { backgroundColor: colors.primary }]} />
+            {/* Spacer area (background handled by layout) */}
+            <View style={styles.backgroundArea} />
 
             {/* User details card floating over the background */}
             <View style={[styles.card, { backgroundColor: colors.card }]}>

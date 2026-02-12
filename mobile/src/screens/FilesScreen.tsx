@@ -66,7 +66,7 @@ export default function FilesScreen() {
         : [colors.primary + "60", colors.background]) as [string, string, ...string[]];
 
     return (
-        <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
+        <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
             {/* <LinearGradient
                 colors={gradientColors}
                 start={{ x: 0, y: 0 }}

@@ -23,13 +23,7 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
 
     return (
         <View style={styles.outerContainer}>
-            {/* Solid colored background area */}
-            <View
-                style={[styles.backgroundArea, {
-                    backgroundColor: colors.primary,
-                    height: 210 + insets.top // Increased height for better coverage
-                }]}
-            />
+            {/* Background is now handled by layout */}
 
             <View style={[styles.container]}>
                 <View style={styles.textContainer}>

@@ -71,7 +71,7 @@ export default function VendorsScreen() {
     const isDiscover = activeTab === "discover";
 
     return (
-        <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
+        <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
             <VendorHeader activeTab={activeTab} setActiveTab={setActiveTab} />
 
             <ScrollView

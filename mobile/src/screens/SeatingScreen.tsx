@@ -33,7 +33,7 @@ export default function SeatingScreen() {
     ];
 
     return (
-        <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
+        <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
             {/* <LinearGradient
                 colors={gradientColors}
                 start={{ x: 0, y: 0 }}

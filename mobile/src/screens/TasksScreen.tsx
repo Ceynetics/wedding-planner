@@ -60,7 +60,7 @@ export default function TasksScreen() {
     ];
 
     return (
-        <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
+        <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}

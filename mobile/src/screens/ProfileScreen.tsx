@@ -52,7 +52,7 @@ export default function ProfileScreen() {
     };
 
     return (
-        <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
+        <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
             <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
