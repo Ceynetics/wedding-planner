@@ -18,8 +18,10 @@ export function VendorHeader({ activeTab, setActiveTab }: VendorHeaderProps) {
     const insets = useSafeAreaInsets();
     const router = useRouter();
 
+    const headerHeight = 220 + insets.top;
+
     return (
-        <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
+        <View style={[styles.container, { height: headerHeight, paddingTop: insets.top + 10 }]}>
             {/* Top Bar */}
             <View style={styles.topBar}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -40,43 +42,45 @@ export function VendorHeader({ activeTab, setActiveTab }: VendorHeaderProps) {
                 </View>
             </View>
 
-            {/* Tab Switcher */}
-            <View style={[styles.tabContainer, { backgroundColor: colors.card }]}>
-                <TouchableOpacity
-                    style={[
-                        styles.tab,
-                        activeTab === "discover" && { backgroundColor: colors.primary }
-                    ]}
-                    onPress={() => setActiveTab("discover")}
-                    activeOpacity={0.8}
-                >
-                    <ThemedText
+            {/* Tab Switcher - Centered in remaining area */}
+            <View style={styles.tabWrapper}>
+                <View style={[styles.tabContainer, { backgroundColor: colors.card }]}>
+                    <TouchableOpacity
                         style={[
-                            styles.tabText,
-                            { color: activeTab === "discover" ? colors.primaryContrast : colors.secondary }
+                            styles.tab,
+                            activeTab === "discover" && { backgroundColor: colors.primary }
                         ]}
+                        onPress={() => setActiveTab("discover")}
+                        activeOpacity={0.8}
                     >
-                        Discover
-                    </ThemedText>
-                </TouchableOpacity>
+                        <ThemedText
+                            style={[
+                                styles.tabText,
+                                { color: activeTab === "discover" ? colors.primaryContrast : colors.secondary }
+                            ]}
+                        >
+                            Discover
+                        </ThemedText>
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                    style={[
-                        styles.tab,
-                        activeTab === "hired" && { backgroundColor: colors.primary }
-                    ]}
-                    onPress={() => setActiveTab("hired")}
-                    activeOpacity={0.8}
-                >
-                    <ThemedText
+                    <TouchableOpacity
                         style={[
-                            styles.tabText,
-                            { color: activeTab === "hired" ? colors.primaryContrast : colors.secondary }
+                            styles.tab,
+                            activeTab === "hired" && { backgroundColor: colors.primary }
                         ]}
+                        onPress={() => setActiveTab("hired")}
+                        activeOpacity={0.8}
                     >
-                        Hired
-                    </ThemedText>
-                </TouchableOpacity>
+                        <ThemedText
+                            style={[
+                                styles.tabText,
+                                { color: activeTab === "hired" ? colors.primaryContrast : colors.secondary }
+                            ]}
+                        >
+                            Hired
+                        </ThemedText>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
@@ -85,14 +89,17 @@ export function VendorHeader({ activeTab, setActiveTab }: VendorHeaderProps) {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 24,
-        paddingBottom: 10,
         zIndex: 10,
     },
     topBar: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 24,
+    },
+    tabWrapper: {
+        flex: 1,
+        justifyContent: "center",
+        paddingBottom: 20, // Push up slightly to look centered relative to whole blue area
     },
     backButton: {
         width: 48,

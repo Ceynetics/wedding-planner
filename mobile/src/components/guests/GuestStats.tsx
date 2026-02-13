@@ -1,16 +1,27 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
 interface GuestStatsProps {
     total: number;
     confirmed: number;
     pending: number;
+    searchQuery?: string;
+    setSearchQuery?: (query: string) => void;
+    onFilterPress?: () => void;
 }
 
-export function GuestStats({ total, confirmed, pending }: GuestStatsProps) {
+export function GuestStats({
+    total,
+    confirmed,
+    pending,
+    searchQuery,
+    setSearchQuery,
+    onFilterPress,
+}: GuestStatsProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
@@ -18,10 +29,33 @@ export function GuestStats({ total, confirmed, pending }: GuestStatsProps) {
         <View style={styles.container}>
             {/* Floating card container */}
             <View style={[styles.cardContainer, { backgroundColor: colors.card }]}>
+                {/* Stats Grid */}
                 <View style={styles.statsGrid}>
                     <StatCard label="Total" value={total} colors={colors} />
                     <StatCard label="Confirmed" value={confirmed} colors={colors} />
                     <StatCard label="Pending" value={pending} colors={colors} />
+                </View>
+
+                {/* Search and Filters Section */}
+                <View style={styles.searchRow}>
+                    <View style={[styles.searchContainer, { backgroundColor: colors.inputBackground }]}>
+                        <Ionicons name="search-outline" size={20} color={colors.secondary} style={styles.searchIcon} />
+                        <TextInput
+                            placeholder="Search Guest"
+                            placeholderTextColor={colors.placeholder}
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            style={[styles.searchInput, { color: colors.text }]}
+                        />
+                    </View>
+
+                    <TouchableOpacity
+                        style={[styles.filterButton, { backgroundColor: colors.inputBackground }]}
+                        onPress={onFilterPress}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="options-outline" size={22} color={colors.primary} />
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
@@ -72,12 +106,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         padding: 10,
-        // Subtle shadow for individual cards
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 2,
     },
     value: {
         fontSize: 32,
@@ -88,5 +116,47 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "600",
         marginTop: 4,
+    },
+    searchRow: {
+        flexDirection: "row",
+        gap: 12,
+        alignItems: "center",
+        marginTop: 20,
+    },
+    searchContainer: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        height: 52,
+        borderRadius: 20,
+        paddingHorizontal: 16,
+        // Match StatCard shadow
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
+    },
+    searchIcon: {
+        marginRight: 10,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 16,
+        fontWeight: "500",
+        height: '100%',
+    },
+    filterButton: {
+        width: 52,
+        height: 52,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        // Match StatCard shadow
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
     },
 });

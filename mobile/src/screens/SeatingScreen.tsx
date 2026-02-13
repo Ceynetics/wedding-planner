@@ -1,4 +1,3 @@
-import { SeatingFilters } from "@/components/seating/SeatingFilters";
 import { SeatingHeader } from "@/components/seating/SeatingHeader";
 import { SeatingStats } from "@/components/seating/SeatingStats";
 import { TableCard } from "@/components/seating/TableCard";
@@ -7,7 +6,6 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -21,10 +19,6 @@ export default function SeatingScreen() {
 
     const [searchQuery, setSearchQuery] = useState("");
 
-    const gradientColors = (theme === "light"
-        ? [colors.primary + "40", colors.primary + "10"]
-        : [colors.primary + "60", colors.background]) as [string, string, ...string[]];
-
     const tables = [
         { id: "1", name: "Head Table", description: "Table 1", currentGuests: 7, maxGuests: 10, isVip: true },
         { id: "2", name: "Head Table", description: "Table 2", currentGuests: 7, maxGuests: 10, isVip: false },
@@ -34,21 +28,15 @@ export default function SeatingScreen() {
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
-            {/* <LinearGradient
-                colors={gradientColors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={[styles.gradient, { height: 400 + insets.top }]}
-            /> */}
-
             <SeatingHeader />
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 + insets.bottom }]}
             >
-                <SeatingStats totalGuests={120} totalSeats={135} />
-                <SeatingFilters
+                <SeatingStats
+                    totalGuests={120}
+                    totalSeats={135}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     onFilterPress={() => console.log("Filter pressed")}
@@ -83,12 +71,6 @@ export default function SeatingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    gradient: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
     },
     scrollContent: {
         // Space handled by insets in JSX

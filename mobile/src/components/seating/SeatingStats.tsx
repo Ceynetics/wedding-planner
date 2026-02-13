@@ -1,50 +1,87 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
 interface SeatingStatsProps {
     totalGuests: number;
     totalSeats: number;
+    searchQuery?: string;
+    setSearchQuery?: (query: string) => void;
+    onFilterPress?: () => void;
 }
 
-export function SeatingStats({ totalGuests, totalSeats }: SeatingStatsProps) {
+export function SeatingStats({
+    totalGuests,
+    totalSeats,
+    searchQuery,
+    setSearchQuery,
+    onFilterPress,
+}: SeatingStatsProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
     return (
         <View style={styles.container}>
-            <StatCard
-                label="Total Guests"
-                value={totalGuests}
-                icon="account-group"
-                colors={colors}
-            />
-            <StatCard
-                label="Total Seats"
-                value={totalSeats}
-                icon="table-furniture"
-                colors={colors}
-            />
+            {/* Main Floating Card */}
+            <View style={[styles.cardContainer, { backgroundColor: colors.card }]}>
+                {/* Stats Row */}
+                <View style={styles.statsRow}>
+                    <StatCard
+                        label="Total Guests"
+                        value={totalGuests}
+                        icon="account-group"
+                        colors={colors}
+                    />
+                    <StatCard
+                        label="Total Seats"
+                        value={totalSeats}
+                        icon="table-furniture"
+                        colors={colors}
+                    />
+                </View>
+
+                {/* Search and Filters Section */}
+                <View style={styles.searchRow}>
+                    <View style={[styles.searchContainer, { backgroundColor: colors.inputBackground }]}>
+                        <Ionicons name="search-outline" size={20} color={colors.secondary} style={styles.searchIcon} />
+                        <TextInput
+                            placeholder="Search Guest"
+                            placeholderTextColor={colors.placeholder}
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            style={[styles.searchInput, { color: colors.text }]}
+                        />
+                    </View>
+
+                    <TouchableOpacity
+                        style={[styles.filterButton, { backgroundColor: colors.inputBackground }]}
+                        onPress={onFilterPress}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="options-outline" size={22} color={colors.primary} />
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
     );
 }
 
 function StatCard({ label, value, icon, colors }: { label: string; value: number; icon: any; colors: any }) {
     return (
-        <View style={[styles.card, { backgroundColor: colors.card }]}>
-            <View style={styles.content}>
-                <ThemedText style={styles.label} lightColor={colors.secondary} darkColor={colors.secondary}>
+        <View style={[styles.statCard, { backgroundColor: colors.inputBackground }]}>
+            <View style={styles.statContent}>
+                <ThemedText style={styles.statLabel} lightColor={colors.secondary} darkColor={colors.secondary}>
                     {label}
                 </ThemedText>
-                <ThemedText style={styles.value} numberOfLines={1} adjustsFontSizeToFit>
+                <ThemedText style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
                     {value}
                 </ThemedText>
             </View>
             <View style={styles.iconContainer}>
-                <MaterialCommunityIcons name={icon} size={40} color={colors.secondary + '40'} />
+                <MaterialCommunityIcons name={icon} size={32} color={colors.secondary + '40'} />
             </View>
         </View>
     );
@@ -52,47 +89,93 @@ function StatCard({ label, value, icon, colors }: { label: string; value: number
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: "row",
-        justifyContent: "space-between",
         paddingHorizontal: 24,
-        gap: 16,
         marginTop: 10,
         zIndex: 2,
     },
-    card: {
-        flex: 1,
-        height: 120,
+    cardContainer: {
         borderRadius: 24,
         padding: 20,
+        // Premium floating shadow
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 10,
+    },
+    statsRow: {
+        flexDirection: "row",
+        gap: 12,
+    },
+    statCard: {
+        flex: 1,
+        height: 100,
+        borderRadius: 20,
+        padding: 16,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-end",
-        // Premium subtle shadow
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.05,
-        shadowRadius: 20,
-        elevation: 2,
     },
-    content: {
+    statContent: {
         flex: 1,
         height: "100%",
         justifyContent: "space-between",
     },
-    label: {
-        fontSize: 15,
+    statLabel: {
+        fontSize: 13,
         fontWeight: "600",
     },
-    value: {
-        fontSize: 36,
+    statValue: {
+        fontSize: 28,
         fontWeight: "800",
         letterSpacing: -1,
-        lineHeight: 44,
         includeFontPadding: false,
     },
     iconContainer: {
         position: "absolute",
-        right: 15,
-        bottom: 15,
+        right: 12,
+        bottom: 12,
+    },
+    searchRow: {
+        flexDirection: "row",
+        gap: 12,
+        alignItems: "center",
+        marginTop: 20,
+    },
+    searchContainer: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        height: 52,
+        borderRadius: 20,
+        paddingHorizontal: 16,
+        // Inner shadow
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
+    },
+    searchIcon: {
+        marginRight: 10,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 16,
+        fontWeight: "500",
+        height: '100%',
+    },
+    filterButton: {
+        width: 52,
+        height: 52,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        // Inner shadow
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
     },
 });

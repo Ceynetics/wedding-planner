@@ -19,12 +19,6 @@ export function NotificationHeader({ onClose }: NotificationHeaderProps) {
         <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
             <View style={styles.headerRow}>
                 <View style={styles.titleSection}>
-                    <MaterialCommunityIcons
-                        name="bell-ring"
-                        size={28}
-                        color={colors.text}
-                        style={styles.bellIcon}
-                    />
                     <ThemedText style={styles.title}>Notifications</ThemedText>
                 </View>
 
@@ -52,9 +46,6 @@ const styles = StyleSheet.create({
     titleSection: {
         flexDirection: "row",
         alignItems: "center",
-    },
-    bellIcon: {
-        marginRight: 10,
     },
     title: {
         fontSize: 28,

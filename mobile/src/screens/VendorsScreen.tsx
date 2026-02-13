@@ -9,7 +9,6 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -63,10 +62,6 @@ export default function VendorsScreen() {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeFilter, setActiveFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
-
-    const gradientColors = (theme === "light"
-        ? [colors.primary + "40", colors.primary + "10"]
-        : [colors.primary + "60", colors.background]) as [string, string, ...string[]];
 
     const isDiscover = activeTab === "discover";
 
@@ -136,12 +131,6 @@ export default function VendorsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    gradient: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
     },
     scrollContent: {
         // Space handled by paddingBottom

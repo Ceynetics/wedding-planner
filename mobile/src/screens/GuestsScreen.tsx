@@ -1,5 +1,4 @@
 import { GuestCard, Guest } from "@/components/guests/GuestCard";
-import { GuestFilters } from "@/components/guests/GuestFilters";
 import { GuestHeader } from "@/components/guests/GuestHeader";
 import { GuestStats } from "@/components/guests/GuestStats";
 import { ThemedView } from "@/components/ThemedView";
@@ -85,17 +84,17 @@ export default function GuestsScreen() {
             >
                 <GuestHeader />
 
-                {/* Stats Summary Cards */}
+                {/* Stats Summary Cards with Search */}
                 <View style={styles.statsContainer}>
-                    <GuestStats total={124} confirmed={86} pending={24} />
+                    <GuestStats
+                        total={124}
+                        confirmed={86}
+                        pending={24}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        onFilterPress={() => console.log("Filter pressed")}
+                    />
                 </View>
-
-                {/* Search and Filters Section */}
-                <GuestFilters
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    onFilterPress={() => console.log("Filter pressed")}
-                />
 
                 {/* Guests List */}
                 <View style={styles.listContainer}>
