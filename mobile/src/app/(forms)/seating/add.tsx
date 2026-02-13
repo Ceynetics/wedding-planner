@@ -57,8 +57,7 @@ export default function SeatingAddScreen() {
                 <AddGuests
                     guests={guests}
                     onAddGuest={() => {
-                        // TODO: Open guest selector modal
-                        console.log('Add guest');
+                        router.push('/(forms)/seating/select-guests' as any);
                     }}
                     onRemoveGuest={(id) => {
                         setGuests(guests.filter(g => g.id !== id));

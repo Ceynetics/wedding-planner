@@ -8,6 +8,7 @@ export default function FormsLayout() {
             <Stack.Screen name="expenses/add" />
             <Stack.Screen name="vendors/add" />
             <Stack.Screen name="seating/add" />
+            <Stack.Screen name="seating/select-guests" options={{ presentation: 'transparentModal', animation: 'slide_from_bottom' }} />
         </Stack>
     );
 }
