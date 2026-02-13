@@ -24,7 +24,7 @@ export default function ToolsScreen() {
         {
             title: "Seating",
             subtitle: "Plan Table Positions and Seating",
-            imageSource: require("../../assets/icons/table.png"),
+            imageSource: require("../../assets/icons/seating.png"),
             onPress: () => router.push("/seating"),
         },
         {
@@ -42,7 +42,7 @@ export default function ToolsScreen() {
         {
             title: "Files",
             subtitle: "Add your Bills and Docs Here",
-            imageSource: require("../../assets/icons/files.png"),
+            imageSource: require("../../assets/icons/drawer.png"),
             onPress: () => router.push("/files"),
         },
         {

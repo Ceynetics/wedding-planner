@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -11,10 +10,10 @@ interface CategorySelectorProps {
 }
 
 const categories = [
-    { id: 'Food', icon: 'restaurant-outline' },
-    { id: 'Venue', icon: 'business-outline' },
-    { id: 'Attire', icon: 'shirt-outline' },
-    { id: 'Flowers', icon: 'flower-outline' },
+    { id: 'Food', image: require('../../../../assets/icons/food.png') },
+    { id: 'Venue', image: require('../../../../assets/icons/venue.png') },
+    { id: 'Attire', image: require('../../../../assets/icons/attire.png') },
+    { id: 'Floral', image: require('../../../../assets/icons/floral.png') },
 ] as const;
 
 export function CategorySelector({ chosenCategory, onSelectCategory }: CategorySelectorProps) {
@@ -34,10 +33,10 @@ export function CategorySelector({ chosenCategory, onSelectCategory }: CategoryS
                             { backgroundColor: chosenCategory === cat.id ? colors.primary : colors.background }
                         ]}
                     >
-                        <Ionicons
-                            name={cat.icon as any}
-                            size={24}
-                            color={chosenCategory === cat.id ? colors.primaryContrast : colors.secondary}
+                        <Image
+                            source={cat.image}
+                            style={styles.categoryImage}
+                            resizeMode="contain"
                         />
                         <ThemedText style={[
                             styles.categoryText,
@@ -72,20 +71,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: 8,
+        gap: 7,
     },
     categoryButton: {
         flex: 1,
         minWidth: 70,
-        height: 80,
-        borderRadius: 16,
+        height: 100,
+        borderRadius: 15,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 8,
     },
+    categoryImage: {
+        width: 50,
+        height: 50,
+    },
     categoryText: {
         fontSize: 12,
         fontWeight: '700',
-        marginTop: 8,
     },
 });

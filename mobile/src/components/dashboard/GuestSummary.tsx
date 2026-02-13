@@ -5,73 +5,70 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-interface GuestCardProps {
-    label: string;
-    count: number;
-    total: number;
-    icon: keyof typeof Ionicons.glyphMap;
-    iconColor: string;
-}
-
-function GuestCard({ label, count, total, icon, iconColor }: GuestCardProps) {
-    const { theme } = useAppTheme();
-    const colors = Colors[theme];
-
-    return (
-        <View style={[styles.card, { backgroundColor: colors.card }]}>
-            <ThemedText style={styles.cardLabel}>{label}</ThemedText>
-            <View style={styles.iconWrapper}>
-                <Ionicons name={icon} size={28} color={iconColor} />
-            </View>
-            <ThemedText style={styles.countText}>
-                {count}/{total}
-            </ThemedText>
-        </View>
-    );
-}
-
 export function GuestSummary() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
+    // Mock data
+    const total = 1000;
+    const confirmed = 500;
+    const pending = 224;
+    const declined = 225;
+
+    // Calculations
+    const confirmedWidth = (confirmed / total) * 100;
+    const pendingWidth = (pending / total) * 100;
+    const declinedWidth = (declined / total) * 100;
+
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View
-                    style={[
-                        styles.headerIconBg,
-                        { backgroundColor: colors.primary + "15" },
-                    ]}
-                >
-                    <Ionicons name="clipboard" size={18} color={colors.primary} />
+            <View style={[styles.mainCard, { backgroundColor: colors.card }]}>
+                {/* Header Section */}
+                <View style={styles.header}>
+                    <View style={[styles.headerIconBg, { backgroundColor: colors.primary + "15" }]}>
+                        <Ionicons name="people" size={18} color={colors.primary} />
+                    </View>
+                    <ThemedText style={[styles.title, { color: colors.primary }]}>
+                        Guest List
+                    </ThemedText>
                 </View>
-                <ThemedText style={[styles.title, { color: colors.primary }]}>
-                    Guest List
-                </ThemedText>
-            </View>
 
-            <View style={styles.row}>
-                <GuestCard
-                    label="Confirmed"
-                    count={500}
-                    total={1000}
-                    icon="checkmark-circle"
-                    iconColor={colors.success}
-                />
-                <GuestCard
-                    label="Pending"
-                    count={224}
-                    total={1000}
-                    icon="time"
-                    iconColor={colors.warning}
-                />
-                <GuestCard
-                    label="Declined"
-                    count={225}
-                    total={1000}
-                    icon="close-circle"
-                    iconColor={colors.error}
-                />
+                {/* Total Stats Section */}
+                <View style={styles.totalSection}>
+                    <View>
+                        <ThemedText style={styles.totalValue}>{total}</ThemedText>
+                        <ThemedText style={styles.totalLabel}>Total Added Guests</ThemedText>
+                    </View>
+                    <View style={styles.totalIconBg}>
+                        <Ionicons name="person-add" size={24} color={colors.secondary} opacity={0.3} />
+                    </View>
+                </View>
+
+                {/* Multi-Segment Progress Bar */}
+                <View style={[styles.fullProgressTrack, { backgroundColor: colors.inputBackground }]}>
+                    <View style={[styles.segment, { backgroundColor: colors.success, width: `${confirmedWidth}%` }]} />
+                    <View style={[styles.segment, { backgroundColor: colors.warning, width: `${pendingWidth}%` }]} />
+                    <View style={[styles.segment, { backgroundColor: colors.error, width: `${declinedWidth}%` }]} />
+                </View>
+
+                {/* Status Breakdown Grid */}
+                <View style={styles.statusGrid}>
+                    <View style={styles.statusItem}>
+                        <View style={[styles.dot, { backgroundColor: colors.success }]} />
+                        <ThemedText style={styles.statusCount}>{confirmed}</ThemedText>
+                        <ThemedText style={styles.statusLabel}>Confirmed</ThemedText>
+                    </View>
+                    <View style={[styles.statusItem, styles.statusBorder]}>
+                        <View style={[styles.dot, { backgroundColor: colors.warning }]} />
+                        <ThemedText style={styles.statusCount}>{pending}</ThemedText>
+                        <ThemedText style={styles.statusLabel}>Pending</ThemedText>
+                    </View>
+                    <View style={styles.statusItem}>
+                        <View style={[styles.dot, { backgroundColor: colors.error }]} />
+                        <ThemedText style={styles.statusCount}>{declined}</ThemedText>
+                        <ThemedText style={styles.statusLabel}>Declined</ThemedText>
+                    </View>
+                </View>
             </View>
         </View>
     );
@@ -82,10 +79,20 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         marginBottom: 24,
     },
+    mainCard: {
+        padding: 24,
+        borderRadius: 24,
+        // Premium floating shadow
+        elevation: 4,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+    },
     header: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 16,
+        marginBottom: 24,
         gap: 10,
     },
     headerIconBg: {
@@ -99,35 +106,68 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "700",
     },
-    row: {
-        flexDirection: "row",
-        gap: 12,
+    totalSection: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
     },
-    card: {
-        flex: 1,
-        paddingVertical: 16,
-        paddingHorizontal: 8,
-        borderRadius: 20,
-        alignItems: "center",
-        justifyContent: "center",
-        // Floating shadow effect
-        elevation: 4,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
+    totalValue: {
+        fontSize: 35,
+        fontWeight: "900",
+        letterSpacing: -1,
+        includeFontPadding: false,
+        lineHeight: 42,
     },
-    cardLabel: {
-        fontSize: 12,
-        fontWeight: "600",
-        opacity: 0.6,
-        marginBottom: 8,
-    },
-    iconWrapper: {
-        marginBottom: 8,
-    },
-    countText: {
+    totalLabel: {
         fontSize: 13,
+        fontWeight: "600",
+        opacity: 0.5,
+    },
+    totalIconBg: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    fullProgressTrack: {
+        height: 8,
+        borderRadius: 4,
+        flexDirection: 'row',
+        overflow: 'hidden',
+        marginBottom: 24,
+    },
+    segment: {
+        height: '100%',
+    },
+    statusGrid: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    statusItem: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    statusBorder: {
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderColor: 'rgba(0,0,0,0.05)',
+    },
+    dot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        marginBottom: 8,
+    },
+    statusCount: {
+        fontSize: 16,
+        fontWeight: "800",
+    },
+    statusLabel: {
+        fontSize: 11,
         fontWeight: "700",
+        opacity: 0.4,
+        marginTop: 2,
     },
 });

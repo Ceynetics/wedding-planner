@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     textAreaContainer: {
-        minHeight: 120,
+        marginTop: 10,
+        minHeight: 150,
         alignItems: 'flex-start',
         borderWidth: 0,
     },

@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         paddingHorizontal: 20,
+        paddingVertical: 10,
         gap: 12,
     },
     card: {
@@ -96,8 +97,8 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     iconContainer: {
-        width: 44,
-        height: 44,
+        width: 56,
+        height: 56,
         borderRadius: 12,
         justifyContent: "center",
         alignItems: "center",

@@ -1,9 +1,9 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, ImageSourcePropType, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
 interface SeatingStatsProps {
     totalGuests: number;
@@ -32,13 +32,13 @@ export function SeatingStats({
                     <StatCard
                         label="Total Guests"
                         value={totalGuests}
-                        icon="account-group"
+                        image={require("../../../assets/icons/guests.png")}
                         colors={colors}
                     />
                     <StatCard
                         label="Total Seats"
                         value={totalSeats}
-                        icon="table-furniture"
+                        image={require("../../../assets/icons/seating.png")}
                         colors={colors}
                     />
                 </View>
@@ -69,7 +69,7 @@ export function SeatingStats({
     );
 }
 
-function StatCard({ label, value, icon, colors }: { label: string; value: number; icon: any; colors: any }) {
+function StatCard({ label, value, image, colors }: { label: string; value: number; image: ImageSourcePropType; colors: any }) {
     return (
         <View style={[styles.statCard, { backgroundColor: colors.inputBackground }]}>
             <View style={styles.statContent}>
@@ -81,7 +81,11 @@ function StatCard({ label, value, icon, colors }: { label: string; value: number
                 </ThemedText>
             </View>
             <View style={styles.iconContainer}>
-                <MaterialCommunityIcons name={icon} size={32} color={colors.secondary + '40'} />
+                <Image
+                    source={image}
+                    style={[styles.statImage]}
+                    resizeMode="contain"
+                />
             </View>
         </View>
     );
@@ -135,6 +139,12 @@ const styles = StyleSheet.create({
         position: "absolute",
         right: 12,
         bottom: 12,
+    },
+    statImage: {
+        width: 80,
+        height: 80,
+        marginRight: -15,
+        marginBottom: -20
     },
     searchRow: {
         flexDirection: "row",

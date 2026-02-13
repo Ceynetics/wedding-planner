@@ -7,7 +7,6 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -19,20 +18,8 @@ export default function ExpensesScreen() {
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
 
-    // Purple gradient matching the design (now handled by Layout)
-    /* const gradientColors = (theme === "light"
-        ? [colors.primary + "40", colors.primary + "10"]
-        : [colors.primary + "60", colors.background]) as [string, string, ...string[]]; */
-
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
-            {/* <LinearGradient
-                colors={gradientColors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={[styles.gradient, { height: 400 + insets.top }]}
-            /> */}
-
             <ExpenseHeader />
 
             <ScrollView
