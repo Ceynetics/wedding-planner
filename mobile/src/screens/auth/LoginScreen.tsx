@@ -40,20 +40,19 @@ export default function LoginScreen() {
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.header}>
-              <View
-                style={[
-                  styles.logoContainer,
-                  { backgroundColor: colors.primary + "20" },
-                ]}
-              >
-                <Ionicons name="leaf" size={40} color={colors.primary} />
+              <Image
+                source={require("../../../assets/icons/hearts.png")}
+                style={styles.headerImage}
+                contentFit="contain"
+              />
+              <View style={styles.headerTextContainer}>
+                <ThemedText type="title" style={styles.title}>
+                  Welcome Back
+                </ThemedText>
+                <ThemedText style={styles.subtitle}>
+                  Sign in to continue your journey
+                </ThemedText>
               </View>
-              <ThemedText type="title" style={styles.title}>
-                Welcome Back
-              </ThemedText>
-              <ThemedText style={styles.subtitle}>
-                Sign in to continue your journey
-              </ThemedText>
             </View>
 
             <View style={styles.form}>
@@ -178,23 +177,23 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   header: {
+    flexDirection: "row",
     alignItems: "center",
     marginBottom: 48,
   },
-  logoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
+  headerImage: {
+    width: 60,
+    height: 60,
+    marginRight: 16,
+  },
+  headerTextContainer: {
+    flex: 1,
   },
   title: {
-    marginBottom: 8,
+    marginBottom: 4,
   },
   subtitle: {
     opacity: 0.6,
-    textAlign: "center",
   },
   form: {
     width: "100%",

@@ -44,7 +44,11 @@ export default function SeatingScreen() {
 
                 <View style={styles.listContainer}>
                     {tables.map((table) => (
-                        <TableCard key={table.id} {...table} />
+                        <TableCard
+                            key={table.id}
+                            {...table}
+                            onPress={() => router.push(`/(tools)/seating/${table.id}` as any)}
+                        />
                     ))}
                 </View>
             </ScrollView>

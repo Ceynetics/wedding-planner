@@ -31,7 +31,8 @@ export default function ToolsLayout() {
                 }}
             >
                 <Stack.Screen name="expenses" />
-                <Stack.Screen name="seating" />
+                <Stack.Screen name="seating/index" />
+                <Stack.Screen name="seating/[id]" />
                 <Stack.Screen name="vendors" />
                 <Stack.Screen name="files" />
             </Stack>

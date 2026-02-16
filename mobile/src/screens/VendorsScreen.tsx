@@ -63,7 +63,13 @@ export default function VendorsScreen() {
     const [activeFilter, setActiveFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
 
+    const [hiredVendors, setHiredVendors] = useState(MOCK_HIRED_VENDORS);
+
     const isDiscover = activeTab === "discover";
+
+    const handleRemoveVendor = (vendorId: string) => {
+        setHiredVendors(prev => prev.filter(v => v.id !== vendorId));
+    };
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
@@ -110,9 +116,19 @@ export default function VendorsScreen() {
                         <HiredStats budget={300000} paid={300000} pending={300000} />
                         <HiredFilters activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
                         <View style={styles.vendorList}>
-                            {MOCK_HIRED_VENDORS.map((vendor) => (
-                                <HiredVendorCard key={vendor.id} {...vendor} />
-                            ))}
+                            {hiredVendors.length > 0 ? (
+                                hiredVendors.map((vendor) => (
+                                    <HiredVendorCard
+                                        key={vendor.id}
+                                        {...vendor}
+                                        onRemove={() => handleRemoveVendor(vendor.id)}
+                                    />
+                                ))
+                            ) : (
+                                <View style={{ alignItems: 'center', marginTop: 40 }}>
+                                    <ThemedText style={{ opacity: 0.6 }}>No hired vendors found.</ThemedText>
+                                </View>
+                            )}
                         </View>
                     </>
                 )}

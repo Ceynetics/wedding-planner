@@ -18,10 +18,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const genderOptions = ["Male", "Female", "Other"];
+
 export default function RegisterScreen() {
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
     const [gender, setGender] = useState("");
+    const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -52,20 +55,19 @@ export default function RegisterScreen() {
                         showsVerticalScrollIndicator={false}
                     >
                         <View style={styles.header}>
-                            <View
-                                style={[
-                                    styles.logoContainer,
-                                    { backgroundColor: colors.primary + "20" },
-                                ]}
-                            >
-                                <Ionicons name="person-add" size={40} color={colors.primary} />
+                            <Image
+                                source={require("../../../assets/icons/hearts.png")}
+                                style={styles.headerImage}
+                                contentFit="contain"
+                            />
+                            <View style={styles.headerTextContainer}>
+                                <ThemedText type="title" style={styles.title}>
+                                    Create Account
+                                </ThemedText>
+                                <ThemedText style={styles.subtitle}>
+                                    Join us and start planning your perfect day
+                                </ThemedText>
                             </View>
-                            <ThemedText type="title" style={styles.title}>
-                                Create Account
-                            </ThemedText>
-                            <ThemedText style={styles.subtitle}>
-                                Join us and start planning your perfect day
-                            </ThemedText>
                         </View>
 
                         <View style={styles.form}>
@@ -87,12 +89,69 @@ export default function RegisterScreen() {
                                     />
                                 </View>
                                 <View style={{ flex: 2 }}>
-                                    <TextField
-                                        label="Gender"
-                                        placeholder="Select gender"
-                                        value={gender}
-                                        onChangeText={setGender}
-                                    />
+                                    {/* Gender Selection with Dropdown */}
+                                    <View style={styles.dropdownContainer}>
+                                        <ThemedText type="label" style={styles.label}>
+                                            Gender
+                                        </ThemedText>
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.dropdownTrigger,
+                                                {
+                                                    backgroundColor: colors.inputBackground,
+                                                    borderBottomLeftRadius: isGenderDropdownOpen ? 0 : 16,
+                                                    borderBottomRightRadius: isGenderDropdownOpen ? 0 : 16,
+                                                },
+                                            ]}
+                                            onPress={() => setIsGenderDropdownOpen(!isGenderDropdownOpen)}
+                                            activeOpacity={0.7}
+                                        >
+                                            <ThemedText
+                                                style={[
+                                                    styles.dropdownValue,
+                                                    { color: gender ? colors.text : colors.placeholder },
+                                                ]}
+                                            >
+                                                {gender || "Select gender"}
+                                            </ThemedText>
+                                            <Ionicons
+                                                name={isGenderDropdownOpen ? "chevron-up" : "chevron-down"}
+                                                size={20}
+                                                color={colors.secondary}
+                                            />
+                                        </TouchableOpacity>
+
+                                        {/* Inline Dropdown Options */}
+                                        {isGenderDropdownOpen && (
+                                            <View style={[styles.optionsList, { backgroundColor: colors.inputBackground, borderColor: colors.border + "20" }]}>
+                                                {genderOptions.map((option, index) => (
+                                                    <TouchableOpacity
+                                                        key={option}
+                                                        style={[
+                                                            styles.optionItem,
+                                                            index === genderOptions.length - 1 && { borderBottomWidth: 0 }
+                                                        ]}
+                                                        onPress={() => {
+                                                            setGender(option);
+                                                            setIsGenderDropdownOpen(false);
+                                                        }}
+                                                    >
+                                                        <ThemedText
+                                                            style={[
+                                                                styles.optionText,
+                                                                gender === option && { color: colors.primary, fontWeight: '700' }
+                                                            ]}
+                                                        >
+                                                            {option}
+                                                        </ThemedText>
+                                                        {gender === option && (
+                                                            <Ionicons name="checkmark" size={18} color={colors.primary} />
+                                                        )}
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
+                                        )}
+                                    </View>
                                 </View>
                             </View>
 
@@ -209,23 +268,24 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
     },
     header: {
+        flexDirection: "row",
         alignItems: "center",
         marginBottom: 48,
     },
-    logoContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 24,
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 24,
+    headerImage: {
+        width: 60,
+        height: 60,
+        marginRight: 16,
+    },
+    headerTextContainer: {
+        flex: 1,
     },
     title: {
-        marginBottom: 8,
+        marginBottom: 4,
     },
     subtitle: {
         opacity: 0.6,
-        textAlign: "center",
+        fontSize: 14.5
     },
     form: {
         width: "100%",
@@ -280,5 +340,57 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         marginTop: 24,
+    },
+    // Gender Dropdown Styles
+    dropdownContainer: {
+        marginBottom: 20,
+        zIndex: 10,
+    },
+    label: {
+        marginBottom: 8,
+        marginLeft: 4,
+    },
+    dropdownTrigger: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        height: 56,
+        borderRadius: 16,
+        paddingHorizontal: 16,
+    },
+    dropdownValue: {
+        fontSize: 16,
+    },
+    optionsList: {
+        position: 'absolute',
+        top: 84, // Label height + trigger height
+        left: 0,
+        right: 0,
+        borderRadius: 16,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        paddingHorizontal: 4,
+        zIndex: 100,
+        // Shadow for the opened dropdown
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 5,
+        borderWidth: 1,
+        borderTopWidth: 0,
+    },
+    optionItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingVertical: 14,
+        paddingHorizontal: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(0,0,0,0.05)',
+    },
+    optionText: {
+        fontSize: 15,
+        fontWeight: "500",
     },
 });

@@ -2,25 +2,45 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import {
+    StyleSheet,
+    TouchableOpacity,
+    View,
+    Modal,
+    TouchableWithoutFeedback,
+} from "react-native";
 
 interface TableCardProps {
+    id: string;
     name: string;
     description: string;
     currentGuests: number;
     maxGuests: number;
     isVip?: boolean;
+    onRemove?: () => void;
+    onPress?: () => void;
 }
 
-export function TableCard({ name, description, currentGuests, maxGuests, isVip }: TableCardProps) {
+export function TableCard({ id, name, description, currentGuests, maxGuests, isVip, onRemove, onPress }: TableCardProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const [showMenu, setShowMenu] = useState(false);
+    const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
 
     const progress = Math.min(currentGuests / maxGuests, 1);
 
+    const handleRemove = () => {
+        setShowMenu(false);
+        onRemove?.();
+    };
+
     return (
-        <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <TouchableOpacity
+            style={[styles.card, { backgroundColor: colors.card }]}
+            onPress={onPress}
+            activeOpacity={0.7}
+        >
             <View style={styles.header}>
                 <View style={styles.leftInfo}>
                     <View style={[styles.iconContainer, { backgroundColor: colors.primary + "15" }]}>
@@ -38,9 +58,57 @@ export function TableCard({ name, description, currentGuests, maxGuests, isVip }
                         </ThemedText>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.menuButton}>
-                    <MaterialCommunityIcons name="dots-vertical" size={24} color={colors.secondary} />
-                </TouchableOpacity>
+                {/* option button */}
+                <View>
+                    <TouchableOpacity
+                        style={styles.menuButton}
+                        onPress={(e) => {
+                            const ref = e.currentTarget;
+                            // @ts-ignore
+                            ref.measureInWindow((x, y, width, height) => {
+                                setMenuPosition({ top: y + height, right: 24 });
+                                setShowMenu(true);
+                            });
+                        }}
+                    >
+                        <MaterialCommunityIcons name="dots-vertical" size={24} color={colors.secondary} />
+                    </TouchableOpacity>
+
+                    {/* Options Menu */}
+                    {showMenu && (
+                        <Modal
+                            transparent={true}
+                            visible={showMenu}
+                            animationType="fade"
+                            onRequestClose={() => setShowMenu(false)}
+                        >
+                            <TouchableWithoutFeedback onPress={() => setShowMenu(false)}>
+                                <View style={styles.modalOverlay}>
+                                    <View
+                                        style={[
+                                            styles.menuContainer,
+                                            {
+                                                backgroundColor: colors.card,
+                                                shadowColor: "#000",
+                                                top: menuPosition.top,
+                                                right: menuPosition.right,
+                                            }
+                                        ]}
+                                    >
+                                        <TouchableOpacity
+                                            style={styles.menuItem}
+                                            onPress={handleRemove}
+                                        >
+                                            <ThemedText style={[styles.menuText, { color: colors.error }]}>
+                                                Remove Table
+                                            </ThemedText>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </Modal>
+                    )}
+                </View>
             </View>
 
             <View style={styles.progressSection}>
@@ -61,7 +129,7 @@ export function TableCard({ name, description, currentGuests, maxGuests, isVip }
                     </ThemedText>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 
@@ -141,5 +209,27 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         minWidth: 75,
         textAlign: "right",
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "transparent",
+    },
+    menuContainer: {
+        position: "absolute",
+        width: 150,
+        borderRadius: 12,
+        padding: 4,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 8,
+    },
+    menuItem: {
+        padding: 12,
+        borderRadius: 8,
+    },
+    menuText: {
+        fontSize: 14,
+        fontWeight: "600",
     },
 });

@@ -1,10 +1,12 @@
 import { Task, TaskCard } from "@/components/tasks/TaskCard";
 import { TaskFilters } from "@/components/tasks/TaskFilters";
 import { TaskHeader } from "@/components/tasks/TaskHeader";
+import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -16,8 +18,7 @@ export default function TasksScreen() {
 
     const [status, setStatus] = useState<"completed" | "remaining">("remaining");
     const [searchQuery, setSearchQuery] = useState("");
-
-    const dummyTasks: Task[] = [
+    const [tasks, setTasks] = useState<Task[]>([
         {
             id: "1",
             title: "Book Hotel",
@@ -30,34 +31,53 @@ export default function TasksScreen() {
                 "https://i.pravatar.cc/150?u=2",
                 "https://i.pravatar.cc/150?u=3",
             ],
+            isCompleted: false,
         },
         {
             id: "2",
-            title: "Book Hotel",
-            priority: "High",
-            category: "Venue",
-            date: "June 24",
-            reminder: "1 more day",
+            title: "Catering Service",
+            priority: "Medium",
+            category: "Food",
+            date: "July 12",
+            reminder: "5 days left",
             assignedUsers: [
                 "https://i.pravatar.cc/150?u=4",
                 "https://i.pravatar.cc/150?u=5",
-                "https://i.pravatar.cc/150?u=6",
             ],
+            isCompleted: false,
         },
         {
             id: "3",
-            title: "Book Hotel",
-            priority: "High",
-            category: "Venue",
-            date: "June 24",
-            reminder: "1 more day",
+            title: "Order Flowers",
+            priority: "Low",
+            category: "Decor",
+            date: "August 05",
+            reminder: "Overdue",
             assignedUsers: [
                 "https://i.pravatar.cc/150?u=7",
-                "https://i.pravatar.cc/150?u=8",
-                "https://i.pravatar.cc/150?u=9",
             ],
+            isCompleted: true,
         },
-    ];
+    ]);
+
+    const handleToggleTask = (taskId: string) => {
+        setTasks(prevTasks =>
+            prevTasks.map(task =>
+                task.id === taskId ? { ...task, isCompleted: !task.isCompleted } : task
+            )
+        );
+    };
+
+    const handleRemoveTask = (taskId: string) => {
+        setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    };
+
+    const filteredTasks = tasks.filter(task => {
+        const matchesStatus = status === "completed" ? task.isCompleted : !task.isCompleted;
+        const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            task.category.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesStatus && matchesSearch;
+    });
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
@@ -66,7 +86,7 @@ export default function TasksScreen() {
                 contentContainerStyle={styles.scrollContent}
             >
                 {/* Header Section */}
-                <TaskHeader remainingTasks={12} />
+                <TaskHeader remainingTasks={tasks.filter(t => !t.isCompleted).length} />
 
                 {/* Filter Section */}
                 <TaskFilters
@@ -79,13 +99,33 @@ export default function TasksScreen() {
 
                 {/* Tasks List */}
                 <View style={styles.taskListContainer}>
-                    {dummyTasks.map((task) => (
-                        <TaskCard
-                            key={task.id}
-                            task={task}
-                            onPress={() => console.log("Task pressed:", task.id)}
-                        />
-                    ))}
+                    {filteredTasks.length > 0 ? (
+                        filteredTasks.map((task) => (
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                onPress={() => console.log("Task pressed:", task.id)}
+                                onCheckPress={() => handleToggleTask(task.id)}
+                                onRemovePress={() => handleRemoveTask(task.id)}
+                            />
+                        ))
+                    ) : (
+                        <View style={styles.emptyContainer}>
+                            <Image
+                                source={require("@/../assets/images/empty-tasks.png")}
+                                style={styles.emptyImage}
+                                contentFit="contain"
+                            />
+                            <ThemedText style={styles.emptyTitle} type="subtitle">
+                                {status === "completed" ? "No completed tasks" : "No tasks remaining"}
+                            </ThemedText>
+                            <ThemedText style={styles.emptySubtitle}>
+                                {status === "completed"
+                                    ? "Finish some tasks to see them here!"
+                                    : "You're all caught up! Take a break."}
+                            </ThemedText>
+                        </View>
+                    )}
                 </View>
             </ScrollView>
 
@@ -127,5 +167,30 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 16,
         elevation: 10,
+    },
+    emptyContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 60,
+        paddingHorizontal: 40,
+    },
+    emptyImage: {
+        width: 200,
+        height: 200,
+        marginBottom: 24,
+        opacity: 0.8,
+    },
+    emptyTitle: {
+        fontSize: 20,
+        fontWeight: "700",
+        textAlign: "center",
+        marginBottom: 8,
+    },
+    emptySubtitle: {
+        fontSize: 16,
+        textAlign: "center",
+        opacity: 0.6,
+        lineHeight: 22,
     },
 });

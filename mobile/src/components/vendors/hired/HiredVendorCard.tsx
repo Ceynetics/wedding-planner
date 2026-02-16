@@ -2,8 +2,14 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import {
+    StyleSheet,
+    TouchableOpacity,
+    View,
+    Modal,
+    TouchableWithoutFeedback,
+} from "react-native";
 
 interface HiredVendorCardProps {
     name: string;
@@ -11,13 +17,21 @@ interface HiredVendorCardProps {
     paidAmount: number;
     totalAmount: number;
     dueDate: string;
+    onRemove?: () => void;
 }
 
-export function HiredVendorCard({ name, category, paidAmount, totalAmount, dueDate }: HiredVendorCardProps) {
+export function HiredVendorCard({ name, category, paidAmount, totalAmount, dueDate, onRemove }: HiredVendorCardProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const [showMenu, setShowMenu] = useState(false);
+    const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
 
     const progress = Math.min(paidAmount / totalAmount, 1);
+
+    const handleRemove = () => {
+        setShowMenu(false);
+        onRemove?.();
+    };
 
     return (
         <View style={[styles.card, { backgroundColor: colors.card }]}>
@@ -32,9 +46,57 @@ export function HiredVendorCard({ name, category, paidAmount, totalAmount, dueDa
                         {category}
                     </ThemedText>
                 </View>
-                <TouchableOpacity style={styles.menuButton}>
-                    <MaterialCommunityIcons name="dots-vertical" size={24} color={colors.secondary} />
-                </TouchableOpacity>
+                {/* option menu */}
+                <View>
+                    <TouchableOpacity
+                        style={styles.menuButton}
+                        onPress={(e) => {
+                            const ref = e.currentTarget;
+                            // @ts-ignore
+                            ref.measureInWindow((x, y, width, height) => {
+                                setMenuPosition({ top: y + height, right: 24 });
+                                setShowMenu(true);
+                            });
+                        }}
+                    >
+                        <MaterialCommunityIcons name="dots-vertical" size={24} color={colors.secondary} />
+                    </TouchableOpacity>
+
+                    {/* Options Menu Pop-up */}
+                    {showMenu && (
+                        <Modal
+                            transparent={true}
+                            visible={showMenu}
+                            animationType="fade"
+                            onRequestClose={() => setShowMenu(false)}
+                        >
+                            <TouchableWithoutFeedback onPress={() => setShowMenu(false)}>
+                                <View style={styles.modalOverlay}>
+                                    <View
+                                        style={[
+                                            styles.menuContainer,
+                                            {
+                                                backgroundColor: colors.card,
+                                                shadowColor: "#000",
+                                                top: menuPosition.top,
+                                                right: menuPosition.right,
+                                            }
+                                        ]}
+                                    >
+                                        <TouchableOpacity
+                                            style={styles.menuItem}
+                                            onPress={handleRemove}
+                                        >
+                                            <ThemedText style={[styles.menuText, { color: colors.error }]}>
+                                                Remove Vendor
+                                            </ThemedText>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </Modal>
+                    )}
+                </View>
             </View>
 
             {/* Progress Section */}
@@ -75,6 +137,7 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         padding: 20,
         marginBottom: 20,
+        // Premium shadow for card
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.05,
@@ -154,5 +217,29 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "700",
         includeFontPadding: false,
+    },
+    // Modal & Menu Styles
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "transparent",
+    },
+    menuContainer: {
+        position: "absolute",
+        width: 150,
+        borderRadius: 12,
+        padding: 4,
+        // Premium shadow for menu
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 8,
+    },
+    menuItem: {
+        padding: 12,
+        borderRadius: 8,
+    },
+    menuText: {
+        fontSize: 14,
+        fontWeight: "600",
     },
 });
