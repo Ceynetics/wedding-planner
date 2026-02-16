@@ -5,6 +5,7 @@ export default function OnboardLayout() {
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="onboard_one" />
             <Stack.Screen name="onboard_two" />
+            <Stack.Screen name="workspace" />
         </Stack>
     );
 }

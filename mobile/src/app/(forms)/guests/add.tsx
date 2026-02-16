@@ -16,6 +16,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { useAppTheme } from '@/context/ThemeContext';
 import { Colors } from '@/constants/Colors';
 
+import { TableSelectorModal } from '@/components/guests/form/TableSelectorModal';
+
 export default function AddGuestScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
@@ -25,6 +27,8 @@ export default function AddGuestScreen() {
     const [adults, setAdults] = useState(0);
     const [kids, setKids] = useState(0);
     const [isVip, setIsVip] = useState(false);
+    const [showTableModal, setShowTableModal] = useState(false);
+    const [selectedTable, setSelectedTable] = useState<{ id: string; name: string } | null>(null);
 
     const labelStyle = {
         color: colors.emphasis,
@@ -148,15 +152,30 @@ export default function AddGuestScreen() {
                 </View>
 
                 {/* Assign Table Card */}
-                <TouchableOpacity style={[styles.card, styles.interactiveCard, { backgroundColor: colors.card }]}>
+                <TouchableOpacity
+                    style={[styles.card, styles.interactiveCard, { backgroundColor: colors.card }]}
+                    onPress={() => setShowTableModal(true)}
+                >
                     <View style={styles.cardHeader}>
                         <View style={[styles.iconContainer, { backgroundColor: colors.inputBackground }]}>
                             <MaterialCommunityIcons name="table-furniture" size={20} color={colors.emphasis} />
                         </View>
-                        <ThemedText style={[styles.cardItemText, { color: colors.emphasis }]}>Assign a Table</ThemedText>
+                        <ThemedText style={[styles.cardItemText, { color: colors.emphasis }]}>
+                            {selectedTable ? `Assigned: ${selectedTable.name}` : "Assign a Table"}
+                        </ThemedText>
                         <Ionicons name="chevron-forward" size={20} color={colors.placeholder} />
                     </View>
                 </TouchableOpacity>
+
+                <TableSelectorModal
+                    visible={showTableModal}
+                    onClose={() => setShowTableModal(false)}
+                    onSelect={(table) => {
+                        setSelectedTable({ id: table.id, name: table.name });
+                        setShowTableModal(false);
+                    }}
+                    selectedTableId={selectedTable?.id}
+                />
 
                 {/* Special Notes */}
                 <View style={styles.section}>

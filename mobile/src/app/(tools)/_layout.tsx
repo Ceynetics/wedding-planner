@@ -4,21 +4,24 @@ import { Stack } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function ToolsLayout() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
 
+    const headerHeight = 220 + insets.top;
+
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             {/* Common Background Area for all tool pages */}
-            <View
+            <LinearGradient
+                colors={[colors.primary, "transparent"]}
                 style={[
                     styles.backgroundArea,
                     {
-                        backgroundColor: colors.primary,
-                        height: 180 + insets.top,
+                        height: headerHeight,
                     },
                 ]}
             />
@@ -34,6 +37,7 @@ export default function ToolsLayout() {
                 <Stack.Screen name="seating/index" />
                 <Stack.Screen name="seating/[id]" />
                 <Stack.Screen name="vendors" />
+                <Stack.Screen name="invitations" />
                 <Stack.Screen name="files" />
             </Stack>
         </View>

@@ -72,7 +72,7 @@ export default function ProfileScreen() {
 
                     <ProfileActions
                         onLogoutPress={handleLogout}
-                        onDeleteEventPress={() => console.log("Delete Event pressed")}
+                        onDeleteEventPress={() => router.push("/(onboard)/workspace" as any)}
                     />
                 </ScrollView>
             </SafeAreaView>

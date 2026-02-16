@@ -37,7 +37,7 @@ export default function ToolsScreen() {
             title: "Invitations",
             subtitle: "Customize your Invitations",
             imageSource: require("../../assets/icons/invitations.png"),
-            onPress: () => console.log("Invitations pressed"),
+            onPress: () => router.push("/invitations"),
         },
         {
             title: "Files",
