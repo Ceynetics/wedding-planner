@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { TextField } from '@/components/TextField';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
+import { DatePicker } from '@/components/DatePicker';
 
 interface PaymentDetailsProps {
     amount: string;
@@ -13,6 +14,16 @@ interface PaymentDetailsProps {
 export function PaymentDetails({ amount }: PaymentDetailsProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    const formatDate = (date: Date) => {
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
 
     const labelStyle = {
         color: colors.emphasis,
@@ -41,11 +52,21 @@ export function PaymentDetails({ amount }: PaymentDetailsProps) {
 
             <View style={styles.inputSpacing}>
                 <ThemedText style={labelStyle}>Due Date</ThemedText>
-                <TouchableOpacity style={[styles.dateSelector, { backgroundColor: colors.inputBackground }]}>
-                    <Ionicons name="calendar" size={20} color={colors.placeholder} style={styles.dateIcon} />
-                    <ThemedText style={{ color: colors.placeholder }}>Select Date</ThemedText>
+                <TouchableOpacity
+                    style={[styles.dateSelector, { backgroundColor: colors.inputBackground }]}
+                    onPress={() => setShowDatePicker(true)}
+                >
+                    <Ionicons name="calendar" size={20} color={colors.primary} style={styles.dateIcon} />
+                    <ThemedText style={{ color: colors.text }}>{formatDate(selectedDate)}</ThemedText>
                 </TouchableOpacity>
             </View>
+
+            <DatePicker
+                visible={showDatePicker}
+                onClose={() => setShowDatePicker(false)}
+                value={selectedDate}
+                onChange={setSelectedDate}
+            />
         </View>
     );
 }

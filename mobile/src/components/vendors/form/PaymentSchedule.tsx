@@ -6,6 +6,8 @@ import { TextField } from '@/components/TextField';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
 
+import { DatePicker } from '@/components/DatePicker';
+
 interface PaymentScheduleProps {
     totalAmount: string;
     onTotalAmountChange: (text: string) => void;
@@ -21,8 +23,16 @@ export function PaymentSchedule({
 
     // Local state for the "Add Payment" inputs shown in the screenshot
     const [amount, setAmount] = useState('');
-    // Date would ideally use a DatePicker, but for UI match we use a pressable or input
-    const [dueDate, setDueDate] = useState('');
+    const [dueDate, setDueDate] = useState<Date | null>(null);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    const formatDate = (date: Date) => {
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
 
     return (
         <View style={styles.container}>
@@ -59,14 +69,24 @@ export function PaymentSchedule({
                 />
                 <TouchableOpacity
                     style={[styles.dateButton, { backgroundColor: colors.inputBackground }]}
-                    onPress={() => { }} // Open Date Picker
+                    onPress={() => setShowDatePicker(true)}
                 >
                     <Ionicons name="calendar-outline" size={20} color={colors.secondary} style={styles.icon} />
                     <ThemedText style={[styles.dateText, { color: dueDate ? colors.text : colors.placeholder }]}>
-                        {dueDate || "Due Date"}
+                        {dueDate ? formatDate(dueDate) : "Due Date"}
                     </ThemedText>
                 </TouchableOpacity>
             </View>
+
+            <DatePicker
+                visible={showDatePicker}
+                onClose={() => setShowDatePicker(false)}
+                value={dueDate || new Date()}
+                onChange={(date) => {
+                    setDueDate(date);
+                    setShowDatePicker(false);
+                }}
+            />
 
             {/* Add Payments Button */}
             <TouchableOpacity
