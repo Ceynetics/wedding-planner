@@ -49,7 +49,7 @@ export default function ToolsScreen() {
             title: "Calendar",
             subtitle: "View your Plans on The Calendar",
             imageSource: require("../../assets/icons/calender.png"),
-            onPress: () => console.log("Calendar pressed"),
+            onPress: () => router.push("/calendar"),
         },
     ];
 

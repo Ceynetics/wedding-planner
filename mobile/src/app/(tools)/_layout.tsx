@@ -38,6 +38,7 @@ export default function ToolsLayout() {
                 <Stack.Screen name="seating/[id]" />
                 <Stack.Screen name="vendors" />
                 <Stack.Screen name="invitations" />
+                <Stack.Screen name="calendar" />
                 <Stack.Screen name="files" />
             </Stack>
         </View>
