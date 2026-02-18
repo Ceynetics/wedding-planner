@@ -58,14 +58,14 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         marginTop: 20,
         height: 56,
-        borderRadius: 16,
+        borderRadius: 50,
         padding: 6,
     },
     tab: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 12,
+        borderRadius: 45,
     },
     tabText: {
         fontSize: 18,

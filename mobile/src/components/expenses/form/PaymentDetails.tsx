@@ -56,7 +56,7 @@ export function PaymentDetails({ amount }: PaymentDetailsProps) {
                     style={[styles.dateSelector, { backgroundColor: colors.inputBackground }]}
                     onPress={() => setShowDatePicker(true)}
                 >
-                    <Ionicons name="calendar" size={20} color={colors.primary} style={styles.dateIcon} />
+                    <Ionicons name="calendar" size={20} color={colors.placeholder} style={styles.dateIcon} />
                     <ThemedText style={{ color: colors.text }}>{formatDate(selectedDate)}</ThemedText>
                 </TouchableOpacity>
             </View>

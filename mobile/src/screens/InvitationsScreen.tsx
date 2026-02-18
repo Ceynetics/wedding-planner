@@ -16,12 +16,36 @@ import { useAppTheme } from "@/context/ThemeContext";
 import { InvitationCard } from "../components/invitations/InvitationCard";
 import { AddCardButton } from "../components/invitations/AddCardButton";
 import { InvitationTabs } from "../components/invitations/InvitationTabs";
+import { DesignPreview } from "../components/invitations/editor/DesignPreview";
+import { CustomizeContent } from "../components/invitations/editor/CustomizeContent";
+import { GuestDetailsSection } from "../components/invitations/editor/GuestDetailsSection";
+import { EditorOptions } from "../components/invitations/editor/EditorOptions";
 
 export default function InvitationsScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<"Cards" | "Editor">("Cards");
+    const [selectedTemplateId, setSelectedTemplateId] = useState("1");
+
+    // Editor State - Content
+    const [name1, setName1] = useState("");
+    const [name2, setName2] = useState("");
+    const [eventDate, setEventDate] = useState(new Date());
+    const [eventTime, setEventTime] = useState("");
+    const [venue, setVenue] = useState("");
+
+    // Editor State - Guest Info
+    const [title, setTitle] = useState("Mrs.");
+    const [guestName, setGuestName] = useState("");
+    const [guestType, setGuestType] = useState<'You' | 'You Two' | 'Family'>('You');
+
+    // Editor State - Options
+    const [selectedColor, setSelectedColor] = useState("#E74C3C");
+    const [isVipGuest, setIsVipGuest] = useState(false);
+
+    const handleExport = () => console.log("Exporting PDF...");
+    const handleShare = () => console.log("Sharing Invitation...");
 
     const templates = [
         { id: "1", title: "Template #1", image: "https://marketplace.canva.com/EAFZ_mQJ20w/1/0/1143w/canva-black-gold-elegant-floral-wedding-invitation-A-f6W-yH1G4.jpg" },
@@ -51,20 +75,60 @@ export default function InvitationsScreen() {
                 <InvitationTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                    <ThemedText style={[styles.sectionTitle, { color: colors.emphasis || colors.primary }]}>
-                        Your Card Designs
-                    </ThemedText>
+                    {activeTab === "Cards" ? (
+                        <>
+                            <ThemedText style={[styles.sectionTitle, { color: colors.emphasis || colors.primary }]}>
+                                Your Card Designs
+                            </ThemedText>
 
-                    <View style={styles.grid}>
-                        {templates.map((item) => (
-                            <View key={item.id} style={styles.cardWrapper}>
-                                <InvitationCard title={item.title} image={item.image} />
+                            <View style={styles.grid}>
+                                {templates.map((item) => (
+                                    <View key={item.id} style={styles.cardWrapper}>
+                                        <InvitationCard title={item.title} image={item.image} />
+                                    </View>
+                                ))}
+                                <View style={styles.cardWrapper}>
+                                    <AddCardButton />
+                                </View>
                             </View>
-                        ))}
-                        <View style={styles.cardWrapper}>
-                            <AddCardButton />
-                        </View>
-                    </View>
+                        </>
+                    ) : (
+                        <>
+                            <DesignPreview
+                                templates={templates}
+                                selectedTemplateId={selectedTemplateId}
+                                onSelectTemplate={setSelectedTemplateId}
+                            />
+                            <CustomizeContent
+                                name1={name1}
+                                onName1Change={setName1}
+                                name2={name2}
+                                onName2Change={setName2}
+                                date={eventDate}
+                                onDateChange={setEventDate}
+                                time={eventTime}
+                                onTimeChange={setEventTime}
+                                venue={venue}
+                                onVenueChange={setVenue}
+                            />
+                            <GuestDetailsSection
+                                title={title}
+                                onTitleChange={setTitle}
+                                guestName={guestName}
+                                onGuestNameChange={setGuestName}
+                                guestType={guestType}
+                                onGuestTypeChange={setGuestType}
+                            />
+                            <EditorOptions
+                                selectedColor={selectedColor}
+                                onColorSelect={setSelectedColor}
+                                isVip={isVipGuest}
+                                onVipChange={setIsVipGuest}
+                                onExport={handleExport}
+                                onShare={handleShare}
+                            />
+                        </>
+                    )}
                 </ScrollView>
             </SafeAreaView>
         </ThemedView>
