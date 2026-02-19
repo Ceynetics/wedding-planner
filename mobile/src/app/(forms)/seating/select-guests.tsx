@@ -7,6 +7,7 @@ import {
     FlatList,
     Dimensions,
     Pressable,
+    ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -70,7 +71,7 @@ const UNASSIGNED_GUESTS: Guest[] = [
     },
 ];
 
-const FILTERS = ['All', 'filter2', 'filter3'];
+const FILTERS = ['All', 'Family', 'Friends', 'Colleagues', 'Other'];
 
 export default function SelectGuestsScreen() {
     const router = useRouter();
@@ -147,28 +148,34 @@ export default function SelectGuestsScreen() {
                 </View>
 
                 {/* Filters */}
-                <View style={styles.filterContainer}>
-                    {FILTERS.map((filter) => (
-                        <TouchableOpacity
-                            key={filter}
-                            onPress={() => setActiveFilter(filter)}
-                            style={[
-                                styles.filterChip,
-                                {
-                                    backgroundColor: activeFilter === filter ? colors.expensePurple : colors.card
-                                }
-                            ]}
-                        >
-                            <ThemedText
+                <View style={styles.filterSection}>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.filterScrollContent}
+                    >
+                        {FILTERS.map((filter) => (
+                            <TouchableOpacity
+                                key={filter}
+                                onPress={() => setActiveFilter(filter)}
                                 style={[
-                                    styles.filterText,
-                                    { color: activeFilter === filter ? '#FFF' : colors.expensePurple }
+                                    styles.filterChip,
+                                    {
+                                        backgroundColor: activeFilter === filter ? colors.expensePurple : colors.card
+                                    }
                                 ]}
                             >
-                                {filter}
-                            </ThemedText>
-                        </TouchableOpacity>
-                    ))}
+                                <ThemedText
+                                    style={[
+                                        styles.filterText,
+                                        { color: activeFilter === filter ? '#FFF' : colors.expensePurple }
+                                    ]}
+                                >
+                                    {filter}
+                                </ThemedText>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
 
                 {/* Guests List */}
@@ -254,15 +261,18 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         height: '100%',
     },
-    filterContainer: {
-        flexDirection: 'row',
-        gap: 12,
+    filterSection: {
         marginBottom: 24,
+        marginHorizontal: -20, // Negative margin to allow full-width scroll
+    },
+    filterScrollContent: {
+        paddingHorizontal: 20,
+        gap: 12,
     },
     filterChip: {
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 16,
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
         minWidth: 80,

@@ -23,8 +23,13 @@ export function HiredFilters({
 
     const filters = [
         { id: "all", label: "All Vendors" },
-        { id: "filter2", label: "filter2" },
-        { id: "filter3", label: "filter3" },
+        { id: "filter2", label: "Hotels" },
+        { id: "filter3", label: "Caterers" },
+        { id: "filter4", label: "Photographers" },
+        { id: "filter5", label: "Florists" },
+        { id: "filter6", label: "Decorators" },
+        { id: "filter7", label: "DJ" },
+        { id: "filter8", label: "Makeup Artists" },
     ];
 
     return (
@@ -78,7 +83,7 @@ const styles = StyleSheet.create({
     filterPill: {
         paddingHorizontal: 28,
         height: 48,
-        borderRadius: 16,
+        borderRadius: 50,
         justifyContent: "center",
         alignItems: "center",
         shadowColor: "#000",

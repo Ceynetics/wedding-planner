@@ -25,6 +25,9 @@ export function GuestDetailsSection({
 }: GuestDetailsSectionProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const [showTitleDropdown, setShowTitleDropdown] = useState(false);
+
+    const TITLES = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.', 'Rev.'];
 
     const labelStyle = {
         color: colors.emphasis || colors.primary,
@@ -41,11 +44,46 @@ export function GuestDetailsSection({
 
             <View style={styles.row}>
                 <View style={styles.titleWidth}>
-                    <ThemedText style={labelStyle}>Title</ThemedText>
-                    <TouchableOpacity style={[styles.selector, { backgroundColor: colors.card }]}>
-                        <ThemedText style={[styles.selectorText, { color: colors.text }]}>{title}</ThemedText>
-                        <Ionicons name="chevron-down" size={18} color={colors.secondary} />
-                    </TouchableOpacity>
+                    <View style={styles.dropdownWrapper}>
+                        <TouchableOpacity
+                            onPress={() => setShowTitleDropdown(!showTitleDropdown)}
+                            activeOpacity={1}
+                        >
+                            <TextField
+                                label="Title"
+                                value={title}
+                                editable={false}
+                                labelStyle={labelStyle}
+                                rightIcon={<Ionicons name={showTitleDropdown ? "chevron-up" : "chevron-down"} size={18} color={colors.secondary} />}
+                                pointerEvents="none"
+                            />
+                        </TouchableOpacity>
+
+                        {showTitleDropdown && (
+                            <View style={[styles.dropdownList, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                                {TITLES.map((item) => (
+                                    <TouchableOpacity
+                                        key={item}
+                                        style={[
+                                            styles.dropdownItem,
+                                            title === item && { backgroundColor: theme === 'dark' ? colors.primary + "20" : colors.primary + "10" }
+                                        ]}
+                                        onPress={() => {
+                                            onTitleChange(item);
+                                            setShowTitleDropdown(false);
+                                        }}
+                                    >
+                                        <ThemedText style={[
+                                            styles.dropdownItemText,
+                                            { color: title === item ? colors.primary : colors.text }
+                                        ]}>
+                                            {item}
+                                        </ThemedText>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
+                    </View>
                 </View>
                 <View style={styles.nameWidth}>
                     <TextField
@@ -107,26 +145,36 @@ const styles = StyleSheet.create({
     },
     titleWidth: {
         width: 100,
+        zIndex: 10,
     },
     nameWidth: {
         flex: 1,
     },
-    selector: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        height: 52,
-        borderRadius: 12,
-        paddingHorizontal: 12,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 5,
-        elevation: 2,
+    dropdownWrapper: {
+        position: 'relative',
     },
-    selectorText: {
+    dropdownList: {
+        position: 'absolute',
+        top: 85,
+        left: 0,
+        width: 120,
+        borderRadius: 12,
+        borderWidth: 1,
+        overflow: 'hidden',
+        elevation: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        zIndex: 1000,
+    },
+    dropdownItem: {
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+    },
+    dropdownItemText: {
         fontSize: 14,
-        fontWeight: '500',
+        fontWeight: '600',
     },
     typeRow: {
         flexDirection: 'row',

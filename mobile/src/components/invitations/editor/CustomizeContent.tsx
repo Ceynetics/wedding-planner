@@ -79,15 +79,18 @@ export function CustomizeContent({
 
             <View style={styles.row}>
                 <View style={styles.halfWidth}>
-                    <ThemedText style={labelStyle}>Date</ThemedText>
                     <TouchableOpacity
-                        style={[styles.selector, { backgroundColor: colors.card }]}
                         onPress={() => setShowDatePicker(true)}
+                        activeOpacity={1}
                     >
-                        <Ionicons name="calendar-outline" size={18} color={colors.secondary} />
-                        <ThemedText style={[styles.selectorText, { color: colors.text }]}>
-                            {formatDate(date)}
-                        </ThemedText>
+                        <TextField
+                            label="Date"
+                            value={formatDate(date)}
+                            editable={false}
+                            labelStyle={labelStyle}
+                            leftIcon={<Ionicons name="calendar-outline" size={18} color={colors.secondary} />}
+                            pointerEvents="none"
+                        />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.halfWidth}>
@@ -146,22 +149,5 @@ const styles = StyleSheet.create({
     },
     fullWidth: {
         width: '100%',
-    },
-    selector: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        height: 52,
-        borderRadius: 12,
-        paddingHorizontal: 12,
-        gap: 8,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 5,
-        elevation: 2,
-    },
-    selectorText: {
-        fontSize: 14,
-        fontWeight: '500',
     },
 });
