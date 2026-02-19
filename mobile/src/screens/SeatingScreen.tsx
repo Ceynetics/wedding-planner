@@ -54,7 +54,10 @@ export default function SeatingScreen() {
             </ScrollView>
 
             <View style={[styles.bottomActions, { paddingBottom: Math.max(insets.bottom, 20) }]}>
-                <TouchableOpacity style={[styles.floorPlanButton, { backgroundColor: theme === 'light' ? '#F5F3FF' : colors.card }]}>
+                <TouchableOpacity
+                    style={[styles.floorPlanButton, { backgroundColor: theme === 'light' ? '#F5F3FF' : colors.card }]}
+                    onPress={() => router.push("/(tools)/seating/floor-plan")}
+                >
                     <MaterialCommunityIcons name="view-grid-outline" size={24} color={colors.primary} />
                     <ThemedText style={styles.floorPlanText} lightColor={colors.primary} darkColor={colors.primary}>
                         View Floor Plan
