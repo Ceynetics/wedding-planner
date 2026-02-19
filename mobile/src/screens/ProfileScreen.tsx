@@ -61,7 +61,7 @@ export default function ProfileScreen() {
                     <ProfileHeader
                         name="John Michael"
                         email="john@gmail.com"
-                        onEditPress={() => console.log("Edit profile pressed")}
+                        onEditPress={() => router.push("/(forms)/profile/edit" as any)}
                     />
 
                     <ProfileMenuSection title="Wedding Details" items={weddingDetails} />
