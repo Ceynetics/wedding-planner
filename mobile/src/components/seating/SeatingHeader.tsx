@@ -16,11 +16,11 @@ export function SeatingHeader() {
     return (
         <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                <Ionicons name="arrow-back" size={24} color={colors.text} />
+                <Ionicons name="arrow-back" size={24} color={colors.primaryContrast} />
             </TouchableOpacity>
 
             <View style={styles.titleContainer}>
-                <ThemedText style={styles.title}>Seating</ThemedText>
+                <ThemedText style={[styles.title, { color: colors.primaryContrast }]}>Seating</ThemedText>
             </View>
 
             <View style={styles.actionButtons}>

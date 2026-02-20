@@ -18,7 +18,7 @@ export function InvitationTabs({ activeTab, onTabChange }: InvitationTabsProps) 
             <TouchableOpacity
                 style={[
                     styles.tab,
-                    activeTab === "Cards" && { backgroundColor: theme === 'dark' ? colors.primary + "40" : colors.primary },
+                    activeTab === "Cards" && { backgroundColor: colors.primary },
                 ]}
                 onPress={() => onTabChange("Cards")}
             >
@@ -35,7 +35,7 @@ export function InvitationTabs({ activeTab, onTabChange }: InvitationTabsProps) 
             <TouchableOpacity
                 style={[
                     styles.tab,
-                    activeTab === "Editor" && { backgroundColor: theme === 'dark' ? colors.primary + "40" : colors.primary },
+                    activeTab === "Editor" && { backgroundColor: colors.primary },
                 ]}
                 onPress={() => onTabChange("Editor")}
             >

@@ -30,8 +30,8 @@ export function TaskHeader({ remainingTasks }: TaskHeaderProps) {
 
             <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
                 <View style={styles.textContainer}>
-                    <ThemedText style={styles.title}>My Tasks</ThemedText>
-                    <ThemedText style={styles.subtitle}>
+                    <ThemedText style={[styles.title, { color: colors.primaryContrast }]}>My Tasks</ThemedText>
+                    <ThemedText style={[styles.subtitle, { color: colors.primaryContrast }]}>
                         {remainingTasks} tasks remaining
                     </ThemedText>
                 </View>

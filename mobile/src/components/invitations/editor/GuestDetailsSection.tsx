@@ -107,7 +107,7 @@ export function GuestDetailsSection({
                         style={[
                             styles.typeCard,
                             { backgroundColor: colors.card },
-                            guestType === item.type && { backgroundColor: theme === 'dark' ? colors.primary + "40" : colors.primary },
+                            guestType === item.type && { backgroundColor: colors.primary },
                         ]}
                         onPress={() => onGuestTypeChange(item.type)}
                     >

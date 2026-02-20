@@ -84,7 +84,7 @@ export function EditorOptions({
                     </ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={[styles.primaryButton, { backgroundColor: theme === 'dark' ? colors.primary + "40" : colors.primary }]}
+                    style={[styles.primaryButton, { backgroundColor: colors.primary }]}
                     onPress={onShare}
                 >
                     <ThemedText style={[styles.buttonText, { color: '#FFF' }]}>

@@ -80,9 +80,9 @@ export default function CalendarScreen() {
                         onPress={() => router.back()}
                         style={styles.backButton}
                     >
-                        <Ionicons name="arrow-back" size={24} color={colors.text} />
+                        <Ionicons name="arrow-back" size={24} color={colors.primaryContrast} />
                     </TouchableOpacity>
-                    <ThemedText style={styles.headerTitle}>Planner Calendar</ThemedText>
+                    <ThemedText style={[styles.headerTitle, { color: colors.primaryContrast }]}>Planner Calendar</ThemedText>
                     {/* <TouchableOpacity style={styles.addButton}>
                         <Ionicons name="add-circle-outline" size={28} color={colors.primary} />
                     </TouchableOpacity> */}

@@ -66,9 +66,9 @@ export default function InvitationsScreen() {
                         onPress={() => router.back()}
                         style={[styles.backButton]}
                     >
-                        <Ionicons name="arrow-back" size={24} color={colors.text} />
+                        <Ionicons name="arrow-back" size={24} color={colors.primaryContrast} />
                     </TouchableOpacity>
-                    <ThemedText type="title" style={styles.headerTitle}>Invitations</ThemedText>
+                    <ThemedText type="title" style={[styles.headerTitle, { color: colors.primaryContrast }]}>Invitations</ThemedText>
                     <View style={{ width: 44 }} />
                 </View>
 

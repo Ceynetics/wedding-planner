@@ -16,11 +16,11 @@ export function ExpenseHeader() {
     return (
         <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                <Ionicons name="arrow-back" size={24} color={colors.text} />
+                <Ionicons name="arrow-back" size={24} color={colors.primaryContrast} />
             </TouchableOpacity>
 
             <View style={styles.titleContainer}>
-                <ThemedText style={styles.title}>Expenses</ThemedText>
+                <ThemedText style={[styles.title, { color: colors.primaryContrast }]}>Expenses</ThemedText>
             </View>
 
             <TouchableOpacity style={[styles.iconButton, { backgroundColor: colors.card }]}>

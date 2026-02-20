@@ -17,7 +17,7 @@ export function GuestHeader() {
 
             <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
                 <View style={styles.textContainer}>
-                    <ThemedText style={styles.title}>
+                    <ThemedText style={[styles.title, { color: colors.primaryContrast }]}>
                         Guests
                     </ThemedText>
                 </View>
