@@ -55,7 +55,7 @@ export default function SeatingScreen() {
 
             <View style={[styles.bottomActions, { paddingBottom: Math.max(insets.bottom, 20) }]}>
                 <TouchableOpacity
-                    style={[styles.floorPlanButton, { backgroundColor: theme === 'light' ? '#F5F3FF' : colors.card }]}
+                    style={[styles.floorPlanButton, { backgroundColor: theme === 'light' ? colors.brideTagBg : colors.card }]}
                     onPress={() => router.push("/(tools)/seating/floor-plan")}
                 >
                     <MaterialCommunityIcons name="view-grid-outline" size={24} color={colors.primary} />
@@ -65,7 +65,7 @@ export default function SeatingScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={[styles.fab, { backgroundColor: '#21003D' }]}
+                    style={[styles.fab, { backgroundColor: colors.primary }]}
                     onPress={() => router.push("/(forms)/seating/add" as any)}
                 >
                     <Ionicons name="add" size={32} color="#FFFFFF" />

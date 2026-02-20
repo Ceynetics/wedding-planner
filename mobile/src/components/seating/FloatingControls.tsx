@@ -28,7 +28,7 @@ export const FloatingControls: React.FC<FloatingControlsProps> = ({
         <View style={styles.container}>
             {/* Add Table Button - Primary Action */}
             <TouchableOpacity
-                style={[styles.button, styles.primaryButton, { backgroundColor: '#21003D' }]}
+                style={[styles.button, styles.primaryButton, { backgroundColor: colors.primary }]}
                 onPress={onAddTable}
                 activeOpacity={0.8}
             >

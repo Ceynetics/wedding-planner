@@ -27,8 +27,8 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
 
             <View style={[styles.container]}>
                 <View style={styles.textContainer}>
-                    <ThemedText style={styles.welcomeText}>Welcome,</ThemedText>
-                    <ThemedText type="title" style={styles.userName}>
+                    <ThemedText style={[styles.welcomeText, { color: colors.primaryContrast }]}>Welcome,</ThemedText>
+                    <ThemedText type="title" style={[styles.userName, { color: colors.primaryContrast }]}>
                         {userName}
                     </ThemedText>
                 </View>
