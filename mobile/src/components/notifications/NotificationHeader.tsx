@@ -19,7 +19,7 @@ export function NotificationHeader({ onClose }: NotificationHeaderProps) {
         <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
             <View style={styles.headerRow}>
                 <View style={styles.titleSection}>
-                    <ThemedText style={styles.title}>Notifications</ThemedText>
+                    <ThemedText style={[styles.title, { color: colors.primaryContrast }]}>Notifications</ThemedText>
                 </View>
 
                 <TouchableOpacity

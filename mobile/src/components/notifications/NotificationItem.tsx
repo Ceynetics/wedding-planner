@@ -22,8 +22,8 @@ export function NotificationItem({ title, description, type, isRead }: Notificat
             case "payment":
                 return {
                     name: "wallet-outline" as const,
-                    color: colors.expensePurple,
-                    bg: colors.expensePurple + "15"
+                    color: colors.primary, // Using primary red for payments
+                    bg: colors.primary + "15"
                 };
             case "rsvp":
                 return {
@@ -34,8 +34,8 @@ export function NotificationItem({ title, description, type, isRead }: Notificat
             case "alert":
                 return {
                     name: "bell-alert-outline" as const,
-                    color: colors.expensePink,
-                    bg: colors.expensePink + "15"
+                    color: colors.expenseRed, // Using red for alerts
+                    bg: colors.expenseRed + "15"
                 };
             default:
                 return {

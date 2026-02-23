@@ -38,7 +38,8 @@ export function GuestStats({
 
                 {/* Search and Filters Section */}
                 <View style={styles.searchRow}>
-                    <View style={[styles.searchContainer, { backgroundColor: colors.inputBackground }]}>
+                    {/* Search Input - Using 'background' for clear separation within the card */}
+                    <View style={[styles.searchContainer, { backgroundColor: colors.background }]}>
                         <Ionicons name="search-outline" size={20} color={colors.secondary} style={styles.searchIcon} />
                         <TextInput
                             placeholder="Search Guest"
@@ -50,7 +51,7 @@ export function GuestStats({
                     </View>
 
                     <TouchableOpacity
-                        style={[styles.filterButton, { backgroundColor: colors.inputBackground }]}
+                        style={[styles.filterButton, { backgroundColor: colors.background }]}
                         onPress={onFilterPress}
                         activeOpacity={0.7}
                     >
@@ -64,7 +65,8 @@ export function GuestStats({
 
 function StatCard({ label, value, colors }: { label: string; value: number; colors: any }) {
     return (
-        <View style={[styles.card, { backgroundColor: colors.inputBackground }]}>
+        /* Stat Card - Changed to 'background' for subtle recessed effect */
+        <View style={[styles.card, { backgroundColor: colors.background }]}>
             <ThemedText
                 style={styles.value}
                 numberOfLines={1}

@@ -45,7 +45,8 @@ export function SeatingStats({
 
                 {/* Search and Filters Section */}
                 <View style={styles.searchRow}>
-                    <View style={[styles.searchContainer, { backgroundColor: colors.inputBackground }]}>
+                    {/* Search Container - Using neutral 'background' for better contrast */}
+                    <View style={[styles.searchContainer, { backgroundColor: colors.background }]}>
                         <Ionicons name="search-outline" size={20} color={colors.secondary} style={styles.searchIcon} />
                         <TextInput
                             placeholder="Search Guest"
@@ -57,7 +58,7 @@ export function SeatingStats({
                     </View>
 
                     <TouchableOpacity
-                        style={[styles.filterButton, { backgroundColor: colors.inputBackground }]}
+                        style={[styles.filterButton, { backgroundColor: colors.background }]}
                         onPress={onFilterPress}
                         activeOpacity={0.7}
                     >
@@ -71,7 +72,8 @@ export function SeatingStats({
 
 function StatCard({ label, value, image, colors }: { label: string; value: number; image: ImageSourcePropType; colors: any }) {
     return (
-        <View style={[styles.statCard, { backgroundColor: colors.inputBackground }]}>
+        /* Stat card background changed to 'background' (Smoke White) for better visibility */
+        <View style={[styles.statCard, { backgroundColor: colors.background }]}>
             <View style={styles.statContent}>
                 <ThemedText style={styles.statLabel} lightColor={colors.secondary} darkColor={colors.secondary}>
                     {label}

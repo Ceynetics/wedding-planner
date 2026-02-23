@@ -30,8 +30,8 @@ export function TaskFilters({
 
     return (
         <View style={[styles.container, { backgroundColor: colors.card }]}>
-            {/* Status Toggle (Completed / Remaining) */}
-            <View style={[styles.statusToggleContainer, { backgroundColor: colors.inputBackground }]}>
+            {/* Status Toggle (Completed / Remaining) - Using 'background' for contrast within the card */}
+            <View style={[styles.statusToggleContainer, { backgroundColor: colors.background }]}>
                 <TouchableOpacity
                     style={[
                         styles.statusButton,
@@ -69,9 +69,9 @@ export function TaskFilters({
                 </TouchableOpacity>
             </View>
 
-            {/* Search and Filter Section */}
             <View style={styles.searchRow}>
-                <View style={[styles.searchContainer, { backgroundColor: colors.inputBackground }]}>
+                {/* Search Bar - Changed to 'background' for better visibility on white cards */}
+                <View style={[styles.searchContainer, { backgroundColor: colors.background }]}>
                     <Ionicons name="search-outline" size={20} color={colors.secondary} style={styles.searchIcon} />
                     <TextInput
                         placeholder="Search tasks..."
@@ -83,7 +83,7 @@ export function TaskFilters({
                 </View>
 
                 <TouchableOpacity
-                    style={[styles.filterButton, { backgroundColor: colors.inputBackground }]}
+                    style={[styles.filterButton, { backgroundColor: colors.background }]}
                     onPress={onFilterPress}
                     activeOpacity={0.7}
                 >

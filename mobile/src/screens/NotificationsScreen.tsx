@@ -5,9 +5,11 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface NotificationGroup {
     title: string;
@@ -73,11 +75,20 @@ export default function NotificationsScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     const [activeFilter, setActiveFilter] = useState("all");
 
+    const headerHeight = 200 + insets.top;
+
     return (
         <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
+            {/* Theme Background Area */}
+            <LinearGradient
+                colors={[colors.primary, colors.background]}
+                style={[styles.backgroundArea, { height: headerHeight }]}
+            />
+
             <NotificationHeader onClose={() => router.back()} />
 
             <NotificationFilters
@@ -107,6 +118,13 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    backgroundArea: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 0,
     },
     scrollContent: {
         flexGrow: 1,

@@ -46,7 +46,7 @@ export function NotificationFilters({
                             style={[
                                 styles.filterPill,
                                 {
-                                    backgroundColor: isActive ? colors.expensePurple : colors.card,
+                                    backgroundColor: isActive ? colors.primary : colors.card,
                                 },
                             ]}
                         >
