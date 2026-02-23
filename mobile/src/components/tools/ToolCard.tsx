@@ -40,15 +40,15 @@ export function ToolCard({ title, subtitle, imageSource, onPress }: ToolCardProp
 const styles = StyleSheet.create({
     card: {
         flex: 1,
-        borderRadius: 24,
+        borderRadius: 10,
         minHeight: 220,
         position: "relative",
         overflow: "hidden",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.05,
-        shadowRadius: 15,
-        elevation: 2,
+        // shadowColor: "#000",
+        // shadowOffset: { width: 0, height: 10 },
+        // shadowOpacity: 0.05,
+        // shadowRadius: 15,
+        // elevation: 2,
     },
     content: {
         padding: 20,

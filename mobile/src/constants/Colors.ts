@@ -55,12 +55,12 @@ export const Colors = {
   },
   dark: {
     text: '#ECEDEE',
-    background: '#1A1A1A',
+    background: '#0d0d0dff',
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
-    card: '#252525',
+    card: '#1e1e1eff',
     border: '#333333',
     primary: '#FF6B6B',
     secondary: '#A1A1AA',
@@ -69,7 +69,7 @@ export const Colors = {
     inputBackground: '#2C2C2C',
     success: '#66BB6A',
     warning: '#FDD835',
-    shadow: '#000000',
+    shadow: '#d6d6d6ff',
 
     // colors for guest cards
     statusPending: '#FBBF24',
@@ -97,6 +97,6 @@ export const Colors = {
     starRating: '#FBBF24',
     emphasis: '#FFCDD2',
     paginationBg: '#333333',
-    primaryContrast: '#1A1A1A',
+    primaryContrast: '#ffffffff',
   },
 };

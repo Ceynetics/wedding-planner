@@ -65,10 +65,10 @@ export default function SeatingScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={[styles.fab, { backgroundColor: colors.primary }]}
+                    style={[styles.fab, { backgroundColor: colors.emphasis }]}
                     onPress={() => router.push("/(forms)/seating/add" as any)}
                 >
-                    <Ionicons name="add" size={32} color="#FFFFFF" />
+                    <Ionicons name="add" size={32} color={colors.primaryContrast} />
                 </TouchableOpacity>
             </View>
         </ThemedView>

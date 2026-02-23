@@ -92,11 +92,11 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         padding: 24,
         borderRadius: 24,
-        elevation: 4,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
+        // elevation: 4,
+        // shadowColor: "#000",
+        // shadowOffset: { width: 0, height: 4 },
+        // shadowOpacity: 0.05,
+        // shadowRadius: 10,
         marginBottom: 40, // More bottom margin for the last item before tab bar
     },
     contentRow: {

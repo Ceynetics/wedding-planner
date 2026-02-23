@@ -138,7 +138,7 @@ export default function VendorsScreen() {
                 style={[styles.fab, { backgroundColor: colors.emphasis }]}
                 onPress={() => router.push("/(forms)/vendors/add" as any)}
             >
-                <MaterialCommunityIcons name="plus" size={32} color="#FFFFFF" />
+                <MaterialCommunityIcons name="plus" size={32} color={colors.primaryContrast} />
             </TouchableOpacity>
         </ThemedView>
     );

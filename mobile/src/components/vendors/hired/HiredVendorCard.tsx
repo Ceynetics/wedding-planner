@@ -138,11 +138,11 @@ const styles = StyleSheet.create({
         padding: 20,
         marginBottom: 20,
         // Premium shadow for card
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.05,
-        shadowRadius: 20,
-        elevation: 3,
+        // shadowColor: "#000",
+        // shadowOffset: { width: 0, height: 10 },
+        // shadowOpacity: 0.05,
+        // shadowRadius: 20,
+        // elevation: 3,
     },
     header: {
         flexDirection: "row",

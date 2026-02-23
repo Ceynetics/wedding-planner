@@ -202,12 +202,6 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         padding: 20,
         borderRadius: 24,
-        // Premium shadow
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 4,
     },
     topRow: {
         flexDirection: "row",

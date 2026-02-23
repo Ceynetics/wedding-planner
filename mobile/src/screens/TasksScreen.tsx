@@ -131,11 +131,11 @@ export default function TasksScreen() {
 
             {/* Floating Action Button */}
             <TouchableOpacity
-                style={[styles.fab, { backgroundColor: "#2D0C4D" }]}
+                style={[styles.fab, { backgroundColor: colors.emphasis }]}
                 activeOpacity={0.8}
                 onPress={() => router.push("/(forms)/tasks/add")}
             >
-                <Ionicons name="add-outline" size={32} color="#FFFFFF" />
+                <Ionicons name="add-outline" size={32} color={colors.primaryContrast} />
             </TouchableOpacity>
         </ThemedView>
     );
