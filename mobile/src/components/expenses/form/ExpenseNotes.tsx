@@ -31,8 +31,14 @@ export function ExpenseNotes({ notes, onNotesChange }: ExpenseNotesProps) {
                 multiline
                 numberOfLines={4}
                 labelStyle={labelStyle}
-                style={styles.textArea}
-                inputContainerStyle={styles.textAreaContainer}
+                style={[styles.textArea, { color: colors.text }]}
+                /* Recessed container using 'background' for clear separation from the card */
+                inputContainerStyle={[
+                    styles.textAreaContainer,
+                    {
+                        backgroundColor: colors.background,
+                    }
+                ]}
             />
         </View>
     );
@@ -53,7 +59,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         minHeight: 150,
         alignItems: 'flex-start',
-        borderWidth: 0,
+        paddingTop: 12,
     },
     textArea: {
         textAlignVertical: 'top',

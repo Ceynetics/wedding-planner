@@ -43,13 +43,13 @@ export function PaymentSchedule({
             <View style={[styles.card, { backgroundColor: colors.card }]}>
                 <ThemedText style={[styles.cardLabel, { color: colors.emphasis }]}>Total Contract Amount</ThemedText>
                 <View style={styles.amountInputContainer}>
-                    <ThemedText style={[styles.currencyPrefix, { color: colors.text }]}>Rs.</ThemedText>
+                    <ThemedText style={[styles.currencyPrefix, { color: colors.emphasis }]}>Rs.</ThemedText>
                     <TextInput
                         placeholder="00.00"
                         value={totalAmount}
                         onChangeText={onTotalAmountChange}
                         keyboardType="numeric"
-                        style={[styles.amountText, { color: colors.secondary }]}
+                        style={[styles.amountText, { color: colors.emphasis }]}
                         placeholderTextColor={colors.placeholder}
                         scrollEnabled={false}
                         multiline={false}
@@ -88,13 +88,13 @@ export function PaymentSchedule({
                 }}
             />
 
-            {/* Add Payments Button */}
+            {/* Add Payments Button - Updated to match Romantic Red theme using vendor colors */}
             <TouchableOpacity
-                style={[styles.addButton, { backgroundColor: colors.expensePurpleBg }]}
+                style={[styles.addButton, { backgroundColor: colors.vendorContactBg }]}
                 onPress={() => { }}
             >
-                <Ionicons name="cash-outline" size={24} color={colors.expensePurple} style={styles.addIcon} />
-                <ThemedText style={[styles.addButtonText, { color: colors.expensePurple }]}>Add Payments</ThemedText>
+                <Ionicons name="cash-outline" size={24} color={colors.vendorContact} style={styles.addIcon} />
+                <ThemedText style={[styles.addButtonText, { color: colors.vendorContact }]}>Add Payments</ThemedText>
             </TouchableOpacity>
         </View>
     );

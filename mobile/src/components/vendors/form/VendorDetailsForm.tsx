@@ -27,8 +27,9 @@ export function VendorDetailsForm({
 
     return (
         <View style={styles.container}>
-            {/* Section Header Pill */}
-            <View style={[styles.pill, { backgroundColor: colors.expensePurpleBg }]}>
+            {/* Section Header Pill - Updated to use theme-aware vendor background colors */}
+            <View style={[styles.pill, { backgroundColor: colors.vendorContactBg }]}>
+                {/* Dot and Text useemphasis color for clear visibility across themes */}
                 <View style={[styles.dot, { backgroundColor: colors.emphasis }]} />
                 <ThemedText style={[styles.pillText, { color: colors.emphasis }]}>Vendor Details</ThemedText>
             </View>

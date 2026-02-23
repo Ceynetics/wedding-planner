@@ -38,7 +38,7 @@ export function PaymentDetails({ amount }: PaymentDetailsProps) {
             <ThemedText style={[styles.sectionLabel, { color: colors.emphasis }]}>Payment Details</ThemedText>
 
             <View style={styles.amountContainer}>
-                <ThemedText style={[styles.amountLabel, { color: colors.expensePurple }]}>Amount</ThemedText>
+                <ThemedText style={[styles.amountLabel, { color: colors.secondary }]}>Amount</ThemedText>
                 <ThemedText style={[styles.amountValue, { color: colors.emphasis }]}>Rs. {amount}</ThemedText>
             </View>
 

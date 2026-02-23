@@ -38,8 +38,15 @@ export function NotesAndReminder({
                     multiline
                     numberOfLines={4}
                     containerStyle={styles.notesInput}
-                    inputContainerStyle={styles.textAreaContainer}
-                    style={styles.textArea}
+                    /* Using 'background' and 'border' for clear separation from the card container */
+                    inputContainerStyle={[
+                        styles.textAreaContainer,
+                        {
+                            backgroundColor: colors.background,
+                            borderColor: colors.border
+                        }
+                    ]}
+                    style={[styles.textArea, { color: colors.text }]}
                 />
             </View>
 
@@ -77,7 +84,10 @@ const styles = StyleSheet.create({
     textAreaContainer: {
         minHeight: 160,
         alignItems: 'flex-start',
-        borderWidth: 0,
+        borderWidth: 1, // Added border for better visibility
+        borderRadius: 16, // Smoother corners for premium look
+        paddingHorizontal: 12,
+        paddingTop: 12,
     },
     textArea: {
         textAlignVertical: 'top',

@@ -17,10 +17,10 @@ export function BudgetSummary({ spent, total, left }: BudgetSummaryProps) {
 
     const progress = Math.min(spent / total, 1);
 
-    // Deep purple gradient for the budget card to match the premium design
+    // Use theme-aware red gradient for the budget card to match the Romantic Red theme
     const cardGradient = (theme === 'light'
-        ? [colors.primary, '#4F46E5'] // Rich Indigo/Purple
-        : ['#4338CA', '#312E81']) as [string, string, ...string[]];
+        ? [colors.primary, colors.emphasis] // Vibrant Red to Darker Red
+        : [colors.primary, colors.expenseRed]) as [string, string, ...string[]]; // Lighter Red to Soft Red
 
     return (
         <LinearGradient
@@ -29,27 +29,29 @@ export function BudgetSummary({ spent, total, left }: BudgetSummaryProps) {
             end={{ x: 1, y: 1 }}
             style={styles.card}
         >
-            <ThemedText style={styles.label} darkColor="#FFFFFF" lightColor="#FFFFFF">Total Spent</ThemedText>
-            <ThemedText style={styles.amount} darkColor="#FFFFFF" lightColor="#FFFFFF">
+            <ThemedText style={[styles.label, { color: colors.primaryContrast }]}>Total Spent</ThemedText>
+            <ThemedText style={[styles.amount, { color: colors.primaryContrast }]}>
                 Rs. {spent.toLocaleString()}
             </ThemedText>
 
             <View style={styles.progressContainer}>
-                <View style={[styles.progressBar, { backgroundColor: 'rgba(255, 255, 255, 0.25)' }]}>
-                    <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: '#FFFFFF' }]} />
+                {/* Semi-transparent track using the contrast color */}
+                <View style={[styles.progressBar, { backgroundColor: colors.primaryContrast + '40' }]}>
+                    {/* Solid contrast color for the fill */}
+                    <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: colors.primaryContrast }]} />
                 </View>
             </View>
 
             <View style={styles.footer}>
                 <View>
-                    <ThemedText style={styles.footerLabel} darkColor="#FFFFFFB3" lightColor="#FFFFFFB3">Budget</ThemedText>
-                    <ThemedText style={styles.footerValue} darkColor="#FFFFFF" lightColor="#FFFFFF">
+                    <ThemedText style={[styles.footerLabel, { color: colors.primaryContrast + 'B3' }]}>Budget</ThemedText>
+                    <ThemedText style={[styles.footerValue, { color: colors.primaryContrast }]}>
                         Rs. {total.toLocaleString()}
                     </ThemedText>
                 </View>
                 <View style={styles.footerRight}>
-                    <ThemedText style={styles.footerLabel} darkColor="#FFFFFFB3" lightColor="#FFFFFFB3">Left</ThemedText>
-                    <ThemedText style={styles.footerValue} darkColor="#FFFFFF" lightColor="#FFFFFF">
+                    <ThemedText style={[styles.footerLabel, { color: colors.primaryContrast + 'B3' }]}>Left</ThemedText>
+                    <ThemedText style={[styles.footerValue, { color: colors.primaryContrast }]}>
                         Rs. {left.toLocaleString()}
                     </ThemedText>
                 </View>

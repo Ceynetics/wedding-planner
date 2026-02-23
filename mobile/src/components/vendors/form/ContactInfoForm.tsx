@@ -25,8 +25,9 @@ export function ContactInfoForm({
 
     return (
         <View style={styles.container}>
-            {/* Section Header Pill */}
-            <View style={[styles.pill, { backgroundColor: colors.expensePurpleBg }]}>
+            {/* Section Header Pill - Updated to use theme-aware background to match Romantic Red theme */}
+            <View style={[styles.pill, { backgroundColor: colors.vendorContactBg }]}>
+                {/* Accent dot and text follow emphasis color for consistent visual weight */}
                 <View style={[styles.dot, { backgroundColor: colors.emphasis }]} />
                 <ThemedText style={[styles.pillText, { color: colors.emphasis }]}>Contact Info</ThemedText>
             </View>
@@ -45,7 +46,7 @@ export function ContactInfoForm({
                 <View style={styles.inputSpacing}>
                     <ThemedText style={styles.label}>Phone / WhatsApp :</ThemedText>
                     <View style={[styles.phoneContainer, { backgroundColor: colors.inputBackground }]}>
-                        <TouchableOpacity style={styles.countrySelector}>
+                        <TouchableOpacity style={[styles.countrySelector, { borderRightColor: colors.border }]}>
                             <Image
                                 source={{ uri: 'https://flagcdn.com/w40/lk.png' }}
                                 style={styles.flag}
@@ -111,7 +112,6 @@ const styles = StyleSheet.create({
         marginRight: 12,
         paddingRight: 12,
         borderRightWidth: 1,
-        borderRightColor: '#E2E8F0', // Or colors.border
         height: '60%',
         justifyContent: 'center',
     },

@@ -93,8 +93,9 @@ export default function SelectGuestsScreen() {
                     contentFit="cover"
                 />
                 {item.isVIP && (
-                    <View style={[styles.vipBadge, { backgroundColor: '#F3E8FF' }]}>
-                        <Ionicons name="ribbon" size={10} color={colors.expensePurple} />
+                    /* VIP Badge - Using theme-aware red tag background */
+                    <View style={[styles.vipBadge, { backgroundColor: colors.brideTagBg, borderColor: colors.card }]}>
+                        <Ionicons name="ribbon" size={10} color={colors.primary} />
                     </View>
                 )}
             </View>
@@ -161,14 +162,15 @@ export default function SelectGuestsScreen() {
                                 style={[
                                     styles.filterChip,
                                     {
-                                        backgroundColor: activeFilter === filter ? colors.expensePurple : colors.card
+                                        /* Active filter uses primary red theme color */
+                                        backgroundColor: activeFilter === filter ? colors.primary : colors.card
                                     }
                                 ]}
                             >
                                 <ThemedText
                                     style={[
                                         styles.filterText,
-                                        { color: activeFilter === filter ? '#FFF' : colors.expensePurple }
+                                        { color: activeFilter === filter ? colors.primaryContrast : colors.primary }
                                     ]}
                                 >
                                     {filter}
@@ -318,7 +320,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: '#FFF',
     },
     guestName: {
         fontSize: 14,
