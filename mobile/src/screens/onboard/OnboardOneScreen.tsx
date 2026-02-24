@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
 import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,18 +19,14 @@ export default function OnboardOneScreen() {
 
     const isDark = theme === 'dark';
 
-    // Image-specific colors (eyeballed from the provided design)
-    const DESIGN_COLORS = {
-        primaryPurple: '#9333EA',
-        darkPurple: '#2E1065',
-        grayText: '#4B5563',
-        bgGradient: ['#E9D5FF', '#FBCFE8', '#FAE8FF'] as const,
-    };
+    const gradientColors = isDark
+        ? [colors.background, colors.card] as [string, string, ...string[]]
+        : [colors.primary + '15', colors.background] as [string, string, ...string[]];
 
     return (
-        <View style={styles.container}>
+        <ThemedView style={styles.container}>
             <LinearGradient
-                colors={DESIGN_COLORS.bgGradient as any}
+                colors={gradientColors}
                 style={StyleSheet.absoluteFill}
             />
 
@@ -41,25 +38,25 @@ export default function OnboardOneScreen() {
                         onPress={() => router.push('/(auth)/login' as any)}
                         activeOpacity={0.7}
                     >
-                        <ThemedText style={styles.skipText}>Skip</ThemedText>
-                        <Ionicons name="chevron-forward" size={18} color={DESIGN_COLORS.darkPurple} />
+                        <ThemedText style={[styles.skipText, { color: colors.primary }]}>Skip</ThemedText>
+                        <Ionicons name="chevron-forward" size={18} color={colors.primary} />
                     </TouchableOpacity>
                 </View>
 
                 {/* Content */}
                 <View style={styles.content}>
                     <View style={styles.textContainer}>
-                        <ThemedText style={styles.title}>
+                        <ThemedText style={[styles.title, { color: colors.text }]}>
                             Plan Your Wedding,{'\n'}Together
                         </ThemedText>
-                        <ThemedText style={styles.subtitle}>
+                        <ThemedText style={[styles.subtitle, { color: colors.secondary }]}>
                             Invite your partner and plan together with real time updates
                         </ThemedText>
                     </View>
 
                     <View style={styles.imageContainer}>
                         <Image
-                            source={require('../../../assets/images/ondboard_one.png')}
+                            source={require('../../../assets/images/image_one.png')}
                             style={styles.image}
                             contentFit="contain"
                             transition={500}
@@ -70,16 +67,16 @@ export default function OnboardOneScreen() {
                 {/* Footer */}
                 <View style={styles.footer}>
                     <TouchableOpacity
-                        style={[styles.continueButton, { backgroundColor: isDark ? colors.expensePurple : DESIGN_COLORS.primaryPurple }]}
+                        style={[styles.continueButton, { backgroundColor: colors.primary }]}
                         onPress={() => router.push('/(onboard)/onboard_two' as any)}
                         activeOpacity={0.9}
                     >
-                        <ThemedText style={styles.continueText}>Continue</ThemedText>
-                        <Ionicons name="arrow-forward" size={20} color="#FFF" />
+                        <ThemedText style={[styles.continueText, { color: colors.primaryContrast }]}>Continue</ThemedText>
+                        <Ionicons name="arrow-forward" size={20} color={colors.primaryContrast} />
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
-        </View>
+        </ThemedView>
     );
 }
 
@@ -103,7 +100,6 @@ const styles = StyleSheet.create({
     skipText: {
         fontSize: 16,
         fontWeight: '700',
-        color: '#2E1065',
         marginRight: 2,
     },
     content: {
@@ -119,14 +115,12 @@ const styles = StyleSheet.create({
         fontSize: width > 400 ? 34 : 30,
         fontWeight: '900',
         textAlign: 'center',
-        color: '#2E1065',
         lineHeight: 42,
         marginBottom: 16,
     },
     subtitle: {
         fontSize: 16,
         textAlign: 'center',
-        color: '#4B5563',
         lineHeight: 24,
         paddingHorizontal: 10,
     },
@@ -140,6 +134,8 @@ const styles = StyleSheet.create({
     image: {
         width: width * 2,
         height: height * 0.65,
+        margin: -20,
+        marginTop: -150
     },
     footer: {
         paddingHorizontal: 24,
@@ -161,7 +157,6 @@ const styles = StyleSheet.create({
     continueText: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#FFF',
         marginRight: 8,
     },
 });

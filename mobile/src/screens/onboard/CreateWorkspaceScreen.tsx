@@ -104,15 +104,15 @@ export default function CreateWorkspaceScreen() {
                                     <View style={styles.avatarsRow}>
                                         <Image
                                             source="https://i.pravatar.cc/150?u=1"
-                                            style={styles.avatar}
+                                            style={[styles.avatar, { borderColor: colors.card }]}
                                         />
                                         <Image
                                             source="https://i.pravatar.cc/150?u=2"
-                                            style={styles.avatar}
+                                            style={[styles.avatar, { borderColor: colors.card }]}
                                         />
                                         <Image
                                             source="https://i.pravatar.cc/150?u=3"
-                                            style={styles.avatar}
+                                            style={[styles.avatar, { borderColor: colors.card }]}
                                         />
                                         <TouchableOpacity style={[styles.addAvatarBtn, { borderColor: colors.primary + "30" }]}>
                                             <Ionicons name="add" size={24} color={colors.primary} />
@@ -131,7 +131,7 @@ export default function CreateWorkspaceScreen() {
                                         inputContainerStyle={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
                                     />
                                     <TouchableOpacity style={[styles.inviteBtn, { backgroundColor: colors.primary }]}>
-                                        <Ionicons name="arrow-forward" size={24} color="#FFF" />
+                                        <Ionicons name="arrow-forward" size={24} color={colors.primaryContrast} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -252,7 +252,6 @@ const styles = StyleSheet.create({
         height: 52,
         borderRadius: 26,
         borderWidth: 2,
-        borderColor: "#FFF",
     },
     addAvatarBtn: {
         width: 52,

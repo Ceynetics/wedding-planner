@@ -115,7 +115,7 @@ export default function TasksScreen() {
                     ) : (
                         <View style={styles.emptyContainer}>
                             <Image
-                                source={require("@/../assets/images/empty-tasks.png")}
+                                source={require("@/../assets/images/Empty-bro.png")}
                                 style={styles.emptyImage}
                                 contentFit="contain"
                             />
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
     },
     fixedSection: {
         zIndex: 10,
+        paddingBottom: 20,
     },
     filtersWrapper: {
         marginTop: 20, // Lower the filter section slightly
@@ -182,14 +183,13 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 60,
         paddingHorizontal: 40,
     },
     emptyImage: {
         width: 200,
         height: 200,
-        marginBottom: 24,
-        opacity: 0.8,
+        marginBottom: 5,
+        opacity: 0.9, // reduce opacity
     },
     emptyTitle: {
         fontSize: 20,

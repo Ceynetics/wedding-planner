@@ -41,7 +41,7 @@ export function TaskHeader({ remainingTasks }: TaskHeaderProps) {
                         style={[styles.iconButton, { backgroundColor: colors.card }]}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="document-attach-outline" size={24} color={colors.primary} />
+                        <Ionicons name="download-outline" size={24} color={colors.primary} />
                     </TouchableOpacity>
 
                     <TouchableOpacity

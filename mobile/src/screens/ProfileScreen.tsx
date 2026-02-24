@@ -48,7 +48,7 @@ export default function ProfileScreen() {
     ];
 
     const handleLogout = () => {
-        router.replace("/" as any);
+        router.replace("/(auth)/login" as any);
     };
 
     return (
@@ -64,7 +64,7 @@ export default function ProfileScreen() {
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContent}
+            // contentContainerStyle={styles.scrollContent}
             >
                 <ProfileMenuSection title="Wedding Details" items={weddingDetails} />
 
@@ -88,11 +88,7 @@ const styles = StyleSheet.create({
     fixedSection: {
         zIndex: 10,
         marginTop: 50, // Lower the header area slightly
-    },
-    scrollContent: {
-        paddingBottom: 40,
-        paddingTop: 10,
-        marginTop: 10
+        paddingBottom: 20,
     },
     content: {
         paddingHorizontal: 24,
