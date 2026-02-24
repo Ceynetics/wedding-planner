@@ -78,10 +78,8 @@ export default function GuestsScreen() {
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContent}
-            >
+            {/* Fixed Header and Stats Section */}
+            <View style={styles.fixedSection}>
                 <GuestHeader />
 
                 {/* Stats Summary Cards with Search */}
@@ -95,7 +93,12 @@ export default function GuestsScreen() {
                         onFilterPress={() => console.log("Filter pressed")}
                     />
                 </View>
+            </View>
 
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
                 {/* Guests List */}
                 <View style={styles.listContainer}>
                     {dummyGuests.map((guest) => (
@@ -128,14 +131,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    fixedSection: {
+        zIndex: 10,
+    },
     scrollContent: {
         paddingBottom: 100,
+        paddingTop: 10,
     },
     statsContainer: {
         zIndex: 2,
     },
     listContainer: {
-        marginTop: 20,
+        marginTop: 10,
     },
     fab: {
         position: "absolute",

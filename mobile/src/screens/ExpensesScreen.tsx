@@ -20,13 +20,16 @@ export default function ExpensesScreen() {
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
-            <ExpenseHeader />
+            <View style={styles.fixedArea}>
+                <ExpenseHeader />
+
+                <BudgetSummary spent={40000} total={300000} left={150000} />
+            </View>
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
-                <BudgetSummary spent={40000} total={300000} left={150000} />
 
                 <CategorySpendings />
 
@@ -50,6 +53,9 @@ export default function ExpensesScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    fixedArea: {
+        paddingBottom: 20,
     },
     gradient: {
         position: "absolute",

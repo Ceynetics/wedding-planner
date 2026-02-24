@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
@@ -66,52 +66,55 @@ export default function CalendarScreen() {
     }, [MOCK_EVENTS]);
 
     // Filter events for the selected day list
+    const insets = useSafeAreaInsets();
+
     const dayEvents = useMemo(() => {
         return MOCK_EVENTS.filter(e => e.date === selectedDate);
     }, [selectedDate, MOCK_EVENTS]);
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: 'transparent' }]}>
-            <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-
-                {/* Header Section */}
+            {/* Fixed Header Section */}
+            <View style={[styles.fixedArea, { paddingTop: insets.top }]}>
                 <View style={styles.header}>
                     <TouchableOpacity
-                        onPress={() => router.back()}
-                        style={styles.backButton}
+                        onPress={() => router.push("/(tabs)/tools" as any)}
+                        style={[styles.backButton]}
                     >
                         <Ionicons name="arrow-back" size={24} color={colors.primaryContrast} />
                     </TouchableOpacity>
-                    <ThemedText style={[styles.headerTitle, { color: colors.primaryContrast }]}>Planner Calendar</ThemedText>
-                    {/* <TouchableOpacity style={styles.addButton}>
-                        <Ionicons name="add-circle-outline" size={28} color={colors.primary} />
-                    </TouchableOpacity> */}
+
+                    <ThemedText style={[styles.headerTitle, { color: colors.primaryContrast }]}>
+                        Planner Calendar
+                    </ThemedText>
+
+                    {/* Placeholder for symmetry to help centering */}
+                    <View style={styles.backButton} />
                 </View>
+            </View>
 
-                {/* Main Content */}
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.scrollContent}
-                >
-                    {/* Calendar Component */}
-                    <CalendarWrapper
-                        selectedDate={selectedDate}
-                        onDateSelect={setSelectedDate}
-                        events={calendarIndicators}
-                        currentMonthId={currentMonthId}
-                        onPrevMonth={handlePrevMonth}
-                        onNextMonth={handleNextMonth}
-                        onMonthYearChange={handleMonthYearChange}
-                    />
+            {/* Main Content */}
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
+                {/* Calendar Component */}
+                <CalendarWrapper
+                    selectedDate={selectedDate}
+                    onDateSelect={setSelectedDate}
+                    events={calendarIndicators}
+                    currentMonthId={currentMonthId}
+                    onPrevMonth={handlePrevMonth}
+                    onNextMonth={handleNextMonth}
+                    onMonthYearChange={handleMonthYearChange}
+                />
 
-                    {/* Events for selected day */}
-                    <EventList
-                        date={selectedDate}
-                        events={dayEvents}
-                    />
-                </ScrollView>
-
-            </SafeAreaView>
+                {/* Events for selected day */}
+                <EventList
+                    date={selectedDate}
+                    events={dayEvents}
+                />
+            </ScrollView>
         </ThemedView>
     );
 }
@@ -120,11 +123,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    fixedArea: {
+        paddingBottom: 20,
+    },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 24,
         paddingVertical: 12,
+        justifyContent: 'space-between',
     },
     backButton: {
         width: 44,
@@ -132,18 +139,14 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: "center",
         alignItems: "center",
+        zIndex: 10
     },
     headerTitle: {
+        flex: 1,
         fontSize: 22,
         fontWeight: "700",
+        textAlign: 'center',
     },
-    // addButton: {
-    //     width: 44,
-    //     height: 44,
-    //     borderRadius: 12,
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    // },
     scrollContent: {
         paddingHorizontal: 20,
         paddingTop: 10,

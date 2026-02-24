@@ -143,10 +143,10 @@ const styles = StyleSheet.create({
         bottom: 12,
     },
     statImage: {
-        width: 80,
-        height: 80,
-        marginRight: -15,
-        marginBottom: -20
+        width: 100,
+        height: 100,
+        marginRight: -25,
+        marginBottom: -30
     },
     searchRow: {
         flexDirection: "row",

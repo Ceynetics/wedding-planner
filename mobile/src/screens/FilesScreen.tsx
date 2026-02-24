@@ -7,7 +7,6 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -61,26 +60,17 @@ export default function FilesScreen() {
     const insets = useSafeAreaInsets();
     const folders = MOCK_FOLDERS(colors);
 
-    const gradientColors = (theme === "light"
-        ? [colors.primary + "40", colors.primary + "10"]
-        : [colors.primary + "60", colors.background]) as [string, string, ...string[]];
-
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
-            {/* <LinearGradient
-                colors={gradientColors}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={[styles.gradient, { height: 300 + insets.top }]}
-            /> */}
-
-            <FileHeader />
+            <View style={styles.fixedArea}>
+                <FileHeader />
+                <StorageDetails used={2.5} total={15} />
+            </View>
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 + insets.bottom }]}
             >
-                <StorageDetails used={2.5} total={15} />
 
                 <View style={styles.sectionHeader}>
                     <ThemedText style={styles.sectionTitle}>Folders</ThemedText>
@@ -116,6 +106,9 @@ export default function FilesScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    fixedArea: {
+        paddingBottom: 20,
     },
     gradient: {
         position: "absolute",

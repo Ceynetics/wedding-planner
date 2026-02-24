@@ -10,7 +10,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Dashboard() {
@@ -50,16 +50,16 @@ export default function Dashboard() {
   return (
     <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
       <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
+        {/* Fixed Header and Countdown Section */}
+        <View style={styles.fixedSection}>
+          <DashboardHeader userName="Sara & John" />
+          <CountdownBanner />
+        </View>
+
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* Header Section */}
-          <DashboardHeader userName="Sara & John" />
-
-          {/* Countdown Section */}
-          <CountdownBanner />
-
           {/* Today's Reminders Section */}
           <RemindersCard
             mainReminder="Photographer Meeting at 2:00pm"
@@ -107,7 +107,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  fixedSection: {
+    zIndex: 10,
+  },
   scrollContent: {
     paddingBottom: 20,
+    paddingTop: 10,
   },
 });

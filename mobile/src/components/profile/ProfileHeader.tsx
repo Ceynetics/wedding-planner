@@ -4,6 +4,7 @@ import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ProfileHeaderProps {
     name: string;
@@ -15,11 +16,12 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ name, email, profileImage, onEditPress }: ProfileHeaderProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const insets = useSafeAreaInsets();
 
     return (
         <View style={styles.container}>
             {/* Spacer area (background handled by layout) */}
-            <View style={styles.backgroundArea} />
+            <View style={[styles.backgroundArea, { height: 130 + insets.top }]} />
 
             {/* User details card floating over the background */}
             <View style={[styles.card, { backgroundColor: colors.card }]}>
@@ -60,7 +62,6 @@ const styles = StyleSheet.create({
     },
     backgroundArea: {
         width: "100%",
-        height: 180,
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0,
     },
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         marginTop: -100, // Negative margin to overlap the background
         borderRadius: 20,
-        padding: 24,
+        padding: 50,
         alignItems: "center",
         position: "relative",
         shadowColor: "#000",

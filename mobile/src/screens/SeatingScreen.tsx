@@ -28,12 +28,9 @@ export default function SeatingScreen() {
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
-            <SeatingHeader />
+            <View style={styles.fixedArea}>
+                <SeatingHeader />
 
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 + insets.bottom }]}
-            >
                 <SeatingStats
                     totalGuests={120}
                     totalSeats={135}
@@ -41,6 +38,12 @@ export default function SeatingScreen() {
                     setSearchQuery={setSearchQuery}
                     onFilterPress={() => console.log("Filter pressed")}
                 />
+            </View>
+
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 + insets.bottom }]}
+            >
 
                 <View style={styles.listContainer}>
                     {tables.map((table) => (
@@ -78,6 +81,9 @@ export default function SeatingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    fixedArea: {
+        paddingBottom: 20,
     },
     scrollContent: {
         // Space handled by insets in JSX

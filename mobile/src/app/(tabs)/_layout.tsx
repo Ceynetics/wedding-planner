@@ -19,7 +19,7 @@ export default function TabLayout() {
                     styles.backgroundArea,
                     {
                         backgroundColor: colors.primary,
-                        height: 220 + insets.top, // Tallest header height (GuestHeader)
+                        height: 250 + insets.top, // Covers DashboardHeader and CountdownBanner
                     },
                 ]}
             />

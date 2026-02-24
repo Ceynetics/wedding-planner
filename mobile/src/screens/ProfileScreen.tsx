@@ -6,7 +6,7 @@ import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
@@ -53,29 +53,30 @@ export default function ProfileScreen() {
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
-            <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.scrollContent}
-                >
-                    <ProfileHeader
-                        name="John Michael"
-                        email="john@gmail.com"
-                        onEditPress={() => router.push("/(forms)/profile/edit" as any)}
-                    />
+            {/* Fixed Header Section */}
+            <View style={styles.fixedSection}>
+                <ProfileHeader
+                    name="John Michael"
+                    email="john@gmail.com"
+                    onEditPress={() => router.push("/(forms)/profile/edit" as any)}
+                />
+            </View>
 
-                    <ProfileMenuSection title="Wedding Details" items={weddingDetails} />
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
+                <ProfileMenuSection title="Wedding Details" items={weddingDetails} />
 
-                    <ProfileMenuSection title="Account & Security" items={accountSecurity} />
+                <ProfileMenuSection title="Account & Security" items={accountSecurity} />
 
-                    <ProfileMenuSection title="Preferences" items={preferences} />
+                <ProfileMenuSection title="Preferences" items={preferences} />
 
-                    <ProfileActions
-                        onLogoutPress={handleLogout}
-                        onDeleteEventPress={() => router.push("/(onboard)/workspace" as any)}
-                    />
-                </ScrollView>
-            </SafeAreaView>
+                <ProfileActions
+                    onLogoutPress={handleLogout}
+                    onDeleteEventPress={() => router.push("/(onboard)/workspace" as any)}
+                />
+            </ScrollView>
         </ThemedView>
     );
 }
@@ -84,8 +85,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    fixedSection: {
+        zIndex: 10,
+        marginTop: 50, // Lower the header area slightly
+    },
     scrollContent: {
         paddingBottom: 40,
+        paddingTop: 10,
+        marginTop: 10
     },
     content: {
         paddingHorizontal: 24,

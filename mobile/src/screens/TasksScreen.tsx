@@ -10,6 +10,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TasksScreen() {
     const router = useRouter();
@@ -81,22 +82,24 @@ export default function TasksScreen() {
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
+            {/* Fixed Header and Filter Section */}
+            <View style={styles.fixedSection}>
+                <TaskHeader remainingTasks={tasks.filter(t => !t.isCompleted).length} />
+                <View style={styles.filtersWrapper}>
+                    <TaskFilters
+                        status={status}
+                        setStatus={setStatus}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        onFilterPress={() => console.log("Filter pressed")}
+                    />
+                </View>
+            </View>
+
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
-                {/* Header Section */}
-                <TaskHeader remainingTasks={tasks.filter(t => !t.isCompleted).length} />
-
-                {/* Filter Section */}
-                <TaskFilters
-                    status={status}
-                    setStatus={setStatus}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    onFilterPress={() => console.log("Filter pressed")}
-                />
-
                 {/* Tasks List */}
                 <View style={styles.taskListContainer}>
                     {filteredTasks.length > 0 ? (
@@ -145,11 +148,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    fixedSection: {
+        zIndex: 10,
+    },
+    filtersWrapper: {
+        marginTop: 20, // Lower the filter section slightly
+    },
     scrollContent: {
         paddingBottom: 120, // Extra padding for FAB
+        paddingTop: 10,
     },
     taskListContainer: {
-        marginTop: 20,
+        marginTop: 10,
         gap: 8,
     },
     fab: {

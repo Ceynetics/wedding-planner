@@ -143,11 +143,6 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 20,
         alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 1,
     },
     iconContainer: {
         width: 48,
