@@ -6,33 +6,54 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+
+// --- Modules & Components ---
 import { AddGuestHeader } from '@/components/guests/form/AddGuestHeader';
 import { TextField } from '@/components/TextField';
 import { Stepper } from '@/components/guests/form/Stepper';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
+import { TableSelectorModal } from '@/components/guests/form/TableSelectorModal';
+
+// --- Design System ---
 import { useAppTheme } from '@/context/ThemeContext';
 import { Colors } from '@/constants/Colors';
 
-import { TableSelectorModal } from '@/components/guests/form/TableSelectorModal';
-
-export default function AddGuestScreen() {
+export default function EditGuestScreen() {
+    // Determine current theme settings dynamically
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
+    // Safely retrieve the specific Guest ID parsed from the route params
+    const { id } = useLocalSearchParams();
+
+    // --- State Definition ---
+    // Pre-loaded state mocks fetching an existing guest ("Joe Charles").
+    // Value assignments map perfectly to standard update endpoints.
+    const [name, setName] = useState('Joe Charles');
     const [side, setSide] = useState<'Bride' | 'Groom'>('Bride');
     const [groupType, setGroupType] = useState<'Family' | 'Individual'>('Family');
-    const [isVegetarian, setIsVegetarian] = useState(false); // Dietary preference
+    const [isVegetarian, setIsVegetarian] = useState(true); // Dietary preference
     const [category, setCategory] = useState('Family'); // Relationship category
-    const [adults, setAdults] = useState(0);
-    const [kids, setKids] = useState(0);
-    const [isVip, setIsVip] = useState(false);
+    const [phone, setPhone] = useState('555-0192');
+    const [email, setEmail] = useState('joe.charles@example.com');
+    const [adults, setAdults] = useState(2);
+    const [kids, setKids] = useState(1);
+    const [isVip, setIsVip] = useState(true);
+    const [notes, setNotes] = useState('Vegetarian Preferences');
+    
+    // Extracted Modal View tracking state
     const [showTableModal, setShowTableModal] = useState(false);
-    const [selectedTable, setSelectedTable] = useState<{ id: string; name: string } | null>(null);
+    const [selectedTable, setSelectedTable] = useState<{ id: string; name: string } | null>({
+        id: "1",
+        name: "Table 1"
+    });
 
-    const labelStyle = {
+    // We maintain dynamic theming elements inline here instead of StyleSheet.create
+    // to natively bind them against active light/dark mode changes.
+    const dynamicLabelStyle = {
         color: colors.emphasis,
         opacity: 1,
         fontWeight: '700' as const,
@@ -40,23 +61,34 @@ export default function AddGuestScreen() {
         fontSize: 16
     };
 
+    // Central data submission handler
+    const handleUpdateGuest = () => {
+        console.log("Submitting Guest updates:", {
+            id, name, side, category, isVegetarian, phone, email, groupType, adults, kids, isVip, selectedTable, notes
+        });
+    };
+
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
+            {/* Disable default header entirely, favoring custom layout component */}
             <Stack.Screen options={{ headerShown: false }} />
             <AddGuestHeader />
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled" // Enhances UX by retaining scroll fluidity while keyboard is up
             >
-                {/* Guest Name */}
+                {/* 1. Guest Identification */}
                 <TextField
                     label="Guest Name"
                     placeholder="e.g : Joe Charles"
-                    labelStyle={labelStyle}
+                    value={name}
+                    onChangeText={setName}
+                    labelStyle={dynamicLabelStyle}
                 />
 
-                {/* Side Toggle */}
+                {/* 2. Affiliation Toggle (Bride vs Groom) */}
                 <View style={[styles.toggleContainer, { backgroundColor: colors.inputBackground }]}>
                     <TouchableOpacity
                         onPress={() => setSide('Bride')}
@@ -68,7 +100,9 @@ export default function AddGuestScreen() {
                         <ThemedText style={[
                             styles.toggleText,
                             { color: side === 'Bride' ? colors.primaryContrast : colors.placeholder }
-                        ]}>Bride</ThemedText>
+                        ]}>
+                            Bride
+                        </ThemedText>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => setSide('Groom')}
@@ -80,13 +114,15 @@ export default function AddGuestScreen() {
                         <ThemedText style={[
                             styles.toggleText,
                             { color: side === 'Groom' ? colors.primaryContrast : colors.placeholder }
-                        ]}>Groom</ThemedText>
+                        ]}>
+                            Groom
+                        </ThemedText>
                     </TouchableOpacity>
                 </View>
 
-                {/* Relationship Category */}
+                {/* Relationship Category (Family, Colleague, Work, Club, Friend) */}
                 <View style={styles.section}>
-                    <ThemedText style={labelStyle}>Relationship</ThemedText>
+                    <ThemedText style={dynamicLabelStyle}>Relationship</ThemedText>
                     <ScrollView 
                         horizontal 
                         showsHorizontalScrollIndicator={false}
@@ -113,25 +149,29 @@ export default function AddGuestScreen() {
                     </ScrollView>
                 </View>
 
-                {/* Contact Details */}
+                {/* 3. Direct Contact Info Fields */}
                 <View style={styles.section}>
-                    <ThemedText style={labelStyle}>Contact Details</ThemedText>
+                    <ThemedText style={dynamicLabelStyle}>Contact Details</ThemedText>
                     <TextField
                         placeholder="Phone"
+                        value={phone}
+                        onChangeText={setPhone}
                         leftIcon={<Ionicons name="call" size={20} color={colors.secondary} />}
                         keyboardType="phone-pad"
                     />
                     <TextField
                         placeholder="Email"
+                        value={email}
+                        onChangeText={setEmail}
                         leftIcon={<Ionicons name="mail" size={20} color={colors.secondary} />}
                         keyboardType="email-address"
                         autoCapitalize="none"
                     />
                 </View>
 
-                {/* Group Toggle */}
+                {/* 4. Family or Individual Flag Modifier */}
                 <View style={styles.section}>
-                    <ThemedText style={labelStyle}>Group</ThemedText>
+                    <ThemedText style={dynamicLabelStyle}>Group</ThemedText>
                     <View style={[styles.toggleContainer, { backgroundColor: colors.inputBackground }]}>
                         <TouchableOpacity
                             onPress={() => setGroupType('Family')}
@@ -143,7 +183,9 @@ export default function AddGuestScreen() {
                             <ThemedText style={[
                                 styles.toggleText,
                                 { color: groupType === 'Family' ? colors.primaryContrast : colors.placeholder }
-                            ]}>Family</ThemedText>
+                            ]}>
+                                Family
+                            </ThemedText>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => setGroupType('Individual')}
@@ -155,12 +197,14 @@ export default function AddGuestScreen() {
                             <ThemedText style={[
                                 styles.toggleText,
                                 { color: groupType === 'Individual' ? colors.primaryContrast : colors.placeholder }
-                            ]}>Individual</ThemedText>
+                            ]}>
+                                Individual
+                            </ThemedText>
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                {/* Steppers */}
+                {/* 5. Headcount Trackers via Stepper Inputs */}
                 <View style={styles.stepperRow}>
                     <Stepper label="Adults" value={adults} onValueChange={setAdults} />
                     <Stepper label="Kids" value={kids} onValueChange={setKids} />
@@ -168,7 +212,7 @@ export default function AddGuestScreen() {
 
                 <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-                {/* VIP Switch Card */}
+                {/* 6. Settings Switches and Special Permissions */}
                 <View style={[styles.card, { backgroundColor: colors.card }]}>
                     <View style={styles.switchRow}>
                         <MaterialCommunityIcons name="crown" size={24} color={colors.warning} />
@@ -182,7 +226,7 @@ export default function AddGuestScreen() {
                     </View>
                 </View>
 
-                {/* Meal Preferences Switch Card */}
+                {/* Dietary Settings Switch */}
                 <View style={[styles.card, { backgroundColor: colors.card }]}>
                     <View style={styles.switchRow}>
                         <MaterialCommunityIcons name="leaf" size={24} color={colors.success} />
@@ -196,10 +240,11 @@ export default function AddGuestScreen() {
                     </View>
                 </View>
 
-                {/* Assign Table Card */}
+                {/* 7. Table and Seating Sub-Form Mapping */}
                 <TouchableOpacity
                     style={[styles.card, styles.interactiveCard, { backgroundColor: colors.card }]}
                     onPress={() => setShowTableModal(true)}
+                    activeOpacity={0.7}
                 >
                     <View style={styles.cardHeader}>
                         <View style={[styles.iconContainer, { backgroundColor: colors.inputBackground }]}>
@@ -212,6 +257,7 @@ export default function AddGuestScreen() {
                     </View>
                 </TouchableOpacity>
 
+                {/* Table Picker Overlay rendering */}
                 <TableSelectorModal
                     visible={showTableModal}
                     onClose={() => setShowTableModal(false)}
@@ -222,22 +268,25 @@ export default function AddGuestScreen() {
                     selectedTableId={selectedTable?.id}
                 />
 
-                {/* Special Notes */}
+                {/* 8. Additional Comments field handling free-text metadata */}
                 <View style={styles.section}>
                     <TextField
                         label="Special Notes (Optional)"
                         placeholder="Add more Details If Needed"
+                        value={notes}
+                        onChangeText={setNotes}
                         multiline
                         numberOfLines={4}
-                        labelStyle={labelStyle}
+                        labelStyle={dynamicLabelStyle}
                         inputContainerStyle={styles.textAreaContainer}
                         style={styles.textArea}
                     />
                 </View>
 
+                {/* 9. Final Update Commit Action Button */}
                 <PrimaryButton
-                    title="Save Guest"
-                    onPress={() => { }}
+                    title="Update Guest"
+                    onPress={handleUpdateGuest}
                     style={styles.saveButton}
                 />
             </ScrollView>
@@ -245,6 +294,8 @@ export default function AddGuestScreen() {
     );
 }
 
+// Ensure strict adherence to separation of structural logic and UI styling components.
+// Colors remain completely isolated from standard sizing, padding, and alignments.
 const styles = StyleSheet.create({
     container: {
         flex: 1,

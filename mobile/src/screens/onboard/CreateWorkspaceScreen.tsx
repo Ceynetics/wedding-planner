@@ -26,6 +26,7 @@ export default function CreateWorkspaceScreen() {
 
     const [eventName, setEventName] = useState("");
     const [venue, setVenue] = useState("Colombo");
+    const [budget, setBudget] = useState("");
     const [eventDate, setEventDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [inviteEmail, setInviteEmail] = useState("");
@@ -62,7 +63,11 @@ export default function CreateWorkspaceScreen() {
                             </ThemedText>
                         </View>
 
-                        <View style={styles.formSection}>
+                        <ScrollView 
+                            style={styles.formSection}
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                        >
                             <TextField
                                 label="Event Name"
                                 placeholder="e.g : Our Wedding"
@@ -92,9 +97,20 @@ export default function CreateWorkspaceScreen() {
                                         value={venue}
                                         onChangeText={setVenue}
                                         leftIcon={<Ionicons name="location" size={20} color={colors.secondary} />}
+                                        containerStyle={styles.rowField}
                                     />
                                 </View>
                             </View>
+
+                            <TextField
+                                label="Event Budget"
+                                placeholder="e.g : 100,000"
+                                value={budget}
+                                onChangeText={setBudget}
+                                keyboardType="numeric"
+                                leftIcon={<Ionicons name="wallet-outline" size={20} color={colors.secondary} />}
+                                containerStyle={styles.fieldMargin}
+                            />
 
                             <View style={styles.partnersSection}>
                                 <ThemedText type="label" style={styles.fieldLabel}>
@@ -157,7 +173,7 @@ export default function CreateWorkspaceScreen() {
                                 onPress={handleCreateWorkspace}
                                 style={styles.createBtn}
                             />
-                        </View>
+                        </ScrollView>
                     </View>
                 </KeyboardAvoidingView>
             </SafeAreaView>
@@ -212,7 +228,10 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: "row",
         gap: 12,
-        marginBottom: 20,
+        marginBottom: 16,
+    },
+    rowField: {
+        marginBottom: 0,
     },
     halfField: {
         flex: 1,

@@ -7,15 +7,11 @@ import { useAppTheme } from '@/context/ThemeContext';
 interface TaskSettingsSectionProps {
     isCompleted: boolean;
     onCompletedChange: (value: boolean) => void;
-    isPrivate: boolean;
-    onPrivateChange: (value: boolean) => void;
 }
 
 export function TaskSettingsSection({
     isCompleted,
-    onCompletedChange,
-    isPrivate,
-    onPrivateChange
+    onCompletedChange
 }: TaskSettingsSectionProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
@@ -27,7 +23,7 @@ export function TaskSettingsSection({
 
     return (
         <View style={styles.section}>
-            <View style={[styles.card, { backgroundColor: colors.card, paddingVertical: 12 }]}>
+            <View style={[styles.card, { backgroundColor: colors.card }]}>
                 <View style={styles.switchRow}>
                     <View style={styles.switchTextContainer}>
                         <ThemedText type="defaultSemiBold" style={{ color: colors.emphasis }}>Mark as Completed</ThemedText>
@@ -36,21 +32,6 @@ export function TaskSettingsSection({
                     <Switch
                         value={isCompleted}
                         onValueChange={onCompletedChange}
-                        trackColor={switchTrackColor}
-                        thumbColor={colors.primaryContrast}
-                    />
-                </View>
-
-                <View style={[styles.divider, { backgroundColor: colors.border }]} />
-
-                <View style={styles.switchRow}>
-                    <View style={styles.switchTextContainer}>
-                        <ThemedText type="defaultSemiBold" style={{ color: colors.emphasis }}>Mark as Private Task</ThemedText>
-                        <ThemedText style={[styles.switchSubtitle, { color: colors.placeholder }]}>Your Partner won't see this task</ThemedText>
-                    </View>
-                    <Switch
-                        value={isPrivate}
-                        onValueChange={onPrivateChange}
                         trackColor={switchTrackColor}
                         thumbColor={colors.primaryContrast}
                     />
@@ -66,7 +47,8 @@ const styles = StyleSheet.create({
     },
     card: {
         borderRadius: 20,
-        padding: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
@@ -85,11 +67,5 @@ const styles = StyleSheet.create({
     switchSubtitle: {
         fontSize: 14,
         marginTop: 2,
-    },
-    divider: {
-        height: 1,
-        marginVertical: 4,
-        marginHorizontal: 16,
-        opacity: 0.5,
     },
 });

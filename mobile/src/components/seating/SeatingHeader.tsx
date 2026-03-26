@@ -23,14 +23,8 @@ export function SeatingHeader() {
                 <ThemedText style={[styles.title, { color: colors.primaryContrast }]}>Seating</ThemedText>
             </View>
 
-            <View style={styles.actionButtons}>
-                <TouchableOpacity style={[styles.iconButton, { backgroundColor: colors.card }]}>
-                    <Ionicons name="document-attach-outline" size={24} color={colors.primary} />
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.iconButton, { backgroundColor: colors.card }]}>
-                    <MaterialCommunityIcons name="grid" size={24} color={colors.primary} />
-                </TouchableOpacity>
-            </View>
+            {/* Empty view to perfectly balance the 48px back button and strictly center the title */}
+            <View style={{ width: 48 }} />
         </View>
     );
 }
@@ -57,21 +51,5 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: "700",
-    },
-    actionButtons: {
-        flexDirection: "row",
-        gap: 12,
-    },
-    iconButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        justifyContent: "center",
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 4,
     },
 });

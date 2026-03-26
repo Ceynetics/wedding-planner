@@ -74,7 +74,7 @@ export default function ProfileScreen() {
 
                 <ProfileActions
                     onLogoutPress={handleLogout}
-                    onDeleteEventPress={() => router.push("/(onboard)/workspace" as any)}
+                    onDeleteAccountPress={() => router.push("/(auth)/register" as any)}
                 />
             </ScrollView>
         </ThemedView>

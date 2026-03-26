@@ -6,7 +6,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Colors } from "@/constants/Colors";
 
-export function AddExpenseHeader() {
+export function AddExpenseHeader({ title = "Add Expense" }: { title?: string }) {
     const router = useRouter();
     const { theme } = useAppTheme();
     const colors = Colors[theme];
@@ -25,7 +25,7 @@ export function AddExpenseHeader() {
                 style={[styles.title, { color: colors.emphasis }]}
                 numberOfLines={1}
             >
-                Add Expense
+                {title}
             </ThemedText>
         </View>
     );

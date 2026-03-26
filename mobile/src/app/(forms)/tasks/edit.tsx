@@ -1,8 +1,8 @@
 import { AddTaskHeader } from "@/components/tasks/form/AddTaskHeader";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
-import { Stack } from "expo-router";
-import React, { useState } from "react";
+import { Stack, useLocalSearchParams } from "expo-router";
+import React, { useState, useEffect } from "react";
 import {
     ScrollView,
     StyleSheet,
@@ -16,18 +16,19 @@ import { TaskAssignmentSection } from "@/components/tasks/form/TaskAssignmentSec
 import { TaskSettingsSection } from "@/components/tasks/form/TaskSettingsSection";
 import { TaskNotesSection } from "@/components/tasks/form/TaskNotesSection";
 
-export default function AddTaskScreen() {
+export default function EditTaskScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const { id } = useLocalSearchParams();
 
-    // Form State
-    const [taskName, setTaskName] = useState("");
-    const [dueDate, setDueDate] = useState<Date | null>(null);
+    // Form State (Mocked editing state based on ID passed in)
+    const [taskName, setTaskName] = useState("Book Hotel");
+    const [dueDate, setDueDate] = useState<Date | null>(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [category, setCategory] = useState<"Venue" | "Food" | "Attire" | "Flowers">("Venue");
     const [priority, setPriority] = useState<"High" | "Medium" | "Low">("High");
     const [isCompleted, setIsCompleted] = useState(false);
-    const [notes, setNotes] = useState("");
+    const [notes, setNotes] = useState("We need to confirm the venue booking.");
 
     const formatDate = (date: Date) => {
         return date.toLocaleDateString("en-US", {
@@ -37,8 +38,8 @@ export default function AddTaskScreen() {
         });
     };
 
-    const handleSaveTask = () => {
-        console.log("Saving Task:", {
+    const handleUpdateTask = () => {
+        console.log("Updating Task ID: ", id, {
             taskName,
             dueDate,
             category,
@@ -51,6 +52,8 @@ export default function AddTaskScreen() {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Stack.Screen options={{ headerShown: false }} />
+            
+            {/* Using the same generic header */}
             <AddTaskHeader />
 
             <ScrollView
@@ -90,8 +93,8 @@ export default function AddTaskScreen() {
                 />
 
                 <PrimaryButton
-                    title="Save Task"
-                    onPress={handleSaveTask}
+                    title="Update Task"
+                    onPress={handleUpdateTask}
                     style={styles.saveButton}
                 />
             </ScrollView>

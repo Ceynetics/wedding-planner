@@ -18,17 +18,23 @@ interface TableCardProps {
     currentGuests: number;
     maxGuests: number;
     isVip?: boolean;
+    onEdit?: () => void;
     onRemove?: () => void;
     onPress?: () => void;
 }
 
-export function TableCard({ id, name, description, currentGuests, maxGuests, isVip, onRemove, onPress }: TableCardProps) {
+export function TableCard({ id, name, description, currentGuests, maxGuests, isVip, onEdit, onRemove, onPress }: TableCardProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
 
     const progress = Math.min(currentGuests / maxGuests, 1);
+
+    const handleEdit = () => {
+        setShowMenu(false);
+        onEdit?.();
+    };
 
     const handleRemove = () => {
         setShowMenu(false);
@@ -95,6 +101,14 @@ export function TableCard({ id, name, description, currentGuests, maxGuests, isV
                                             }
                                         ]}
                                     >
+                                        <TouchableOpacity
+                                            style={styles.menuItem}
+                                            onPress={handleEdit}
+                                        >
+                                            <ThemedText style={styles.menuText}>
+                                                Edit Table
+                                            </ThemedText>
+                                        </TouchableOpacity>
                                         <TouchableOpacity
                                             style={styles.menuItem}
                                             onPress={handleRemove}

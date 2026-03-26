@@ -105,7 +105,7 @@ export default function GuestsScreen() {
                         <GuestCard
                             key={guest.id}
                             guest={guest}
-                            onEdit={() => console.log("Edit:", guest.name)}
+                            onEdit={() => router.push({ pathname: "/(forms)/guests/edit", params: { id: guest.id } } as any)}
                             onDelete={() => console.log("Delete:", guest.name)}
                             onCall={() => console.log("Call:", guest.phone)}
                             onMail={() => console.log("Mail:", guest.email)}

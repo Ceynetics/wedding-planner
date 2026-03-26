@@ -6,10 +6,10 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface ProfileActionsProps {
     onLogoutPress?: () => void;
-    onDeleteEventPress?: () => void;
+    onDeleteAccountPress?: () => void;
 }
 
-export function ProfileActions({ onLogoutPress, onDeleteEventPress }: ProfileActionsProps) {
+export function ProfileActions({ onLogoutPress, onDeleteAccountPress }: ProfileActionsProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
@@ -25,10 +25,10 @@ export function ProfileActions({ onLogoutPress, onDeleteEventPress }: ProfileAct
 
             <TouchableOpacity
                 style={[styles.deleteButton, { borderColor: colors.error }]}
-                onPress={onDeleteEventPress}
+                onPress={onDeleteAccountPress}
                 activeOpacity={0.7}
             >
-                <ThemedText style={[styles.deleteText, { color: colors.error }]}>Delete Event</ThemedText>
+                <ThemedText style={[styles.deleteText, { color: colors.error }]}>Delete Account</ThemedText>
             </TouchableOpacity>
         </View>
     );

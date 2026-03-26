@@ -109,6 +109,7 @@ export default function TasksScreen() {
                                 task={task}
                                 onPress={() => console.log("Task pressed:", task.id)}
                                 onCheckPress={() => handleToggleTask(task.id)}
+                                onEditPress={() => router.push({ pathname: "/(forms)/tasks/edit", params: { id: task.id } as any })}
                                 onRemovePress={() => handleRemoveTask(task.id)}
                             />
                         ))

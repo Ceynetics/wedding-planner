@@ -29,9 +29,10 @@ interface TaskCardProps {
     onCheckPress?: () => void;
     onRemovePress?: () => void;
     onMorePress?: () => void;
+    onEditPress?: () => void;
 }
 
-export function TaskCard({ task, onPress, onCheckPress, onRemovePress, onMorePress }: TaskCardProps) {
+export function TaskCard({ task, onPress, onCheckPress, onRemovePress, onMorePress, onEditPress }: TaskCardProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const [showMenu, setShowMenu] = useState(false);
@@ -57,6 +58,11 @@ export function TaskCard({ task, onPress, onCheckPress, onRemovePress, onMorePre
     const handleCheck = () => {
         setShowMenu(false);
         onCheckPress?.();
+    };
+
+    const handleEdit = () => {
+        setShowMenu(false);
+        onEditPress?.();
     };
 
     const handleRemove = () => {
@@ -129,6 +135,15 @@ export function TaskCard({ task, onPress, onCheckPress, onRemovePress, onMorePre
                                         >
                                             <ThemedText style={styles.menuText}>
                                                 {task.isCompleted ? "Mark as Unchecked" : "Mark as Checked"}
+                                            </ThemedText>
+                                        </TouchableOpacity>
+                                        <View style={[styles.menuSeparator, { backgroundColor: colors.secondary + "20" }]} />
+                                        <TouchableOpacity
+                                            style={styles.menuItem}
+                                            onPress={handleEdit}
+                                        >
+                                            <ThemedText style={styles.menuText}>
+                                                Edit Task
                                             </ThemedText>
                                         </TouchableOpacity>
                                         <View style={[styles.menuSeparator, { backgroundColor: colors.secondary + "20" }]} />

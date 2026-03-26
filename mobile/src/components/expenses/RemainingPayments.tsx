@@ -2,8 +2,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, View, TouchableOpacity, useWindowDimensions } from "react-native";
 
 interface PaymentItem {
     id: string;
@@ -15,6 +16,11 @@ interface PaymentItem {
 export function RemainingPayments() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const { width } = useWindowDimensions();
+    const router = useRouter();
+    
+    // Scale card dynamically to fit cleanly on screen while maxing out safely around 340px
+    const cardWidth = Math.min(width * 0.85, 340);
 
     const payments: PaymentItem[] = [
         { id: "1", title: "Bridal Boquete", amount: 500000, dueDate: "25th Jan. 2026" },
@@ -29,17 +35,42 @@ export function RemainingPayments() {
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                 {payments.map((item) => (
-                    <View key={item.id} style={[styles.card, { backgroundColor: colors.expenseRedBg }]}>
-                        <View style={styles.leftContent}>
-                            <View style={styles.iconContainer}>
-                                <MaterialCommunityIcons name="credit-card-clock-outline" size={24} color={colors.expenseRed} />
+                    <View key={item.id} style={[styles.card, { width: cardWidth, backgroundColor: colors.card }]}>
+                        <View style={styles.topRow}>
+                            <View style={styles.leftContent}>
+                                <View style={[styles.iconContainer, { backgroundColor: colors.expenseRed + '15' }]}>
+                                    <MaterialCommunityIcons name="credit-card-clock-outline" size={24} color={colors.expenseRed} />
+                                </View>
+                                <View style={styles.textContainer}>
+                                    <ThemedText style={styles.cardTitle} numberOfLines={1}>{item.title}</ThemedText>
+                                </View>
                             </View>
-                            <View style={styles.textContainer}>
-                                <ThemedText style={styles.cardTitle} lightColor={colors.expenseRed} darkColor={colors.expenseRed}>{item.title}</ThemedText>
-                                <ThemedText style={styles.dueDate} lightColor={colors.expenseRed + '99'} darkColor={colors.expenseRed + '99'}>Due : {item.dueDate}</ThemedText>
+                            <ThemedText style={styles.amount}>
+                                Rs. {item.amount.toLocaleString()}
+                            </ThemedText>
+                        </View>
+                        
+                        {/* Bottom Row: Due Date details mapped left, with inline edit/delete actions right */}
+                        <View style={[styles.actionsRow, { borderTopColor: colors.border }]}>
+                            <View style={styles.dueDateContainer}>
+                                <MaterialCommunityIcons name="calendar-clock-outline" size={16} color={colors.text} style={{ opacity: 0.5 }} />
+                                <ThemedText style={[styles.dueDate, { opacity: 0.5 }]}>Due: {item.dueDate}</ThemedText>
+                            </View>
+                            
+                            <View style={styles.actionGroup}>
+                                <TouchableOpacity style={styles.iconAction}>
+                                    <MaterialCommunityIcons name="trash-can-outline" size={22} color={colors.error} />
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                    style={[styles.editButton, { backgroundColor: colors.expenseRed + '15' }]}
+                                    onPress={() => router.push({ pathname: "/(forms)/expenses/edit", params: { id: item.id } } as any)}
+                                >
+                                    <ThemedText style={[styles.editText, { color: colors.expenseRed }]}>
+                                        Edit
+                                    </ThemedText>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                        <ThemedText style={styles.amount} lightColor={colors.expenseRed} darkColor={colors.expenseRed}>Rs. {item.amount.toLocaleString()}</ThemedText>
                     </View>
                 ))}
             </ScrollView>
@@ -72,9 +103,11 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     card: {
-        width: 300,
+        // Dynamic width managed natively via useWindowDimensions
         padding: 16,
         borderRadius: 20,
+    },
+    topRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
@@ -82,24 +115,50 @@ const styles = StyleSheet.create({
     leftContent: {
         flexDirection: "row",
         alignItems: "center",
+        flex: 1, // Enforce flexible text bounds to avoid blocking the amount
+        marginRight: 10,
         gap: 12,
     },
     iconContainer: {
         width: 44,
         height: 44,
         borderRadius: 22,
-        backgroundColor: "#FFFFFF",
         justifyContent: "center",
         alignItems: "center",
-        // Subtle shadow for icon
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 5,
-        elevation: 1,
     },
     textContainer: {
+        flex: 1,
         gap: 2,
+    },
+    actionsRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        borderTopWidth: 1,
+        marginTop: 16,
+        paddingTop: 12,
+    },
+    dueDateContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+    },
+    actionGroup: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+    },
+    iconAction: {
+        padding: 4,
+    },
+    editButton: {
+        paddingHorizontal: 20,
+        paddingVertical: 8,
+        borderRadius: 10,
+    },
+    editText: {
+        fontSize: 14,
+        fontWeight: "700",
     },
     cardTitle: {
         fontSize: 16,

@@ -5,7 +5,7 @@ import {
     View,
     Switch,
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { AddExpenseHeader } from '@/components/expenses/form/AddExpenseHeader';
 import { PaymentDetails } from '@/components/expenses/form/PaymentDetails';
@@ -16,36 +16,43 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { useAppTheme } from '@/context/ThemeContext';
 import { Colors } from '@/constants/Colors';
 
-export default function AddExpenseScreen() {
+export default function EditExpenseScreen() {
+    // --- Setup Context Hooks ---
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    
+    // Safely capture payload from navigating element
+    const { id } = useLocalSearchParams();
 
-    const [amount, setAmount] = useState('40,000.00');
-    const [chosenCategory, setChosenCategory] = useState('Food');
+    // --- State Management ---
+    // Pre-populate utilizing mocked fetch response states mapped via `{id}`
+    const [amount, setAmount] = useState('500,000.00'); // Seed dummy edit data
+    const [chosenCategory, setChosenCategory] = useState('Clothing');
     const [splitEnabled, setSplitEnabled] = useState(false);
-    const [paidBy, setPaidBy] = useState<'Me' | 'Partner'>('Me');
-    const [notes, setNotes] = useState('');
+    const [paidBy, setPaidBy] = useState<'Me' | 'Partner'>('Partner');
+    const [notes, setNotes] = useState('Bridal designer fee installment');
     const [isPaid, setIsPaid] = useState(false);
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Stack.Screen options={{ headerShown: false }} />
-            <AddExpenseHeader />
+            {/* Header repurposed utilizing parameterized title */}
+            <AddExpenseHeader title="Edit Expense" />
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
-                {/* Payment Details Section */}
+                {/* 1. Payment Details Section */}
                 <PaymentDetails amount={amount} />
 
-                {/* Choose Payment Category Section */}
+                {/* 2. Choose Payment Category Section */}
                 <CategorySelector
                     chosenCategory={chosenCategory}
                     onSelectCategory={setChosenCategory}
                 />
 
-                {/* Payer & Split Section */}
+                {/* 3. Payer & Split Section */}
                 <PayerSplit
                     paidBy={paidBy}
                     onPaidByChange={setPaidBy}
@@ -53,7 +60,7 @@ export default function AddExpenseScreen() {
                     onSplitChange={setSplitEnabled}
                 />
 
-                {/* Already Paid Toggle Card */}
+                {/* 4. Resolved Payment Verification Toggle */}
                 <View style={[styles.card, { backgroundColor: colors.card }]}>
                     <View style={styles.toggleRow}>
                         <View style={styles.toggleTextContainer}>
@@ -72,20 +79,24 @@ export default function AddExpenseScreen() {
                     </View>
                 </View>
 
-                {/* Notes Section */}
+                {/* 5. Supplemental Data Section */}
                 <ExpenseNotes notes={notes} onNotesChange={setNotes} />
 
+                {/* 6. Form Submission Trigger */}
                 <PrimaryButton
-                    title="Add Expense"
-                    onPress={() => { }}
+                    title="Update Expense"
+                    onPress={() => {
+                        console.log('Update expense payload fired:', { id, amount, isPaid, notes });
+                    }}
                     style={styles.saveButton}
-                    icon="add-circle-outline"
+                    icon="save-outline"
                 />
             </ScrollView>
         </View>
     );
 }
 
+// Ensure style constraints remain strictly detached targeting performance tracking optimizations
 const styles = StyleSheet.create({
     container: {
         flex: 1,

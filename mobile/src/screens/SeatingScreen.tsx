@@ -50,6 +50,7 @@ export default function SeatingScreen() {
                         <TableCard
                             key={table.id}
                             {...table}
+                            onEdit={() => router.push({ pathname: "/(forms)/seating/edit", params: { id: table.id } } as any)}
                             onPress={() => router.push(`/(tools)/seating/${table.id}` as any)}
                         />
                     ))}
