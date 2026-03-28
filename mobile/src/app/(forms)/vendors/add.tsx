@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { AddVendorHeader } from '@/components/vendors/form/AddVendorHeader';
+import { VendorCategorySection, VendorCategory } from '@/components/vendors/form/VendorCategorySection';
 import { VendorDetailsForm } from '@/components/vendors/form/VendorDetailsForm';
 import { ContactInfoForm } from '@/components/vendors/form/ContactInfoForm';
 import { PaymentSchedule } from '@/components/vendors/form/PaymentSchedule';
@@ -14,6 +15,7 @@ export default function VendorAddScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
+    // State management for form fields
     const [vendorName, setVendorName] = useState('');
     const [companyName, setCompanyName] = useState('');
     const [address, setAddress] = useState('');
@@ -22,6 +24,7 @@ export default function VendorAddScreen() {
     const [totalAmount, setTotalAmount] = useState('0.00');
     const [notes, setNotes] = useState('');
     const [reminderEnabled, setReminderEnabled] = useState(false);
+    const [category, setCategory] = useState<VendorCategory>("Venue"); // Default category selection
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -31,7 +34,15 @@ export default function VendorAddScreen() {
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
             >
+                {/* Section: Select Category */}
+                <VendorCategorySection
+                    category={category}
+                    onCategoryChange={setCategory}
+                />
+
+                {/* Section: Vendor Details */}
                 <VendorDetailsForm
                     vendorName={vendorName}
                     onVendorNameChange={setVendorName}

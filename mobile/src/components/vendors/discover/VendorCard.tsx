@@ -2,10 +2,12 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface VendorCardProps {
+    id: string; // Added id for routing
     name: string;
     category: string;
     rating: number;
@@ -13,12 +15,21 @@ interface VendorCardProps {
     icon: string;
 }
 
-export function VendorCard({ name, category, rating, image, icon }: VendorCardProps) {
+export function VendorCard({ id, name, category, rating, image, icon }: VendorCardProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const router = useRouter();
+
+    const handlePress = () => {
+        router.push(`/(tools)/vendors/${id}` as any);
+    };
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <TouchableOpacity 
+            style={[styles.card, { backgroundColor: colors.card }]}
+            onPress={handlePress}
+            activeOpacity={0.9}
+        >
             {/* Vendor Image */}
             <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
 
@@ -64,7 +75,7 @@ export function VendorCard({ name, category, rating, image, icon }: VendorCardPr
                     </ThemedText>
                 </TouchableOpacity>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 
