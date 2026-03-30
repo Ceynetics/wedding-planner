@@ -5,6 +5,7 @@ import { VendorCategorySection, VendorCategory } from '@/components/vendors/form
 import { VendorDetailsForm } from '@/components/vendors/form/VendorDetailsForm';
 import { ContactInfoForm } from '@/components/vendors/form/ContactInfoForm';
 import { PaymentSchedule } from '@/components/vendors/form/PaymentSchedule';
+import { PaymentFrequencySection, PaymentFrequency } from '@/components/vendors/form/PaymentFrequencySection';
 import { NotesAndReminder } from '@/components/vendors/form/NotesAndReminder';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { Colors } from '@/constants/Colors';
@@ -25,6 +26,7 @@ export default function VendorAddScreen() {
     const [notes, setNotes] = useState('');
     const [reminderEnabled, setReminderEnabled] = useState(false);
     const [category, setCategory] = useState<VendorCategory>("Venue"); // Default category selection
+    const [frequency, setFrequency] = useState<PaymentFrequency>("One-time");
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -57,6 +59,12 @@ export default function VendorAddScreen() {
                     onEmailChange={setEmail}
                     phone={phone}
                     onPhoneChange={setPhone}
+                />
+
+                {/* Section: Payment Frequency Selection */}
+                <PaymentFrequencySection
+                    frequency={frequency}
+                    onFrequencyChange={setFrequency}
                 />
 
                 <PaymentSchedule
