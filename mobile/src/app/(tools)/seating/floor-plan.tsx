@@ -6,7 +6,8 @@ import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState, useRef } from "react";
+import { useSeatingTables } from "@/hooks/useSeatingTables";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { StyleSheet, TouchableOpacity, View, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -20,37 +21,34 @@ export default function FloorPlanScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
 
-    // Ref to access zoom methods in FloorCanvas
     const canvasRef = useRef<FloorCanvasRef>(null);
+    const { tables: apiTables, updatePosition } = useSeatingTables();
 
-    // Initial mock data with positions
-    const [tables, setTables] = useState([
-        { id: "1", name: "Head Table 1", description: "Table 1", currentGuests: 7, maxGuests: 10, isVip: true, x: 0, y: -150 },
-        { id: "2", name: "Guest Table 2", description: "Table 2", currentGuests: 5, maxGuests: 8, isVip: false, x: -120, y: 0 },
-        { id: "3", name: "Guest Table 3", description: "Table 3", currentGuests: 8, maxGuests: 8, isVip: false, x: 120, y: 0 },
-        { id: "4", name: "VIP Table 4", description: "Table 4", currentGuests: 6, maxGuests: 10, isVip: true, x: 0, y: 150 },
-    ]);
+    // Map API tables to canvas format
+    const tables = apiTables.map(t => ({
+        id: String(t.id),
+        name: t.name,
+        description: t.tableShape || 'Table',
+        currentGuests: t.seatedCount,
+        maxGuests: t.chairCount || 0,
+        isVip: t.isVip,
+        x: t.positionX || 0,
+        y: t.positionY || 0,
+    }));
 
-    const handleTableMove = (id: string, x: number, y: number) => {
-        setTables(prev => prev.map(t => t.id === id ? { ...t, x, y } : t));
-    };
+    // Debounce timer ref
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    /**
-     * handleAddTable - Adds a new table to the workspace.
-     */
+    const handleTableMove = useCallback((id: string, x: number, y: number) => {
+        // Debounced position persist to backend
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            updatePosition(Number(id), { positionX: x, positionY: y });
+        }, 300);
+    }, [updatePosition]);
+
     const handleAddTable = () => {
-        const newId = (tables.length + 1).toString();
-        const newTable = {
-            id: newId,
-            name: `Table ${newId}`,
-            description: `Table ${newId}`,
-            currentGuests: 0,
-            maxGuests: 8,
-            isVip: false,
-            x: 0,
-            y: 0,
-        };
-        setTables([...tables, newTable]);
+        router.push("/(forms)/seating/add" as any);
     };
 
     /**

@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AddGuestHeader } from '@/components/guests/form/AddGuestHeader';
 import { TextField } from '@/components/TextField';
@@ -15,12 +15,34 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { useAppTheme } from '@/context/ThemeContext';
 import { Colors } from '@/constants/Colors';
+import { useGuests } from '@/hooks/useGuests';
+import { extractErrorMessage } from '@/utils/errors';
+import { required, email as emailValidator, phone as phoneValidator } from '@/utils/validation';
+import type { GuestSide, GuestCategory, AddressStyle } from '@/types/api';
 
 import { TableSelectorModal } from '@/components/guests/form/TableSelectorModal';
 
 export default function AddGuestScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const router = useRouter();
+    const { createGuest } = useGuests();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [errors, setErrors] = useState<{ guestName?: string; phone?: string; email?: string }>({});
+    const [guestName, setGuestName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [notes, setNotes] = useState('');
+
+    const validateForm = () => {
+        const newErrors: typeof errors = {};
+        newErrors.guestName = required(guestName, 'Guest name');
+        if (phone) newErrors.phone = phoneValidator(phone);
+        if (email) newErrors.email = emailValidator(email);
+        setErrors(newErrors);
+        return !newErrors.guestName && !newErrors.phone && !newErrors.email;
+    };
 
     const [side, setSide] = useState<'Bride' | 'Groom'>('Bride');
     const [groupType, setGroupType] = useState<'Family' | 'Individual'>('Family');
@@ -54,6 +76,9 @@ export default function AddGuestScreen() {
                     label="Guest Name"
                     placeholder="e.g : Joe Charles"
                     labelStyle={labelStyle}
+                    value={guestName}
+                    onChangeText={(v) => { setGuestName(v); setErrors(prev => ({ ...prev, guestName: undefined })); }}
+                    error={errors.guestName}
                 />
 
                 {/* Side Toggle */}
@@ -118,14 +143,20 @@ export default function AddGuestScreen() {
                     <ThemedText style={labelStyle}>Contact Details</ThemedText>
                     <TextField
                         placeholder="Phone"
+                        value={phone}
+                        onChangeText={(v) => { setPhone(v); setErrors(prev => ({ ...prev, phone: undefined })); }}
                         leftIcon={<Ionicons name="call" size={20} color={colors.secondary} />}
                         keyboardType="phone-pad"
+                        error={errors.phone}
                     />
                     <TextField
                         placeholder="Email"
+                        value={email}
+                        onChangeText={(v) => { setEmail(v); setErrors(prev => ({ ...prev, email: undefined })); }}
                         leftIcon={<Ionicons name="mail" size={20} color={colors.secondary} />}
                         keyboardType="email-address"
                         autoCapitalize="none"
+                        error={errors.email}
                     />
                 </View>
 
@@ -227,6 +258,8 @@ export default function AddGuestScreen() {
                     <TextField
                         label="Special Notes (Optional)"
                         placeholder="Add more Details If Needed"
+                        value={notes}
+                        onChangeText={setNotes}
                         multiline
                         numberOfLines={4}
                         labelStyle={labelStyle}
@@ -235,9 +268,38 @@ export default function AddGuestScreen() {
                     />
                 </View>
 
+                {error ? (
+                    <ThemedText style={{ color: colors.error, textAlign: 'center', marginBottom: 12 }}>{error}</ThemedText>
+                ) : null}
+
                 <PrimaryButton
                     title="Save Guest"
-                    onPress={() => { }}
+                    loading={loading}
+                    onPress={async () => {
+                        if (!validateForm()) return;
+                        setLoading(true);
+                        setError('');
+                        try {
+                            await createGuest({
+                                name: guestName,
+                                side: side.toUpperCase() as GuestSide,
+                                category: category.toUpperCase() as GuestCategory,
+                                phone: phone || undefined,
+                                email: email || undefined,
+                                adults: adults || 1,
+                                children: kids || 0,
+                                dietary: isVegetarian ? 'Vegetarian' : undefined,
+                                isVip: isVip,
+                                notes: notes || undefined,
+                                newHouseholdStyle: (groupType === 'Family' ? 'FAMILY' : 'INDIVIDUAL') as AddressStyle,
+                            });
+                            router.back();
+                        } catch (e) {
+                            setError(extractErrorMessage(e));
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
                     style={styles.saveButton}
                 />
             </ScrollView>

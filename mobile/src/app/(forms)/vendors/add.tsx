@@ -10,11 +10,18 @@ import { NotesAndReminder } from '@/components/vendors/form/NotesAndReminder';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
-import { Stack } from 'expo-router';
+import { useVendors } from '@/hooks/useVendors';
+import type { VendorCategory as VendorCategoryType, PaymentFrequency as PaymentFrequencyType } from '@/types/api';
+import { extractErrorMessage } from '@/utils/errors';
+import { required, email as emailValidator, phone as phoneValidator } from '@/utils/validation';
+import { ThemedText } from '@/components/ThemedText';
+import { Stack, useRouter } from 'expo-router';
 
 export default function VendorAddScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const router = useRouter();
+    const { createHiredVendor } = useVendors();
 
     // State management for form fields
     const [vendorName, setVendorName] = useState('');
@@ -27,6 +34,19 @@ export default function VendorAddScreen() {
     const [reminderEnabled, setReminderEnabled] = useState(false);
     const [category, setCategory] = useState<VendorCategory>("Venue"); // Default category selection
     const [frequency, setFrequency] = useState<PaymentFrequency>("One-time");
+    const [errors, setErrors] = useState<{ vendorName?: string; email?: string; phone?: string }>({});
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const validateForm = (): boolean => {
+        const newErrors: { vendorName?: string; email?: string; phone?: string } = {};
+        newErrors.vendorName = required(vendorName, 'Vendor name');
+        newErrors.email = emailValidator(email);
+        newErrors.phone = phoneValidator(phone);
+        const hasErrors = Object.values(newErrors).some(Boolean);
+        setErrors(hasErrors ? newErrors : {});
+        return !hasErrors;
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -47,7 +67,8 @@ export default function VendorAddScreen() {
                 {/* Section: Vendor Details */}
                 <VendorDetailsForm
                     vendorName={vendorName}
-                    onVendorNameChange={setVendorName}
+                    onVendorNameChange={(v) => { setVendorName(v); setErrors(prev => ({ ...prev, vendorName: undefined })); }}
+                    vendorNameError={errors.vendorName}
                     companyName={companyName}
                     onCompanyNameChange={setCompanyName}
                     address={address}
@@ -56,9 +77,11 @@ export default function VendorAddScreen() {
 
                 <ContactInfoForm
                     email={email}
-                    onEmailChange={setEmail}
+                    onEmailChange={(v) => { setEmail(v); setErrors(prev => ({ ...prev, email: undefined })); }}
+                    emailError={errors.email}
                     phone={phone}
-                    onPhoneChange={setPhone}
+                    onPhoneChange={(v) => { setPhone(v); setErrors(prev => ({ ...prev, phone: undefined })); }}
+                    phoneError={errors.phone}
                 />
 
                 {/* Section: Payment Frequency Selection */}
@@ -79,9 +102,39 @@ export default function VendorAddScreen() {
                     onReminderChange={setReminderEnabled}
                 />
 
+                {error ? <ThemedText style={{ color: 'red', textAlign: 'center', marginBottom: 12 }}>{error}</ThemedText> : null}
+
                 <PrimaryButton
                     title="Save Vendor"
-                    onPress={() => { }}
+                    onPress={async () => {
+                        if (!validateForm()) return;
+                        setLoading(true);
+                        setError('');
+                        try {
+                            const freqMap: Record<string, string> = {
+                                'One-time': 'ONE_TIME', 'Monthly': 'MONTHLY', 'Quarterly': 'QUARTERLY',
+                                'Bi-annual': 'BI_ANNUAL', 'Annual': 'ANNUAL'
+                            };
+                            await createHiredVendor({
+                                vendorName,
+                                companyName,
+                                category: category.toUpperCase() as VendorCategoryType,
+                                address,
+                                email,
+                                phone,
+                                totalAmount: totalAmount ? parseFloat(totalAmount) : undefined,
+                                notes,
+                                reminderEnabled,
+                                frequency: (freqMap[frequency] || 'ONE_TIME') as PaymentFrequencyType,
+                            });
+                            router.back();
+                        } catch (e) {
+                            setError(extractErrorMessage(e));
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                    loading={loading}
                     icon="save-outline"
                     style={styles.saveButton}
                 />

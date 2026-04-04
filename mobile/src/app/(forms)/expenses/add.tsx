@@ -5,7 +5,7 @@ import {
     View,
     Switch,
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { AddExpenseHeader } from '@/components/expenses/form/AddExpenseHeader';
 import { PaymentDetails } from '@/components/expenses/form/PaymentDetails';
@@ -15,17 +15,36 @@ import { ExpenseNotes } from '@/components/expenses/form/ExpenseNotes';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { useAppTheme } from '@/context/ThemeContext';
 import { Colors } from '@/constants/Colors';
+import { useExpenses } from '@/hooks/useExpenses';
+import { extractErrorMessage } from '@/utils/errors';
+import { required, positiveNumber } from '@/utils/validation';
+import type { ExpenseCategory, Payer } from '@/types/api';
 
 export default function AddExpenseScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const router = useRouter();
+    const { createExpense } = useExpenses();
 
-    const [amount, setAmount] = useState('40,000.00');
+    const [title, setTitle] = useState('');
+    const [amount, setAmount] = useState('');
     const [chosenCategory, setChosenCategory] = useState('Food');
     const [splitEnabled, setSplitEnabled] = useState(false);
     const [paidBy, setPaidBy] = useState<'Me' | 'Partner'>('Me');
     const [notes, setNotes] = useState('');
     const [isPaid, setIsPaid] = useState(false);
+    const [errors, setErrors] = useState<{ title?: string; amount?: string }>({});
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const validateForm = (): boolean => {
+        const newErrors: { title?: string; amount?: string } = {};
+        newErrors.title = required(title, 'Expense title');
+        newErrors.amount = positiveNumber(amount, 'Amount');
+        const hasErrors = Object.values(newErrors).some(Boolean);
+        setErrors(hasErrors ? newErrors : {});
+        return !hasErrors;
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -37,7 +56,14 @@ export default function AddExpenseScreen() {
                 contentContainerStyle={styles.scrollContent}
             >
                 {/* Payment Details Section */}
-                <PaymentDetails amount={amount} />
+                <PaymentDetails
+                    amount={amount}
+                    onAmountChange={(v) => { setAmount(v); setErrors(prev => ({ ...prev, amount: undefined })); }}
+                    title={title}
+                    onTitleChange={(v) => { setTitle(v); setErrors(prev => ({ ...prev, title: undefined })); }}
+                    amountError={errors.amount}
+                    titleError={errors.title}
+                />
 
                 {/* Choose Payment Category Section */}
                 <CategorySelector
@@ -75,9 +101,32 @@ export default function AddExpenseScreen() {
                 {/* Notes Section */}
                 <ExpenseNotes notes={notes} onNotesChange={setNotes} />
 
+                {error ? <ThemedText style={{ color: 'red', textAlign: 'center', marginBottom: 12 }}>{error}</ThemedText> : null}
+
                 <PrimaryButton
                     title="Add Expense"
-                    onPress={() => { }}
+                    onPress={async () => {
+                        if (!validateForm()) return;
+                        setLoading(true);
+                        setError('');
+                        try {
+                            await createExpense({
+                                title,
+                                amount: parseFloat(amount.replace(/,/g, '')) || 0,
+                                category: chosenCategory.toUpperCase() as ExpenseCategory,
+                                paidBy: (paidBy === 'Me' ? 'ME' : 'PARTNER') as Payer,
+                                isPaid,
+                                splitEnabled,
+                                notes: notes || undefined,
+                            });
+                            router.back();
+                        } catch (e) {
+                            setError(extractErrorMessage(e));
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                    loading={loading}
                     style={styles.saveButton}
                     icon="add-circle-outline"
                 />

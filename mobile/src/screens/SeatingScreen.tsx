@@ -5,6 +5,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useSeatingTables } from "@/hooks/useSeatingTables";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -17,14 +18,17 @@ export default function SeatingScreen() {
     const insets = useSafeAreaInsets();
     const router = useRouter();
 
+    const { tables: apiTables, stats, isLoading } = useSeatingTables();
     const [searchQuery, setSearchQuery] = useState("");
 
-    const tables = [
-        { id: "1", name: "Head Table", description: "Table 1", currentGuests: 7, maxGuests: 10, isVip: true },
-        { id: "2", name: "Head Table", description: "Table 2", currentGuests: 7, maxGuests: 10, isVip: false },
-        { id: "3", name: "Head Table", description: "Table 3", currentGuests: 7, maxGuests: 10, isVip: false },
-        { id: "4", name: "Head Table", description: "Table 4", currentGuests: 7, maxGuests: 10, isVip: true },
-    ];
+    const tables = apiTables.map((t) => ({
+        id: String(t.id),
+        name: t.name,
+        description: t.name,
+        currentGuests: t.seatedCount,
+        maxGuests: t.chairCount || 0,
+        isVip: t.isVip,
+    }));
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
@@ -32,8 +36,8 @@ export default function SeatingScreen() {
                 <SeatingHeader />
 
                 <SeatingStats
-                    totalGuests={120}
-                    totalSeats={135}
+                    totalGuests={stats?.filledChairs ?? 0}
+                    totalSeats={stats?.totalChairs ?? 0}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     onFilterPress={() => console.log("Filter pressed")}

@@ -10,18 +10,34 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
+import { useSeatingTables } from '@/hooks/useSeatingTables';
+import type { TableShape } from '@/types/api';
+import { extractErrorMessage } from '@/utils/errors';
+import { required } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 
 export default function SeatingAddScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const router = useRouter();
+    const { createTable } = useSeatingTables();
 
     const [tableName, setTableName] = useState('');
     const [tableShape, setTableShape] = useState<'curved' | 'square'>('curved');
     const [isVip, setIsVip] = useState(false);
     const [capacity, setCapacity] = useState(5);
     const [guests, setGuests] = useState<Array<{ id: string; name: string; relation: string; avatar?: string }>>([]);
+    const [errors, setErrors] = useState<{ tableName?: string }>({});
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const validateForm = (): boolean => {
+        const newErrors: { tableName?: string } = {};
+        newErrors.tableName = required(tableName, 'Table name');
+        const hasErrors = Object.values(newErrors).some(Boolean);
+        setErrors(hasErrors ? newErrors : {});
+        return !hasErrors;
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -34,7 +50,8 @@ export default function SeatingAddScreen() {
             >
                 <TableNameInput
                     tableName={tableName}
-                    onTableNameChange={setTableName}
+                    onTableNameChange={(v) => { setTableName(v); setErrors(prev => ({ ...prev, tableName: undefined })); }}
+                    error={errors.tableName}
                 />
 
                 <TableShapeSelector
@@ -65,13 +82,30 @@ export default function SeatingAddScreen() {
                     maxGuests={Math.round(capacity)}
                 />
 
+                {error ? <ThemedText style={{ color: 'red', textAlign: 'center', marginBottom: 12 }}>{error}</ThemedText> : null}
+
                 <PrimaryButton
                     title="Create Table"
-                    onPress={() => {
-                        // TODO: Handle table creation
-                        console.log('Create table:', { tableName, tableShape, isVip, capacity, guests });
-                        router.back();
+                    onPress={async () => {
+                        if (!validateForm()) return;
+                        setLoading(true);
+                        setError('');
+                        try {
+                            const shapeMap: Record<string, string> = { 'curved': 'ROUND', 'square': 'SQUARE' };
+                            await createTable({
+                                name: tableName,
+                                tableShape: (shapeMap[tableShape] || 'ROUND') as TableShape,
+                                chairCount: capacity,
+                                isVip: isVip,
+                            });
+                            router.back();
+                        } catch (e) {
+                            setError(extractErrorMessage(e));
+                        } finally {
+                            setLoading(false);
+                        }
                     }}
+                    loading={loading}
                     style={styles.createButton}
                 />
 

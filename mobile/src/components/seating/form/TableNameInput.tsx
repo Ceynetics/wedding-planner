@@ -8,11 +8,13 @@ import { useAppTheme } from '@/context/ThemeContext';
 interface TableNameInputProps {
     tableName: string;
     onTableNameChange: (text: string) => void;
+    error?: string;
 }
 
 export function TableNameInput({
     tableName,
     onTableNameChange,
+    error: errorProp,
 }: TableNameInputProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
@@ -24,6 +26,7 @@ export function TableNameInput({
                 placeholder="Example Table"
                 value={tableName}
                 onChangeText={onTableNameChange}
+                error={errorProp}
                 containerStyle={styles.input}
             />
         </View>

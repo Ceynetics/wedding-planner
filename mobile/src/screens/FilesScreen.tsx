@@ -6,16 +6,19 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { fileApi } from "@/api/endpoints";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import type { FileResponse } from "@/types/api";
 
-const MOCK_FOLDERS = (colors: any) => [
+const FOLDER_META = (colors: any) => [
     {
         id: "1",
         name: "Contracts",
-        fileCount: 12,
+        folder: "CONTRACTS" as const,
         icon: "handshake-outline",
         iconBgColor: colors.expensePurple + "15",
         iconColor: colors.expensePurple,
@@ -23,7 +26,7 @@ const MOCK_FOLDERS = (colors: any) => [
     {
         id: "2",
         name: "Invoices / Bills",
-        fileCount: 12,
+        folder: "INVOICES" as const,
         icon: "file-document-outline",
         iconBgColor: colors.success + "15",
         iconColor: colors.success,
@@ -31,7 +34,7 @@ const MOCK_FOLDERS = (colors: any) => [
     {
         id: "3",
         name: "Invitations",
-        fileCount: 12,
+        folder: "INVITATIONS" as const,
         icon: "palette-outline",
         iconBgColor: colors.expensePink + "15",
         iconColor: colors.expensePink,
@@ -39,26 +42,53 @@ const MOCK_FOLDERS = (colors: any) => [
     {
         id: "4",
         name: "Other Files",
-        fileCount: 12,
+        folder: "OTHER" as const,
         icon: "image-outline",
         iconBgColor: colors.warning + "15",
         iconColor: colors.warning,
     },
 ];
 
-const MOCK_RECENT_FILES = [
-    { id: "1", name: "Hotel Payments", module: "module name", size: "file size" },
-    { id: "2", name: "Hotel Payments", module: "module name", size: "file size" },
-    { id: "3", name: "Hotel Payments", module: "module name", size: "file size" },
-    { id: "4", name: "Hotel Payments", module: "module name", size: "file size" },
-    { id: "5", name: "Hotel Payments", module: "module name", size: "file size" },
-];
+function formatFileSize(bytes?: number): string {
+    if (!bytes) return "—";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 export default function FilesScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
-    const folders = MOCK_FOLDERS(colors);
+    const { workspace } = useWorkspace();
+    const [files, setFiles] = useState<FileResponse[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (workspace) {
+            setIsLoading(true);
+            fileApi.list(workspace.id)
+                .then(({ data }) => setFiles(data))
+                .catch(() => {})
+                .finally(() => setIsLoading(false));
+        }
+    }, [workspace]);
+
+    const folderMeta = FOLDER_META(colors);
+    const folders = folderMeta.map((fm) => ({
+        ...fm,
+        fileCount: files.filter((f) => f.folder === fm.folder).length,
+    }));
+
+    const recentFiles = [...files]
+        .sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""))
+        .slice(0, 5)
+        .map((f) => ({
+            id: String(f.id),
+            name: f.name,
+            module: f.module ?? f.folder,
+            size: formatFileSize(f.size),
+        }));
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
@@ -87,9 +117,17 @@ export default function FilesScreen() {
                 </View>
 
                 <View style={styles.recentList}>
-                    {MOCK_RECENT_FILES.map((file) => (
-                        <RecentFileItem key={file.id} {...file} />
-                    ))}
+                    {isLoading ? (
+                        <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: 16 }} />
+                    ) : recentFiles.length > 0 ? (
+                        recentFiles.map((file) => (
+                            <RecentFileItem key={file.id} {...file} />
+                        ))
+                    ) : (
+                        <ThemedText style={{ textAlign: "center", marginTop: 16, opacity: 0.5 }}>
+                            No files yet
+                        </ThemedText>
+                    )}
                 </View>
             </ScrollView>
 

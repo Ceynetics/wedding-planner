@@ -1,7 +1,13 @@
 import { AddTaskHeader } from "@/components/tasks/form/AddTaskHeader";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { taskApi } from "@/api/endpoints";
+import { useTasks } from "@/hooks/useTasks";
+import { extractErrorMessage } from "@/utils/errors";
+import { displayEnum } from "@/utils/enums";
+import type { TaskPriority, TaskCategory } from "@/types/api";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState, useEffect } from "react";
 import {
     ScrollView,
@@ -20,15 +26,30 @@ export default function EditTaskScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const { id } = useLocalSearchParams();
+    const router = useRouter();
+    const { workspace } = useWorkspace();
+    const { updateTask } = useTasks();
 
-    // Form State (Mocked editing state based on ID passed in)
-    const [taskName, setTaskName] = useState("Book Hotel");
-    const [dueDate, setDueDate] = useState<Date | null>(new Date());
+    const [taskName, setTaskName] = useState("");
+    const [dueDate, setDueDate] = useState<Date | null>(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [category, setCategory] = useState<"Venue" | "Food" | "Attire" | "Flowers">("Venue");
     const [priority, setPriority] = useState<"High" | "Medium" | "Low">("High");
     const [isCompleted, setIsCompleted] = useState(false);
-    const [notes, setNotes] = useState("We need to confirm the venue booking.");
+    const [notes, setNotes] = useState("");
+
+    useEffect(() => {
+        if (workspace && id) {
+            taskApi.getById(workspace.id, Number(id)).then(({ data }) => {
+                setTaskName(data.title);
+                if (data.dueDate) setDueDate(new Date(data.dueDate));
+                setCategory(displayEnum(data.category) as any || "Venue");
+                setPriority(displayEnum(data.priority) as any || "High");
+                setIsCompleted(data.isCompleted);
+                setNotes(data.notes || "");
+            }).catch(() => {});
+        }
+    }, [workspace, id]);
 
     const formatDate = (date: Date) => {
         return date.toLocaleDateString("en-US", {
@@ -38,15 +59,20 @@ export default function EditTaskScreen() {
         });
     };
 
-    const handleUpdateTask = () => {
-        console.log("Updating Task ID: ", id, {
-            taskName,
-            dueDate,
-            category,
-            priority,
-            isCompleted,
-            notes
-        });
+    const handleUpdateTask = async () => {
+        try {
+            await updateTask(Number(id), {
+                title: taskName,
+                dueDate: dueDate ? dueDate.toISOString().split('T')[0] : undefined,
+                category: category.toUpperCase() as TaskCategory,
+                priority: priority.toUpperCase() as TaskPriority,
+                isCompleted,
+                notes: notes || undefined,
+            });
+            router.back();
+        } catch (e) {
+            alert(extractErrorMessage(e));
+        }
     };
 
     return (

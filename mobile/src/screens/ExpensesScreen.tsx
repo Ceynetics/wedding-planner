@@ -6,6 +6,7 @@ import { RemainingPayments } from "@/components/expenses/RemainingPayments";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useExpenses } from "@/hooks/useExpenses";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -17,13 +18,14 @@ export default function ExpensesScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
+    const { summary, isLoading } = useExpenses();
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
             <View style={styles.fixedArea}>
                 <ExpenseHeader />
 
-                <BudgetSummary spent={40000} total={300000} left={150000} />
+                <BudgetSummary spent={summary?.totalSpent ?? 0} total={summary?.totalBudget ?? 0} left={summary?.remaining ?? 0} />
             </View>
 
             <ScrollView

@@ -3,6 +3,7 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileMenuItem, ProfileMenuSection } from "@/components/profile/ProfileMenuSection";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { useAuth } from "@/context/AuthContext";
 import { useAppTheme } from "@/context/ThemeContext";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -13,6 +14,7 @@ export default function ProfileScreen() {
     const { theme, toggleTheme } = useAppTheme();
     const colors = Colors[theme];
     const router = useRouter();
+    const { user, logout } = useAuth();
 
     const weddingDetails: ProfileMenuItem[] = [
         { id: "date", label: "Wedding Date", icon: "calendar-outline", onPress: () => { } },
@@ -47,8 +49,9 @@ export default function ProfileScreen() {
         },
     ];
 
-    const handleLogout = () => {
-        router.replace("/(auth)/login" as any);
+    const handleLogout = async () => {
+        await logout();
+        router.replace('/');
     };
 
     return (
@@ -56,8 +59,8 @@ export default function ProfileScreen() {
             {/* Fixed Header Section */}
             <View style={styles.fixedSection}>
                 <ProfileHeader
-                    name="John Michael"
-                    email="john@gmail.com"
+                    name={user?.fullName || 'User'}
+                    email={user?.email || ''}
                     onEditPress={() => router.push("/(forms)/profile/edit" as any)}
                 />
             </View>

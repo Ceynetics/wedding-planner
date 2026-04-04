@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
 import { CalendarWrapper, CalendarEvent } from '@/components/calendar/CalendarWrapper';
 import { EventList, EventItem } from '@/components/calendar/EventList';
+import { useCalendar } from '@/hooks/useCalendar';
 
 /**
  * Main screen for the Calendar tool.
@@ -23,6 +24,14 @@ export default function CalendarScreen() {
 
     // State for the month currently being viewed in the calendar (YYYY-MM-01)
     const [currentMonthId, setCurrentMonthId] = useState(selectedDate.substring(0, 7) + '-01');
+
+    const { events, isLoading, fetchEvents } = useCalendar();
+
+    // Fetch events whenever the viewed month changes
+    useEffect(() => {
+        const month = currentMonthId.substring(0, 7); // YYYY-MM
+        fetchEvents(month);
+    }, [currentMonthId, fetchEvents]);
 
     /**
      * Jump to previous month
@@ -50,27 +59,29 @@ export default function CalendarScreen() {
         setCurrentMonthId(date.toISOString().split('T')[0].substring(0, 7) + '-01');
     };
 
-    // Mock Events Data
-    const MOCK_EVENTS = useMemo(() => [
-        { id: '1', title: 'Pick up Wedding Dress', type: 'task', time: '10:00 AM', status: 'Pending', date: '2026-02-18' },
-        { id: '2', title: 'Payment for Venue', type: 'payment', amount: '$2,500', status: 'Pending', date: '2026-02-18' },
-        { id: '3', title: 'Review Guest List', type: 'task', time: '02:00 PM', status: 'Completed', date: '2026-02-20' },
-        { id: '4', title: 'Catering Final Payment', type: 'payment', amount: '$1,200', status: 'Pending', date: '2026-02-25' },
-        { id: '5', title: 'Valentine\'s Day', type: 'holiday', date: '2026-02-14' },
-        { id: '6', title: 'Wedding Day!', type: 'holiday', date: '2026-06-24' },
-    ] as (EventItem & { date: string })[], []);
+    // Map API events to the format expected by EventList and CalendarWrapper
+    const mappedEvents: (EventItem & { date: string })[] = useMemo(() => {
+        return events.map((e, index) => ({
+            id: e.referenceId != null ? String(e.referenceId) : `evt-${index}`,
+            title: e.title,
+            type: (e.type?.toLowerCase() as EventItem['type']) || 'task',
+            date: e.date,
+            amount: e.amount,
+            status: e.status as EventItem['status'],
+        }));
+    }, [events]);
 
     // Filter events for indicators in the calendar
     const calendarIndicators: CalendarEvent[] = useMemo(() => {
-        return MOCK_EVENTS.map(e => ({ date: e.date, type: e.type }));
-    }, [MOCK_EVENTS]);
+        return mappedEvents.map(e => ({ date: e.date, type: e.type }));
+    }, [mappedEvents]);
 
     // Filter events for the selected day list
     const insets = useSafeAreaInsets();
 
     const dayEvents = useMemo(() => {
-        return MOCK_EVENTS.filter(e => e.date === selectedDate);
-    }, [selectedDate, MOCK_EVENTS]);
+        return mappedEvents.filter(e => e.date === selectedDate);
+    }, [selectedDate, mappedEvents]);
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: 'transparent' }]}>

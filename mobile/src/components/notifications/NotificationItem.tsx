@@ -11,9 +11,10 @@ export interface NotificationItemProps {
     description: string;
     type: "payment" | "rsvp" | "alert" | "general";
     isRead: boolean;
+    onPress?: () => void;
 }
 
-export function NotificationItem({ title, description, type, isRead }: NotificationItemProps) {
+export function NotificationItem({ title, description, type, isRead, onPress }: NotificationItemProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
@@ -52,6 +53,7 @@ export function NotificationItem({ title, description, type, isRead }: Notificat
         <TouchableOpacity
             style={[styles.container, { backgroundColor: colors.card }]}
             activeOpacity={0.7}
+            onPress={onPress}
         >
             <View style={[styles.iconContainer, { backgroundColor: config.bg }]}>
                 <MaterialCommunityIcons name={config.name} size={24} color={config.color} />

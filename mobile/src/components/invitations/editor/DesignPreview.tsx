@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
+import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -8,7 +9,7 @@ import { useAppTheme } from '@/context/ThemeContext';
 interface Template {
     id: string;
     title: string;
-    image: string;
+    image?: string;
 }
 
 interface DesignPreviewProps {
@@ -52,11 +53,17 @@ export function DesignPreview({ templates, selectedTemplateId, onSelectTemplate 
                             { backgroundColor: colors.card },
                             selectedTemplateId === item.id && { borderColor: colors.primary, borderWidth: 2 }
                         ]}>
-                            <Image
-                                source={{ uri: item.image }}
-                                style={styles.thumbnail}
-                                contentFit="cover"
-                            />
+                            {item.image ? (
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={styles.thumbnail}
+                                    contentFit="cover"
+                                />
+                            ) : (
+                                <View style={[styles.thumbnail, { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.inputBackground }]}>
+                                    <Ionicons name="document-text-outline" size={24} color={colors.secondary} />
+                                </View>
+                            )}
                         </View>
                         <ThemedText style={[styles.templateTitle, { color: colors.text }]}>
                             {item.title}
@@ -67,11 +74,20 @@ export function DesignPreview({ templates, selectedTemplateId, onSelectTemplate 
 
             {/* Large Card Preview */}
             <View style={[styles.previewContainer, { backgroundColor: colors.card }]}>
-                <Image
-                    source={{ uri: selectedTemplate.image }}
-                    style={styles.mainImage}
-                    contentFit="cover"
-                />
+                {selectedTemplate?.image ? (
+                    <Image
+                        source={{ uri: selectedTemplate.image }}
+                        style={styles.mainImage}
+                        contentFit="cover"
+                    />
+                ) : (
+                    <View style={[styles.mainImage, { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.inputBackground }]}>
+                        <Ionicons name="document-text-outline" size={64} color={colors.secondary} />
+                        <ThemedText style={{ color: colors.secondary, marginTop: 12, fontSize: 16 }}>
+                            {selectedTemplate?.title || 'Select a template'}
+                        </ThemedText>
+                    </View>
+                )}
             </View>
         </View>
     );

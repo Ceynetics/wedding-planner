@@ -8,6 +8,7 @@ import { useAppTheme } from '@/context/ThemeContext';
 interface VendorDetailsFormProps {
     vendorName: string;
     onVendorNameChange: (text: string) => void;
+    vendorNameError?: string;
     companyName: string;
     onCompanyNameChange: (text: string) => void;
     address: string;
@@ -17,6 +18,7 @@ interface VendorDetailsFormProps {
 export function VendorDetailsForm({
     vendorName,
     onVendorNameChange,
+    vendorNameError,
     companyName,
     onCompanyNameChange,
     address,
@@ -40,6 +42,7 @@ export function VendorDetailsForm({
                     placeholder="e.g : Main Event"
                     value={vendorName}
                     onChangeText={onVendorNameChange}
+                    error={vendorNameError}
                     containerStyle={styles.inputSpacing}
                 />
 

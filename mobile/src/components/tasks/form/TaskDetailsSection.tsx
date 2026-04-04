@@ -10,6 +10,7 @@ import { DatePicker } from '@/components/DatePicker';
 interface TaskDetailsSectionProps {
     name: string;
     onNameChange: (text: string) => void;
+    nameError?: string;
     dueDate: Date | null;
     showDatePicker: boolean;
     onToggleDatePicker: (show: boolean) => void;
@@ -20,6 +21,7 @@ interface TaskDetailsSectionProps {
 export function TaskDetailsSection({
     name,
     onNameChange,
+    nameError,
     dueDate,
     showDatePicker,
     onToggleDatePicker,
@@ -45,6 +47,7 @@ export function TaskDetailsSection({
                     placeholder="What needs to be Done ?"
                     value={name}
                     onChangeText={onNameChange}
+                    error={nameError}
                     labelStyle={labelStyle}
                 />
             </View>

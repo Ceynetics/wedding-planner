@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ScrollView,
     StyleSheet,
     View,
     Switch,
 } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { AddExpenseHeader } from '@/components/expenses/form/AddExpenseHeader';
 import { PaymentDetails } from '@/components/expenses/form/PaymentDetails';
@@ -14,24 +14,45 @@ import { PayerSplit } from '@/components/expenses/form/PayerSplit';
 import { ExpenseNotes } from '@/components/expenses/form/ExpenseNotes';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { useAppTheme } from '@/context/ThemeContext';
+import { useWorkspace } from '@/context/WorkspaceContext';
 import { Colors } from '@/constants/Colors';
+import { expenseApi } from '@/api/endpoints';
+import { useExpenses } from '@/hooks/useExpenses';
+import { extractErrorMessage } from '@/utils/errors';
+import { displayEnum } from '@/utils/enums';
+import type { ExpenseCategory, Payer } from '@/types/api';
 
 export default function EditExpenseScreen() {
     // --- Setup Context Hooks ---
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     
-    // Safely capture payload from navigating element
     const { id } = useLocalSearchParams();
+    const router = useRouter();
+    const { workspace } = useWorkspace();
+    const { updateExpense } = useExpenses();
 
-    // --- State Management ---
-    // Pre-populate utilizing mocked fetch response states mapped via `{id}`
-    const [amount, setAmount] = useState('500,000.00'); // Seed dummy edit data
-    const [chosenCategory, setChosenCategory] = useState('Clothing');
+    const [title, setTitle] = useState('');
+    const [amount, setAmount] = useState('');
+    const [chosenCategory, setChosenCategory] = useState('Food');
     const [splitEnabled, setSplitEnabled] = useState(false);
-    const [paidBy, setPaidBy] = useState<'Me' | 'Partner'>('Partner');
-    const [notes, setNotes] = useState('Bridal designer fee installment');
+    const [paidBy, setPaidBy] = useState<'Me' | 'Partner'>('Me');
+    const [notes, setNotes] = useState('');
     const [isPaid, setIsPaid] = useState(false);
+
+    useEffect(() => {
+        if (workspace && id) {
+            expenseApi.getById(workspace.id, Number(id)).then(({ data }) => {
+                setTitle(data.title || '');
+                setAmount(data.amount?.toLocaleString() || '');
+                setChosenCategory(displayEnum(data.category) || 'Food');
+                setSplitEnabled(data.splitEnabled);
+                setPaidBy(data.paidBy === 'PARTNER' ? 'Partner' : 'Me');
+                setNotes(data.notes || '');
+                setIsPaid(data.isPaid);
+            }).catch(() => {});
+        }
+    }, [workspace, id]);
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -44,7 +65,12 @@ export default function EditExpenseScreen() {
                 contentContainerStyle={styles.scrollContent}
             >
                 {/* 1. Payment Details Section */}
-                <PaymentDetails amount={amount} />
+                <PaymentDetails
+                    amount={amount}
+                    onAmountChange={setAmount}
+                    title={title}
+                    onTitleChange={setTitle}
+                />
 
                 {/* 2. Choose Payment Category Section */}
                 <CategorySelector
@@ -85,8 +111,21 @@ export default function EditExpenseScreen() {
                 {/* 6. Form Submission Trigger */}
                 <PrimaryButton
                     title="Update Expense"
-                    onPress={() => {
-                        console.log('Update expense payload fired:', { id, amount, isPaid, notes });
+                    onPress={async () => {
+                        try {
+                            await updateExpense(Number(id), {
+                                title: title || 'Expense',
+                                amount: parseFloat(amount.replace(/,/g, '')) || 0,
+                                category: chosenCategory.toUpperCase() as ExpenseCategory,
+                                paidBy: (paidBy === 'Me' ? 'ME' : 'PARTNER') as Payer,
+                                isPaid,
+                                splitEnabled,
+                                notes: notes || undefined,
+                            });
+                            router.back();
+                        } catch (e) {
+                            alert(extractErrorMessage(e));
+                        }
                     }}
                     style={styles.saveButton}
                     icon="save-outline"

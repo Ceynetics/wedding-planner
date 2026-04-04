@@ -8,16 +8,20 @@ import { useAppTheme } from '@/context/ThemeContext';
 interface ContactInfoFormProps {
     email: string;
     onEmailChange: (text: string) => void;
+    emailError?: string;
     phone: string;
     onPhoneChange: (text: string) => void;
+    phoneError?: string;
     countryCode?: string;
 }
 
 export function ContactInfoForm({
     email,
     onEmailChange,
+    emailError,
     phone,
     onPhoneChange,
+    phoneError,
     countryCode = 'LK', // Default to Sri Lanka as seen in screenshot
 }: ContactInfoFormProps) {
     const { theme } = useAppTheme();
@@ -38,6 +42,7 @@ export function ContactInfoForm({
                     placeholder="example@gmail.com"
                     value={email}
                     onChangeText={onEmailChange}
+                    error={emailError}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     containerStyle={styles.inputSpacing}
@@ -56,6 +61,7 @@ export function ContactInfoForm({
                             placeholder="77 xxx xxxx"
                             value={phone}
                             onChangeText={onPhoneChange}
+                            error={phoneError}
                             keyboardType="phone-pad"
                             containerStyle={styles.phoneInputContainer}
                             inputContainerStyle={[styles.phoneInput, { borderWidth: 0, backgroundColor: 'transparent' }]}

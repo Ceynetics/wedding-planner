@@ -5,11 +5,13 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useTasks } from "@/hooks/useTasks";
+import { displayEnum } from "@/utils/enums";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TasksScreen() {
@@ -17,63 +19,31 @@ export default function TasksScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
+    const { tasks: apiTasks, isLoading, fetchTasks, toggleTask, deleteTask } = useTasks();
+
     const [status, setStatus] = useState<"completed" | "remaining">("remaining");
     const [searchQuery, setSearchQuery] = useState("");
-    const [tasks, setTasks] = useState<Task[]>([
-        {
-            id: "1",
-            title: "Book Hotel",
-            priority: "High",
-            category: "Venue",
-            date: "June 24",
-            reminder: "1 more day",
-            assignedUsers: [
-                "https://i.pravatar.cc/150?u=1",
-                "https://i.pravatar.cc/150?u=2",
-                "https://i.pravatar.cc/150?u=3",
-            ],
-            isCompleted: false,
-        },
-        {
-            id: "2",
-            title: "Catering Service",
-            priority: "Medium",
-            category: "Food",
-            date: "July 12",
-            reminder: "5 days left",
-            assignedUsers: [
-                "https://i.pravatar.cc/150?u=4",
-                "https://i.pravatar.cc/150?u=5",
-            ],
-            isCompleted: false,
-        },
-        {
-            id: "3",
-            title: "Order Flowers",
-            priority: "Low",
-            category: "Decor",
-            date: "August 05",
-            reminder: "Overdue",
-            assignedUsers: [
-                "https://i.pravatar.cc/150?u=7",
-            ],
-            isCompleted: true,
-        },
-    ]);
 
-    const handleToggleTask = (taskId: string) => {
-        setTasks(prevTasks =>
-            prevTasks.map(task =>
-                task.id === taskId ? { ...task, isCompleted: !task.isCompleted } : task
-            )
-        );
+    const mappedTasks: Task[] = apiTasks.map(t => ({
+        id: String(t.id),
+        title: t.title,
+        priority: displayEnum(t.priority) as "High" | "Medium" | "Low",
+        category: displayEnum(t.category) || 'Venue',
+        date: t.dueDate || '',
+        reminder: t.dueDate ? `Due ${t.dueDate}` : '',
+        assignedUsers: t.assignedUsers?.map(u => u.avatarUrl || `https://i.pravatar.cc/150?u=${u.id}`) || [],
+        isCompleted: t.isCompleted,
+    }));
+
+    const handleToggleTask = async (taskId: string) => {
+        await toggleTask(Number(taskId));
     };
 
-    const handleRemoveTask = (taskId: string) => {
-        setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    const handleRemoveTask = async (taskId: string) => {
+        await deleteTask(Number(taskId));
     };
 
-    const filteredTasks = tasks.filter(task => {
+    const filteredTasks = mappedTasks.filter(task => {
         const matchesStatus = status === "completed" ? task.isCompleted : !task.isCompleted;
         const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             task.category.toLowerCase().includes(searchQuery.toLowerCase());
@@ -84,7 +54,7 @@ export default function TasksScreen() {
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
             {/* Fixed Header and Filter Section */}
             <View style={styles.fixedSection}>
-                <TaskHeader remainingTasks={tasks.filter(t => !t.isCompleted).length} />
+                <TaskHeader remainingTasks={mappedTasks.filter(t => !t.isCompleted).length} />
                 <View style={styles.filtersWrapper}>
                     <TaskFilters
                         status={status}

@@ -8,7 +8,11 @@ import { SeatingPlan } from "@/components/dashboard/SeatingPlan";
 import { PaymentItem, ToDoPayments } from "@/components/dashboard/ToDoPayments";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { useAuth } from "@/context/AuthContext";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useExpenses } from "@/hooks/useExpenses";
+import { useGuests } from "@/hooks/useGuests";
+import { useTasks } from "@/hooks/useTasks";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +20,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Dashboard() {
   const { theme } = useAppTheme();
   const colors = Colors[theme];
+  const { user } = useAuth();
+  const { stats: guestStats } = useGuests();
+  const { stats: taskStats } = useTasks();
+  const { summary: budgetSummary } = useExpenses();
 
   const dummyPayments: PaymentItem[] = [
     {
@@ -52,7 +60,7 @@ export default function Dashboard() {
       <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
         {/* Fixed Header and Countdown Section */}
         <View style={styles.fixedSection}>
-          <DashboardHeader userName="Sara & John" />
+          <DashboardHeader userName={user?.fullName || 'User'} />
           <CountdownBanner />
         </View>
 
@@ -70,8 +78,8 @@ export default function Dashboard() {
 
           {/* Budget Section */}
           <BudgetCard
-            totalBudget={300000}
-            spentAmount={150000}
+            totalBudget={budgetSummary?.totalBudget ?? 300000}
+            spentAmount={budgetSummary?.totalSpent ?? 0}
           />
 
           {/* To-Do Payments Section */}
@@ -81,11 +89,16 @@ export default function Dashboard() {
           />
 
           {/* Guest List Section */}
-          <GuestSummary />
+          <GuestSummary
+            total={guestStats?.total}
+            confirmed={guestStats?.confirmed}
+            pending={guestStats?.pending}
+            notInvited={guestStats?.notInvited}
+          />
 
           {/* Planning Progress Section */}
           <PlanningProgress
-            progress={25}
+            progress={taskStats && taskStats.total > 0 ? Math.round((taskStats.completed / taskStats.total) * 100) : 0}
             upcomingTasks={dummyTasks}
           />
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ProfileEditHeader } from '@/components/profile/ProfileEditHeader';
@@ -6,7 +6,10 @@ import { TextField } from '@/components/TextField';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
+import { useAuth } from '@/context/AuthContext';
 import { useAppTheme } from '@/context/ThemeContext';
+import { extractErrorMessage } from '@/utils/errors';
+import { required } from '@/utils/validation';
 import { Stack, useRouter } from 'expo-router';
 
 /**
@@ -16,20 +19,39 @@ export default function EditProfileScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const router = useRouter();
+    const { user, updateUser } = useAuth();
 
-    // State initialized with current user data (mocked)
-    const [name, setName] = useState('John Michael');
-    const [email, setEmail] = useState('john@gmail.com');
-    const [phone, setPhone] = useState('+1 234 567 890');
-    const [bio, setBio] = useState('I love planning beautiful weddings and making dreams come true.');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [bio, setBio] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [errors, setErrors] = useState<{ name?: string }>({});
 
-    /**
-     * Handles saving profile changes
-     */
-    const handleSave = () => {
-        // Implementation for updating profile
-        console.log('Saving profile:', { name, email, phone, bio });
-        router.back();
+    useEffect(() => {
+        if (user) {
+            setName(user.fullName || '');
+            setEmail(user.email || '');
+            setPhone(user.phone || '');
+            setBio(user.bio || '');
+        }
+    }, [user]);
+
+    const handleSave = async () => {
+        const nameError = required(name, 'Full name');
+        if (nameError) { setErrors({ name: nameError }); return; }
+        setErrors({});
+        setError('');
+        setLoading(true);
+        try {
+            await updateUser({ fullName: name, phone, bio });
+            router.back();
+        } catch (e) {
+            setError(extractErrorMessage(e));
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -65,9 +87,10 @@ export default function EditProfileScreen() {
                     <TextField
                         label="Full Name"
                         value={name}
-                        onChangeText={setName}
+                        onChangeText={(v) => { setName(v); setErrors(prev => ({ ...prev, name: undefined })); }}
                         placeholder="Enter your name"
                         leftIcon={<Ionicons name="person-outline" size={20} color={colors.secondary} />}
+                        error={errors.name}
                     />
 
                     <TextField
@@ -80,12 +103,37 @@ export default function EditProfileScreen() {
                         leftIcon={<Ionicons name="mail-outline" size={20} color={colors.secondary} />}
                     />
 
+                    <TextField
+                        label="Phone Number"
+                        value={phone}
+                        onChangeText={setPhone}
+                        placeholder="Enter your phone number"
+                        keyboardType="phone-pad"
+                        leftIcon={<Ionicons name="call-outline" size={20} color={colors.secondary} />}
+                    />
+
+                    <TextField
+                        label="Bio"
+                        value={bio}
+                        onChangeText={setBio}
+                        placeholder="Tell us about yourself"
+                        multiline
+                        numberOfLines={4}
+                        leftIcon={<Ionicons name="document-text-outline" size={20} color={colors.secondary} />}
+                        inputContainerStyle={styles.textArea}
+                    />
+
                 </View>
+
+                {error ? (
+                    <ThemedText style={{ color: colors.error, textAlign: 'center', marginBottom: 12 }}>{error}</ThemedText>
+                ) : null}
 
                 {/* Save Button */}
                 <PrimaryButton
                     title="Save Changes"
                     onPress={handleSave}
+                    loading={loading}
                     style={styles.saveButton}
                 />
 

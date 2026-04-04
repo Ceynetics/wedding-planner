@@ -4,6 +4,10 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
+import { extractErrorMessage } from "@/utils/errors";
+import { required, email as emailValidator, minLength, ageRange, validate } from '@/utils/validation';
+import { Gender } from "@/types/api";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -29,18 +33,36 @@ export default function RegisterScreen() {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<{name?: string; email?: string; password?: string; age?: string; form?: string}>({});
     const router = useRouter();
+    const { register } = useAuth();
 
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
+        const newErrors: typeof errors = {};
+        newErrors.name = validate(name, (v) => required(v, 'Full Name'));
+        newErrors.email = validate(email, (v) => required(v, 'Email'), emailValidator);
+        newErrors.password = validate(password, (v) => required(v, 'Password'), (v) => minLength(v, 8, 'Password'));
+        newErrors.age = validate(age, ageRange);
+        if (newErrors.name || newErrors.email || newErrors.password || newErrors.age) { setErrors(newErrors); return; }
+        setErrors({});
         setLoading(true);
-        // Simulate register
-        setTimeout(() => {
+        try {
+            await register({
+                fullName: name,
+                age: age ? parseInt(age) : undefined,
+                gender: gender ? (gender.toUpperCase() as Gender) : undefined,
+                email,
+                password,
+            });
+            router.replace('/');
+        } catch (e) {
+            setErrors({ form: extractErrorMessage(e) });
+        } finally {
             setLoading(false);
-            router.push("/(onboard)/workspace" as any);
-        }, 2000);
+        }
     };
 
     return (
@@ -75,7 +97,8 @@ export default function RegisterScreen() {
                                 label="Full Name"
                                 placeholder="Enter your full name"
                                 value={name}
-                                onChangeText={setName}
+                                onChangeText={(v) => { setName(v); if (errors.name) setErrors((prev) => ({ ...prev, name: undefined })); }}
+                                error={errors.name}
                             />
 
                             <View style={styles.row}>
@@ -84,8 +107,9 @@ export default function RegisterScreen() {
                                         label="Age"
                                         placeholder="25"
                                         value={age}
-                                        onChangeText={setAge}
+                                        onChangeText={(v) => { setAge(v); if (errors.age) setErrors((prev) => ({ ...prev, age: undefined })); }}
                                         keyboardType="numeric"
+                                        error={errors.age}
                                     />
                                 </View>
                                 <View style={{ flex: 2 }}>
@@ -159,17 +183,19 @@ export default function RegisterScreen() {
                                 label="Email Address"
                                 placeholder="Enter your email"
                                 value={email}
-                                onChangeText={setEmail}
+                                onChangeText={(v) => { setEmail(v); if (errors.email) setErrors((prev) => ({ ...prev, email: undefined })); }}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
+                                error={errors.email}
                             />
 
                             <TextField
                                 label="Password"
                                 placeholder="Create a password"
                                 value={password}
-                                onChangeText={setPassword}
+                                onChangeText={(v) => { setPassword(v); if (errors.password) setErrors((prev) => ({ ...prev, password: undefined })); }}
                                 secureTextEntry={!showPassword}
+                                error={errors.password}
                                 rightIcon={
                                     <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                         <Ionicons
@@ -180,6 +206,12 @@ export default function RegisterScreen() {
                                     </TouchableOpacity>
                                 }
                             />
+
+                            {errors.form ? (
+                                <ThemedText style={{ color: 'red', marginBottom: 12, textAlign: 'center' }}>
+                                    {errors.form}
+                                </ThemedText>
+                            ) : null}
 
                             <PrimaryButton
                                 title="Sign Up"

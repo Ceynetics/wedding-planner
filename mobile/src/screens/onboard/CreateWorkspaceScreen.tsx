@@ -5,6 +5,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { extractErrorMessage } from "@/utils/errors";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -23,7 +25,10 @@ export default function CreateWorkspaceScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const router = useRouter();
+    const { createWorkspace } = useWorkspace();
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const [eventName, setEventName] = useState("");
     const [venue, setVenue] = useState("Colombo");
     const [budget, setBudget] = useState("");
@@ -38,9 +43,23 @@ export default function CreateWorkspaceScreen() {
         return `${d < 10 ? "0" + d : d} / ${m < 10 ? "0" + m : m} / ${y}`;
     };
 
-    const handleCreateWorkspace = () => {
-        // Navigate to dashboard after workspace creation
-        router.replace("/(tabs)");
+    const handleCreateWorkspace = async () => {
+        if (!eventName) { setError('Event name is required'); return; }
+        setLoading(true);
+        setError('');
+        try {
+            await createWorkspace({
+                eventName,
+                eventDate: eventDate ? eventDate.toISOString().split('T')[0] : undefined,
+                venue: venue || undefined,
+                budget: budget ? parseFloat(budget.replace(/,/g, '')) : undefined,
+            });
+            router.replace('/');
+        } catch (e) {
+            setError(extractErrorMessage(e));
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -168,9 +187,16 @@ export default function CreateWorkspaceScreen() {
                                 </ThemedText>
                             </TouchableOpacity>
 
+                            {error ? (
+                                <ThemedText style={{ color: 'red', marginBottom: 12, textAlign: 'center' }}>
+                                    {error}
+                                </ThemedText>
+                            ) : null}
+
                             <PrimaryButton
                                 title="Create Workspace"
                                 onPress={handleCreateWorkspace}
+                                loading={loading}
                                 style={styles.createBtn}
                             />
                         </ScrollView>

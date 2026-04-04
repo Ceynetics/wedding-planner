@@ -8,67 +8,48 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useVendors } from "@/hooks/useVendors";
+import { displayEnum } from "@/utils/enums";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const MOCK_DISCOVER_VENDORS = [
-    {
-        id: "1",
-        name: "Lumina Studios",
-        category: "Photography",
-        rating: 4.5,
-        image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop",
-        icon: "camera",
-    },
-    {
-        id: "2",
-        name: "Lumina Studios",
-        category: "Cinematography",
-        rating: 4.8,
-        image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1000&auto=format&fit=crop",
-        icon: "video",
-    },
-];
-
-const MOCK_HIRED_VENDORS = [
-    {
-        id: "1",
-        name: "Blossom Florals",
-        category: "Floral Arrangements & Decor",
-        paidAmount: 5000,
-        totalAmount: 25000,
-        dueDate: "Oct 15",
-    },
-    {
-        id: "2",
-        name: "Blossom Florals",
-        category: "Floral Arrangements & Decor",
-        paidAmount: 5000,
-        totalAmount: 25000,
-        dueDate: "Oct 15",
-    },
-];
-
 export default function VendorsScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const insets = useSafeAreaInsets();
     const router = useRouter();
+    const { discoverVendors, hiredVendors, isLoading, deleteHiredVendor } = useVendors();
 
     const [activeTab, setActiveTab] = useState<"discover" | "hired">("discover");
     const [searchQuery, setSearchQuery] = useState("");
     const [activeFilter, setActiveFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
 
-    const [hiredVendors, setHiredVendors] = useState(MOCK_HIRED_VENDORS);
-
     const isDiscover = activeTab === "discover";
 
-    const handleRemoveVendor = (vendorId: string) => {
-        setHiredVendors(prev => prev.filter(v => v.id !== vendorId));
+    const mappedDiscoverVendors = discoverVendors.map((v) => ({
+        id: String(v.id),
+        name: v.name,
+        category: displayEnum(v.category),
+        rating: v.rating ?? 0,
+        image: v.imageUrl ?? "",
+        icon: "camera",
+    }));
+
+    const mappedHiredVendors = hiredVendors.map((v) => ({
+        id: String(v.id),
+        name: v.vendorName,
+        category: displayEnum(v.category),
+        paidAmount: v.paidAmount ?? 0,
+        totalAmount: v.totalAmount ?? 0,
+        dueDate: v.dueDate ?? "",
+    }));
+
+    const handleRemoveVendor = async (vendorId: string) => {
+        await deleteHiredVendor(Number(vendorId));
     };
 
     return (
@@ -87,7 +68,7 @@ export default function VendorsScreen() {
                             onFilterPress={() => console.log("Filter pressed")}
                         />
                         <View style={styles.vendorList}>
-                            {MOCK_DISCOVER_VENDORS.map((vendor) => (
+                            {mappedDiscoverVendors.map((vendor) => (
                                 <DiscoverCard key={vendor.id} {...vendor} />
                             ))}
                         </View>
@@ -116,8 +97,8 @@ export default function VendorsScreen() {
                         <HiredStats budget={300000} paid={300000} pending={300000} />
                         <HiredFilters activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
                         <View style={styles.vendorList}>
-                            {hiredVendors.length > 0 ? (
-                                hiredVendors.map((vendor) => (
+                            {mappedHiredVendors.length > 0 ? (
+                                mappedHiredVendors.map((vendor) => (
                                     <HiredVendorCard
                                         key={vendor.id}
                                         {...vendor}

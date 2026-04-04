@@ -1,0 +1,43 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/openjdk:21.0
+      - image: cimg/postgres:17.0
+        environment:
+          POSTGRES_DB: wedding_planner_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+    working_directory: ~/project/backend
+    steps:
+      - checkout:
+          path: ~/project
+      - restore_cache:
+          keys:
+            - maven-{{ checksum "pom.xml" }}
+            - maven-
+      - run:
+          name: Wait for PostgreSQL
+          command: dockerize -wait tcp://localhost:5432 -timeout 30s
+      - run:
+          name: Build and Test
+          command: |
+            ./mvnw clean verify \
+              -Dspring.datasource.url=jdbc:postgresql://localhost:5432/wedding_planner_test \
+              -Dspring.datasource.username=test \
+              -Dspring.datasource.password=test \
+              -Dfirebase.enabled=false
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-{{ checksum "pom.xml" }}
+      - store_test_results:
+          path: target/surefire-reports
+      - store_artifacts:
+          path: target/wedding-planner-1.0.0.jar
+
+workflows:
+  build:
+    jobs:
+      - build-and-test

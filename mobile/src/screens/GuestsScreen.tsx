@@ -4,77 +4,44 @@ import { GuestStats } from "@/components/guests/GuestStats";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useGuests } from "@/hooks/useGuests";
+import { displayEnum } from "@/utils/enums";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function GuestsScreen() {
     const router = useRouter();
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
+    const { guests, stats, isLoading, fetchGuests, deleteGuest } = useGuests();
     const [searchQuery, setSearchQuery] = useState("");
+    const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const dummyGuests: Guest[] = [
-        {
-            id: "1",
-            name: "Wade Warren",
-            avatar: "https://i.pravatar.cc/150?u=wade",
-            isVIP: true,
-            status: "Pending",
-            side: "Bride",
-            category: "Family",
-            adults: 2,
-            children: 1,
-            dietary: "Vegetarian",
-            phone: "+1 234 567 890",
-            email: "wade@example.com",
-        },
-        {
-            id: "2",
-            name: "Jerome Bell",
-            avatar: "https://i.pravatar.cc/150?u=jerome",
-            isVIP: false,
-            status: "Confirmed",
-            side: "Bride",
-            category: "Family",
-            adults: 2,
-            children: 1,
-            dietary: "Vegetarian",
-            phone: "+1 234 567 891",
-            email: "jerome@example.com",
-        },
-        {
-            id: "3",
-            name: "Albert Flores",
-            avatar: "https://i.pravatar.cc/150?u=albert",
-            isVIP: true,
-            status: "Not Invited",
-            side: "Groom",
-            category: "Colleague",
-            adults: 1,
-            children: 0,
-            dietary: "Non-Veg",
-            phone: "+1 234 567 892",
-            email: "albert@example.com",
-            hasInvitationSent: true,
-        },
-        {
-            id: "4",
-            name: "Bessie Cooper",
-            avatar: "https://i.pravatar.cc/150?u=bessie",
-            isVIP: false,
-            status: "Confirmed",
-            side: "Groom",
-            category: "Family",
-            adults: 2,
-            children: 1,
-            dietary: "Vegetarian",
-            phone: "+1 234 567 893",
-            email: "bessie@example.com",
-        },
-    ];
+    useEffect(() => {
+        if (searchTimer.current) clearTimeout(searchTimer.current);
+        searchTimer.current = setTimeout(() => {
+            fetchGuests({ search: searchQuery || undefined });
+        }, 400);
+        return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
+    }, [searchQuery, fetchGuests]);
+
+    const mappedGuests = guests.map(g => ({
+        id: String(g.id),
+        name: g.name,
+        avatar: g.avatarUrl || `https://i.pravatar.cc/150?u=${g.id}`,
+        isVIP: g.isVip,
+        status: displayEnum(g.status) as any,
+        side: displayEnum(g.side) as any,
+        category: displayEnum(g.category) || 'Other',
+        adults: g.adults || 1,
+        children: g.children || 0,
+        dietary: g.dietary || 'Non-Veg',
+        phone: g.phone || '',
+        email: g.email || '',
+    }));
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
@@ -85,9 +52,9 @@ export default function GuestsScreen() {
                 {/* Stats Summary Cards with Search */}
                 <View style={styles.statsContainer}>
                     <GuestStats
-                        total={124}
-                        confirmed={86}
-                        pending={24}
+                        total={stats?.total ?? 0}
+                        confirmed={stats?.confirmed ?? 0}
+                        pending={stats?.pending ?? 0}
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         onFilterPress={() => console.log("Filter pressed")}
@@ -101,17 +68,20 @@ export default function GuestsScreen() {
             >
                 {/* Guests List */}
                 <View style={styles.listContainer}>
-                    {dummyGuests.map((guest) => (
-                        <GuestCard
-                            key={guest.id}
-                            guest={guest}
-                            onEdit={() => router.push({ pathname: "/(forms)/guests/edit", params: { id: guest.id } } as any)}
-                            onDelete={() => console.log("Delete:", guest.name)}
-                            onCall={() => console.log("Call:", guest.phone)}
-                            onMail={() => console.log("Mail:", guest.email)}
-                            onShareInvitation={guest.id === "3" ? () => console.log("Share Invitation") : undefined}
-                        />
-                    ))}
+                    {isLoading && guests.length === 0 ? (
+                        <ActivityIndicator size="large" style={{ marginTop: 40 }} />
+                    ) : (
+                        mappedGuests.map((guest) => (
+                            <GuestCard
+                                key={guest.id}
+                                guest={guest}
+                                onEdit={() => router.push({ pathname: "/(forms)/guests/edit", params: { id: guest.id } } as any)}
+                                onDelete={async () => { await deleteGuest(Number(guest.id)); }}
+                                onCall={() => console.log("Call:", guest.phone)}
+                                onMail={() => console.log("Mail:", guest.email)}
+                            />
+                        ))
+                    )}
                 </View>
             </ScrollView>
 

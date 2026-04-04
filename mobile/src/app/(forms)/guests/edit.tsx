@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ScrollView,
     StyleSheet,
@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 // --- Modules & Components ---
@@ -19,30 +19,52 @@ import { TableSelectorModal } from '@/components/guests/form/TableSelectorModal'
 
 // --- Design System ---
 import { useAppTheme } from '@/context/ThemeContext';
+import { useWorkspace } from '@/context/WorkspaceContext';
 import { Colors } from '@/constants/Colors';
+import { guestApi } from '@/api/endpoints';
+import { useGuests } from '@/hooks/useGuests';
+import { extractErrorMessage } from '@/utils/errors';
+import { displayEnum } from '@/utils/enums';
+import type { GuestSide, GuestCategory } from '@/types/api';
 
 export default function EditGuestScreen() {
     // Determine current theme settings dynamically
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
-    // Safely retrieve the specific Guest ID parsed from the route params
     const { id } = useLocalSearchParams();
+    const router = useRouter();
+    const { workspace } = useWorkspace();
+    const { updateGuest } = useGuests();
 
-    // --- State Definition ---
-    // Pre-loaded state mocks fetching an existing guest ("Joe Charles").
-    // Value assignments map perfectly to standard update endpoints.
-    const [name, setName] = useState('Joe Charles');
+    const [name, setName] = useState('');
     const [side, setSide] = useState<'Bride' | 'Groom'>('Bride');
     const [groupType, setGroupType] = useState<'Family' | 'Individual'>('Family');
-    const [isVegetarian, setIsVegetarian] = useState(true); // Dietary preference
-    const [category, setCategory] = useState('Family'); // Relationship category
-    const [phone, setPhone] = useState('555-0192');
-    const [email, setEmail] = useState('joe.charles@example.com');
-    const [adults, setAdults] = useState(2);
-    const [kids, setKids] = useState(1);
-    const [isVip, setIsVip] = useState(true);
-    const [notes, setNotes] = useState('Vegetarian Preferences');
+    const [isVegetarian, setIsVegetarian] = useState(false);
+    const [category, setCategory] = useState('Family');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [adults, setAdults] = useState(1);
+    const [kids, setKids] = useState(0);
+    const [isVip, setIsVip] = useState(false);
+    const [notes, setNotes] = useState('');
+
+    useEffect(() => {
+        if (workspace && id) {
+            guestApi.getById(workspace.id, Number(id)).then(({ data }) => {
+                setName(data.name);
+                setSide(displayEnum(data.side) as any || 'Bride');
+                setCategory(displayEnum(data.category) || 'Family');
+                setPhone(data.phone || '');
+                setEmail(data.email || '');
+                setAdults(data.adults || 1);
+                setKids(data.children || 0);
+                setIsVip(data.isVip);
+                setIsVegetarian(data.dietary === 'Vegetarian');
+                setNotes(data.notes || '');
+            }).catch(() => {});
+        }
+    }, [workspace, id]);
     
     // Extracted Modal View tracking state
     const [showTableModal, setShowTableModal] = useState(false);
@@ -61,11 +83,24 @@ export default function EditGuestScreen() {
         fontSize: 16
     };
 
-    // Central data submission handler
-    const handleUpdateGuest = () => {
-        console.log("Submitting Guest updates:", {
-            id, name, side, category, isVegetarian, phone, email, groupType, adults, kids, isVip, selectedTable, notes
-        });
+    const handleUpdateGuest = async () => {
+        try {
+            await updateGuest(Number(id), {
+                name,
+                side: side.toUpperCase() as GuestSide,
+                category: category.toUpperCase() as GuestCategory,
+                phone,
+                email,
+                adults,
+                children: kids,
+                dietary: isVegetarian ? 'Vegetarian' : undefined,
+                isVip,
+                notes: notes || undefined,
+            });
+            router.back();
+        } catch (e) {
+            alert(extractErrorMessage(e));
+        }
     };
 
     return (

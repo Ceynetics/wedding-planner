@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { AddSeatingHeader } from '@/components/seating/form/AddSeatingHeader';
@@ -11,6 +11,11 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
+import { useWorkspace } from '@/context/WorkspaceContext';
+import { seatingTableApi } from '@/api/endpoints';
+import { useSeatingTables } from '@/hooks/useSeatingTables';
+import { extractErrorMessage } from '@/utils/errors';
+import type { TableShape } from '@/types/api';
 
 export default function SeatingEditScreen() {
     // --- Context & Navigation ---
@@ -18,23 +23,44 @@ export default function SeatingEditScreen() {
     const colors = Colors[theme];
     const router = useRouter();
 
-    // Safely retrieve the targeted table ID from the navigation route params
     const { id } = useLocalSearchParams();
+    const { workspace } = useWorkspace();
+    const { updateTable } = useSeatingTables();
 
-    // --- State Management ---
-    // Pre-populate with dummy edit data tied to the mocked database state
-    const [tableName, setTableName] = useState('Head Table');
+    const [tableName, setTableName] = useState('');
     const [tableShape, setTableShape] = useState<'curved' | 'square'>('curved');
-    const [isVip, setIsVip] = useState(true);
-    const [capacity, setCapacity] = useState(10);
-    const [guests, setGuests] = useState<Array<{ id: string; name: string; relation: string; avatar?: string }>>([
-        { id: "1", name: "Joe Charles", relation: "Family" }
-    ]);
+    const [isVip, setIsVip] = useState(false);
+    const [capacity, setCapacity] = useState(8);
+    const [guests, setGuests] = useState<Array<{ id: string; name: string; relation: string; avatar?: string }>>([]);
 
-    // Update dispatch handler logic
-    const handleUpdateTable = () => {
-        console.log('Update table:', { id, tableName, tableShape, isVip, capacity, guests });
-        router.back();
+    useEffect(() => {
+        if (workspace && id) {
+            seatingTableApi.getById(workspace.id, Number(id)).then(({ data }) => {
+                setTableName(data.name);
+                setTableShape(data.tableShape === 'SQUARE' ? 'square' : 'curved');
+                setIsVip(data.isVip);
+                setCapacity(data.chairCount || 8);
+                const householdGuests = data.households?.flatMap(h =>
+                    h.members?.map(m => ({ id: String(m.id), name: m.name, relation: h.householdName, avatar: m.avatarUrl })) || []
+                ) || [];
+                setGuests(householdGuests);
+            }).catch(() => {});
+        }
+    }, [workspace, id]);
+
+    const handleUpdateTable = async () => {
+        try {
+            const shapeMap: Record<string, string> = { 'curved': 'ROUND', 'square': 'SQUARE' };
+            await updateTable(Number(id), {
+                name: tableName,
+                tableShape: (shapeMap[tableShape] || 'ROUND') as TableShape,
+                chairCount: capacity,
+                isVip,
+            });
+            router.back();
+        } catch (e) {
+            alert(extractErrorMessage(e));
+        }
     };
 
     return (

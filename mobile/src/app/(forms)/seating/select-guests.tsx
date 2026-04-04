@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -15,6 +15,8 @@ import { Image } from 'expo-image';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { useAppTheme } from '@/context/ThemeContext';
+import { useSeatingTables } from '@/hooks/useSeatingTables';
+import type { HouseholdResponse } from '@/types/api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,52 +26,9 @@ interface Guest {
     category: string;
     avatar: string;
     isVIP: boolean;
+    householdId?: number;
+    memberCount?: number;
 }
-
-const UNASSIGNED_GUESTS: Guest[] = [
-    {
-        id: '1',
-        name: 'Nimali Jr.',
-        category: 'Work',
-        avatar: 'https://i.pravatar.cc/150?u=nimali',
-        isVIP: true,
-    },
-    {
-        id: '2',
-        name: 'Ravin Jay',
-        category: 'Family',
-        avatar: 'https://i.pravatar.cc/150?u=ravin',
-        isVIP: false,
-    },
-    {
-        id: '3',
-        name: 'Julia Ann',
-        category: 'Colleague',
-        avatar: 'https://i.pravatar.cc/150?u=julia',
-        isVIP: true,
-    },
-    {
-        id: '4',
-        name: 'Bessie Cooper',
-        category: 'Family',
-        avatar: 'https://i.pravatar.cc/150?u=bessie',
-        isVIP: false,
-    },
-    {
-        id: '5',
-        name: 'Albert Flores',
-        category: 'Colleague',
-        avatar: 'https://i.pravatar.cc/150?u=albert',
-        isVIP: true,
-    },
-    {
-        id: '6',
-        name: 'Jerome Bell',
-        category: 'Family',
-        avatar: 'https://i.pravatar.cc/150?u=jerome',
-        isVIP: false,
-    },
-];
 
 const FILTERS = ['All', 'Family', 'Friends', 'Colleagues', 'Other'];
 
@@ -77,9 +36,24 @@ export default function SelectGuestsScreen() {
     const router = useRouter();
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    const { fetchUnassignedHouseholds, unassignedHouseholds, assignHouseholds } = useSeatingTables();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState('All');
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+    useEffect(() => { fetchUnassignedHouseholds(); }, [fetchUnassignedHouseholds]);
+
+    // Map households to guest-like cards for display
+    const UNASSIGNED_GUESTS: Guest[] = unassignedHouseholds.map(h => ({
+        id: String(h.id),
+        name: h.householdName,
+        category: h.addressStyle || 'Individual',
+        avatar: `https://i.pravatar.cc/150?u=h${h.id}`,
+        isVIP: false,
+        householdId: h.id,
+        memberCount: h.totalMembers || 1,
+    }));
 
     const renderGuestCard = ({ item }: { item: Guest }) => (
         <TouchableOpacity

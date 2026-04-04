@@ -5,15 +5,18 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-export function GuestSummary() {
+interface GuestSummaryProps {
+    total?: number;
+    confirmed?: number;
+    pending?: number;
+    notInvited?: number;
+}
+
+export function GuestSummary({ total = 0, confirmed = 0, pending = 0, notInvited = 0 }: GuestSummaryProps = {}) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
-    // Mock data
-    const total = 1000;
-    const confirmed = 500;
-    const pending = 224;
-    const declined = 225;
+    const declined = notInvited;
 
     // Calculations
     const confirmedWidth = (confirmed / total) * 100;

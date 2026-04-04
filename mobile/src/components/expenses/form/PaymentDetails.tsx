@@ -9,9 +9,21 @@ import { DatePicker } from '@/components/DatePicker';
 
 interface PaymentDetailsProps {
     amount: string;
+    onAmountChange: (value: string) => void;
+    title: string;
+    onTitleChange: (value: string) => void;
+    amountError?: string;
+    titleError?: string;
 }
 
-export function PaymentDetails({ amount }: PaymentDetailsProps) {
+export function PaymentDetails({
+    amount,
+    onAmountChange,
+    title,
+    onTitleChange,
+    amountError,
+    titleError,
+}: PaymentDetailsProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -37,15 +49,25 @@ export function PaymentDetails({ amount }: PaymentDetailsProps) {
         <View style={[styles.card, { backgroundColor: colors.card }]}>
             <ThemedText style={[styles.sectionLabel, { color: colors.emphasis }]}>Payment Details</ThemedText>
 
-            <View style={styles.amountContainer}>
-                <ThemedText style={[styles.amountLabel, { color: colors.secondary }]}>Amount</ThemedText>
-                <ThemedText style={[styles.amountValue, { color: colors.emphasis }]}>Rs. {amount}</ThemedText>
-            </View>
+            <TextField
+                label="Amount"
+                placeholder="0.00"
+                value={amount}
+                onChangeText={onAmountChange}
+                keyboardType="decimal-pad"
+                error={amountError}
+                labelStyle={labelStyle}
+                leftIcon={<ThemedText style={{ color: colors.secondary, fontWeight: '700', fontSize: 16 }}>Rs.</ThemedText>}
+                containerStyle={styles.inputSpacing}
+            />
 
             <TextField
-                label="Vendor Name"
-                placeholder="e.g: Blosom.com"
-                leftIcon={<Ionicons name="storefront" size={20} color={colors.placeholder} />}
+                label="Expense Title"
+                placeholder="e.g: Catering deposit"
+                value={title}
+                onChangeText={onTitleChange}
+                error={titleError}
+                leftIcon={<Ionicons name="receipt-outline" size={20} color={colors.placeholder} />}
                 labelStyle={labelStyle}
                 containerStyle={styles.inputSpacing}
             />
@@ -86,22 +108,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         marginBottom: 24,
-    },
-    amountContainer: {
-        alignItems: 'center',
-        marginBottom: 32,
-    },
-    amountLabel: {
-        fontSize: 20,
-        fontWeight: '600',
-        marginBottom: 8,
-        opacity: 0.5,
-        lineHeight: 24,
-    },
-    amountValue: {
-        fontSize: 36,
-        fontWeight: '800',
-        lineHeight: 44,
     },
     inputSpacing: {
         marginBottom: 20,

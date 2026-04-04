@@ -6,13 +6,16 @@ import {
     TouchableOpacity,
     View,
     ScrollView,
-    FlatList,
+    ActivityIndicator,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
+import { useInvitations } from "@/hooks/useInvitations";
+import { extractErrorMessage } from "@/utils/errors";
 import { InvitationCard } from "../components/invitations/InvitationCard";
 import { AddCardButton } from "../components/invitations/AddCardButton";
 import { InvitationTabs } from "../components/invitations/InvitationTabs";
@@ -25,6 +28,7 @@ export default function InvitationsScreen() {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const router = useRouter();
+    const { invitations, templates: apiTemplates, isLoading, createInvitation, generateInvitation } = useInvitations();
     const [activeTab, setActiveTab] = useState<"Cards" | "Editor">("Cards");
     const [selectedTemplateId, setSelectedTemplateId] = useState("1");
 
@@ -44,19 +48,51 @@ export default function InvitationsScreen() {
     const [selectedColor, setSelectedColor] = useState("#E74C3C");
     const [isVipGuest, setIsVipGuest] = useState(false);
 
-    const handleExport = () => console.log("Exporting PDF...");
+    // Template names when API templates are not available
+    const DEFAULT_TEMPLATES = [
+        { id: '1', title: 'Elegant Floral', image: undefined },
+        { id: '2', title: 'Classic Gold', image: undefined },
+        { id: '3', title: 'Modern Minimal', image: undefined },
+    ];
+
+    const templates = apiTemplates.length > 0
+        ? apiTemplates.map((t) => ({ id: t.id, title: t.displayName, image: undefined as string | undefined }))
+        : DEFAULT_TEMPLATES;
+
+    const handleExport = async () => {
+        // Find the most recently created invitation to export
+        const latest = invitations[invitations.length - 1];
+        if (!latest) { Alert.alert("No Invitation", "Create an invitation first."); return; }
+        try {
+            await generateInvitation(latest.id, 'PDF');
+            Alert.alert("Success", "PDF generated successfully.");
+        } catch (err) {
+            Alert.alert("Export Failed", extractErrorMessage(err));
+        }
+    };
+
     const handleShare = () => console.log("Sharing Invitation...");
 
-    const templates = [
-        { id: "1", title: "Template #1", image: "https://marketplace.canva.com/EAFZ_mQJ20w/1/0/1143w/canva-black-gold-elegant-floral-wedding-invitation-A-f6W-yH1G4.jpg" },
-        { id: "2", title: "Template #2", image: "https://marketplace.canva.com/EAFf7M1e7oQ/1/0/1143w/canva-white-and-green-floral-elegant-wedding-invitation-0pT_B8p0fM0.jpg" },
-        { id: "3", title: "Template #3", image: "https://marketplace.canva.com/EAFiS1R9f9M/1/0/1143w/canva-cream-and-gold-minimalist-wedding-invitation-q7X_A7X_A7X.jpg" },
-        { id: "4", title: "Template #3", image: "https://marketplace.canva.com/EAFiS1R9f9M/1/0/1143w/canva-cream-and-gold-minimalist-wedding-invitation-q7X_A7X_A7X.jpg" },
-        { id: "5", title: "Template #3", image: "https://marketplace.canva.com/EAFiS1R9f9M/1/0/1143w/canva-cream-and-gold-minimalist-wedding-invitation-q7X_A7X_A7X.jpg" },
-        { id: "6", title: "Template #3", image: "https://marketplace.canva.com/EAFiS1R9f9M/1/0/1143w/canva-cream-and-gold-minimalist-wedding-invitation-q7X_A7X_A7X.jpg" },
-        { id: "7", title: "Template #2", image: "https://marketplace.canva.com/EAFf7M1e7oQ/1/0/1143w/canva-white-and-green-floral-elegant-wedding-invitation-0pT_B8p0fM0.jpg" },
-        { id: "8", title: "Template #1", image: "https://marketplace.canva.com/EAFZ_mQJ20w/1/0/1143w/canva-black-gold-elegant-floral-wedding-invitation-A-f6W-yH1G4.jpg" },
-    ];
+    const handleSaveInvitation = async () => {
+        try {
+            await createInvitation({
+                templateId: selectedTemplateId,
+                name1,
+                name2,
+                eventDate: eventDate.toISOString().split('T')[0],
+                eventTime,
+                venue,
+                selectedColor,
+                isVipGuest: isVipGuest,
+                greeting: `Dear ${title} ${guestName}`,
+                addressLine: `${title} ${guestName}`,
+            });
+            Alert.alert("Success", "Invitation created successfully.");
+            setActiveTab("Cards");
+        } catch (err) {
+            Alert.alert("Error", extractErrorMessage(err));
+        }
+    };
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: "transparent" }]}>
@@ -81,16 +117,33 @@ export default function InvitationsScreen() {
                                 Your Card Designs
                             </ThemedText>
 
-                            <View style={styles.grid}>
-                                {templates.map((item) => (
-                                    <View key={item.id} style={styles.cardWrapper}>
-                                        <InvitationCard title={item.title} image={item.image} />
+                            {isLoading ? (
+                                <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
+                            ) : (
+                                <View style={styles.grid}>
+                                    {(invitations.length > 0
+                                        ? invitations.map((inv) => {
+                                            const tpl = templates.find(t => t.id === inv.templateId);
+                                            return (
+                                                <View key={inv.id} style={styles.cardWrapper}>
+                                                    <InvitationCard
+                                                        title={inv.name1 && inv.name2 ? `${inv.name1} & ${inv.name2}` : tpl?.title ?? `Invitation #${inv.id}`}
+                                                        image={tpl?.image}
+                                                    />
+                                                </View>
+                                            );
+                                        })
+                                        : templates.map((item) => (
+                                            <View key={item.id} style={styles.cardWrapper}>
+                                                <InvitationCard title={item.title} image={item.image} />
+                                            </View>
+                                        ))
+                                    )}
+                                    <View style={styles.cardWrapper}>
+                                        <AddCardButton />
                                     </View>
-                                ))}
-                                <View style={styles.cardWrapper}>
-                                    <AddCardButton />
                                 </View>
-                            </View>
+                            )}
                         </>
                     ) : (
                         <>
@@ -127,6 +180,15 @@ export default function InvitationsScreen() {
                                 onExport={handleExport}
                                 onShare={handleShare}
                             />
+                            <TouchableOpacity
+                                style={[styles.saveButton, { backgroundColor: colors.primary }]}
+                                onPress={handleSaveInvitation}
+                                activeOpacity={0.8}
+                            >
+                                <ThemedText style={[styles.saveButtonText, { color: colors.primaryContrast }]}>
+                                    Save Invitation
+                                </ThemedText>
+                            </TouchableOpacity>
                         </>
                     )}
                 </ScrollView>
@@ -171,9 +233,21 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-between",
+        gap: 16,
     },
     cardWrapper: {
-        width: "30%", // 3 columns
-        marginBottom: 24,
+        width: "47%",
+        marginBottom: 8,
+    },
+    saveButton: {
+        height: 56,
+        borderRadius: 16,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 24,
+    },
+    saveButtonText: {
+        fontSize: 17,
+        fontWeight: "700",
     },
 });
