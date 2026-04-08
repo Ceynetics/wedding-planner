@@ -30,9 +30,10 @@ interface TaskCardProps {
     onRemovePress?: () => void;
     onMorePress?: () => void;
     onEditPress?: () => void;
+    onNotifyPartnerPress?: () => void;
 }
 
-export function TaskCard({ task, onPress, onCheckPress, onRemovePress, onMorePress, onEditPress }: TaskCardProps) {
+export function TaskCard({ task, onPress, onCheckPress, onRemovePress, onMorePress, onEditPress, onNotifyPartnerPress }: TaskCardProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
     const [showMenu, setShowMenu] = useState(false);
@@ -146,6 +147,24 @@ export function TaskCard({ task, onPress, onCheckPress, onRemovePress, onMorePre
                                                 Edit Task
                                             </ThemedText>
                                         </TouchableOpacity>
+                                        
+                                        {!task.isCompleted && task.assignedUsers && task.assignedUsers.length > 0 && (
+                                            <>
+                                                <View style={[styles.menuSeparator, { backgroundColor: colors.secondary + "20" }]} />
+                                                <TouchableOpacity
+                                                    style={styles.menuItem}
+                                                    onPress={() => {
+                                                        setShowMenu(false);
+                                                        onNotifyPartnerPress?.();
+                                                    }}
+                                                >
+                                                    <ThemedText style={[styles.menuText, { color: colors.primary }]}>
+                                                        Remind Partner
+                                                    </ThemedText>
+                                                </TouchableOpacity>
+                                            </>
+                                        )}
+
                                         <View style={[styles.menuSeparator, { backgroundColor: colors.secondary + "20" }]} />
                                         <TouchableOpacity
                                             style={styles.menuItem}

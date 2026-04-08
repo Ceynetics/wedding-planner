@@ -24,9 +24,10 @@ export default function AddTaskScreen() {
     const [taskName, setTaskName] = useState("");
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [category, setCategory] = useState<"Venue" | "Food" | "Attire" | "Flowers">("Venue");
+    const [category, setCategory] = useState<string>("Venue");
     const [priority, setPriority] = useState<"High" | "Medium" | "Low">("High");
     const [isCompleted, setIsCompleted] = useState(false);
+    const [hideFromPartner, setHideFromPartner] = useState(false);
     const [notes, setNotes] = useState("");
 
     const formatDate = (date: Date) => {
@@ -44,6 +45,7 @@ export default function AddTaskScreen() {
             category,
             priority,
             isCompleted,
+            hideFromPartner,
             notes
         });
     };
@@ -82,6 +84,8 @@ export default function AddTaskScreen() {
                 <TaskSettingsSection
                     isCompleted={isCompleted}
                     onCompletedChange={setIsCompleted}
+                    hideFromPartner={hideFromPartner}
+                    onHideFromPartnerChange={setHideFromPartner}
                 />
 
                 <TaskNotesSection
