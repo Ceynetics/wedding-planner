@@ -5,12 +5,12 @@ import {
     Switch,
     TouchableOpacity,
     View,
+    Modal,
 } from 'react-native';
 import { Stack } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AddGuestHeader } from '@/components/guests/form/AddGuestHeader';
 import { TextField } from '@/components/TextField';
-import { Stepper } from '@/components/guests/form/Stepper';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -24,13 +24,35 @@ export default function AddGuestScreen() {
 
     const [side, setSide] = useState<'Bride' | 'Groom'>('Bride');
     const [groupType, setGroupType] = useState<'Family' | 'Individual'>('Family');
-    const [isVegetarian, setIsVegetarian] = useState(false); // Dietary preference
     const [category, setCategory] = useState('Family'); // Relationship category
-    const [adults, setAdults] = useState(0);
+    const [designation, setDesignation] = useState('Mr.'); // Title/Designation
+    const [showDesignationModal, setShowDesignationModal] = useState(false);
+    const [guestName, setGuestName] = useState("");
+    const [addedGuests, setAddedGuests] = useState<Array<{ title: string, name: string, isVegetarian?: boolean }>>([]);
     const [kids, setKids] = useState(0);
     const [isVip, setIsVip] = useState(false);
     const [showTableModal, setShowTableModal] = useState(false);
     const [selectedTable, setSelectedTable] = useState<{ id: string; name: string } | null>(null);
+
+    const DESIGNATIONS = ['Mr.', 'Mrs.', 'Ms.', 'Miss', 'Dr.', 'Prof.', 'Rev.'];
+
+    const handleAddGuest = () => {
+        if (guestName.trim()) {
+            // Include default isVegetarian: false when adding a new guest
+            setAddedGuests([...addedGuests, { title: designation, name: guestName.trim(), isVegetarian: false }]);
+            setGuestName(""); // Reset input field after adding
+        }
+    };
+
+    const handleRemoveGuest = (indexToRemove: number) => {
+        setAddedGuests(addedGuests.filter((_, index) => index !== indexToRemove));
+    };
+
+    const toggleVegetarian = (index: number) => {
+        const newGuests = [...addedGuests];
+        newGuests[index].isVegetarian = !newGuests[index].isVegetarian;
+        setAddedGuests(newGuests);
+    };
 
     const labelStyle = {
         color: colors.emphasis,
@@ -49,41 +71,6 @@ export default function AddGuestScreen() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
-                {/* Guest Name */}
-                <TextField
-                    label="Guest Name"
-                    placeholder="e.g : Joe Charles"
-                    labelStyle={labelStyle}
-                />
-
-                {/* Side Toggle */}
-                <View style={[styles.toggleContainer, { backgroundColor: colors.inputBackground }]}>
-                    <TouchableOpacity
-                        onPress={() => setSide('Bride')}
-                        style={[
-                            styles.toggleButton,
-                            side === 'Bride' && { backgroundColor: colors.primary }
-                        ]}
-                    >
-                        <ThemedText style={[
-                            styles.toggleText,
-                            { color: side === 'Bride' ? colors.primaryContrast : colors.placeholder }
-                        ]}>Bride</ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => setSide('Groom')}
-                        style={[
-                            styles.toggleButton,
-                            side === 'Groom' && { backgroundColor: colors.primary }
-                        ]}
-                    >
-                        <ThemedText style={[
-                            styles.toggleText,
-                            { color: side === 'Groom' ? colors.primaryContrast : colors.placeholder }
-                        ]}>Groom</ThemedText>
-                    </TouchableOpacity>
-                </View>
-
                 {/* Relationship Category */}
                 <View style={styles.section}>
                     <ThemedText style={labelStyle}>Relationship</ThemedText>
@@ -111,6 +98,106 @@ export default function AddGuestScreen() {
                             </TouchableOpacity>
                         ))}
                     </ScrollView>
+                </View>
+
+                {/* Guest Side */}
+                <View style={styles.section}>
+                    <ThemedText style={labelStyle}>Guest Side</ThemedText>
+                    <View style={[styles.toggleContainer, { backgroundColor: colors.inputBackground }]}>
+                        <TouchableOpacity
+                            onPress={() => setSide('Bride')}
+                            style={[
+                                styles.toggleButton,
+                                side === 'Bride' && { backgroundColor: colors.primary }
+                            ]}
+                        >
+                            <ThemedText style={[
+                                styles.toggleText,
+                                { color: side === 'Bride' ? colors.primaryContrast : colors.placeholder }
+                            ]}>Bride</ThemedText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => setSide('Groom')}
+                            style={[
+                                styles.toggleButton,
+                                side === 'Groom' && { backgroundColor: colors.primary }
+                            ]}
+                        >
+                            <ThemedText style={[
+                                styles.toggleText,
+                                { color: side === 'Groom' ? colors.primaryContrast : colors.placeholder }
+                            ]}>Groom</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Guest Name Section */}
+                <View style={styles.section}>
+                    <ThemedText style={labelStyle}>Guest Name</ThemedText>
+                    <View style={styles.nameInputRow}>
+                        <TouchableOpacity
+                            style={[styles.designationButton, { backgroundColor: colors.inputBackground }]}
+                            onPress={() => setShowDesignationModal(true)}
+                        >
+                            <ThemedText style={styles.designationText}>{designation}</ThemedText>
+                            <Ionicons name="chevron-down" size={16} color={colors.secondary} />
+                        </TouchableOpacity>
+                        
+                        <View style={{ flex: 1 }}>
+                            <TextField
+                                placeholder="e.g : Joe Charles"
+                                containerStyle={{ marginBottom: 0 }}
+                                value={guestName}
+                                onChangeText={setGuestName}
+                            />
+                        </View>
+                    </View>
+
+                    {/* Add Guest Action Button */}
+                    <TouchableOpacity 
+                        style={[styles.addGuestBtn, { borderColor: colors.primary + "60" }]}
+                        onPress={handleAddGuest}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="add" size={20} color={colors.primary} />
+                        <ThemedText style={{ color: colors.primary, fontWeight: '700', marginLeft: 8 }}>
+                            Add to Group
+                        </ThemedText>
+                    </TouchableOpacity>
+
+                    {/* Display Added Guests */}
+                    {addedGuests.length > 0 && (
+                        <View style={styles.addedGuestsContainer}>
+                            {addedGuests.map((guest, index) => (
+                                <View key={index} style={[styles.guestChip, { backgroundColor: colors.inputBackground }]}>
+                                    <ThemedText style={{ fontWeight: '600', color: colors.text }}>
+                                        {guest.title} {guest.name}
+                                    </ThemedText>
+                                    <TouchableOpacity onPress={() => handleRemoveGuest(index)}>
+                                        <Ionicons name="close-circle" size={20} color={colors.secondary} />
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                </View>
+
+                {/* Kids Counter Card */}
+                <View style={[styles.card, { backgroundColor: colors.card }]}>
+                    <View style={styles.switchRow}>
+                        <MaterialCommunityIcons name="baby-carriage" size={24} color={colors.primary} />
+                        <ThemedText style={[styles.cardTitle, { color: colors.emphasis }]}>Kids Attending</ThemedText>
+                        
+                        <View style={[styles.inlineStepper, { backgroundColor: colors.inputBackground }]}>
+                            <TouchableOpacity onPress={() => setKids(Math.max(0, kids - 1))} style={styles.stepperBtn}>
+                                <Ionicons name="remove" size={18} color={colors.emphasis} />
+                            </TouchableOpacity>
+                            <ThemedText style={[styles.stepperValue, { color: colors.emphasis }]}>{kids}</ThemedText>
+                            <TouchableOpacity onPress={() => setKids(kids + 1)} style={styles.stepperBtn}>
+                                <Ionicons name="add" size={18} color={colors.emphasis} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
 
                 {/* Contact Details */}
@@ -160,12 +247,6 @@ export default function AddGuestScreen() {
                     </View>
                 </View>
 
-                {/* Steppers */}
-                <View style={styles.stepperRow}>
-                    <Stepper label="Adults" value={adults} onValueChange={setAdults} />
-                    <Stepper label="Kids" value={kids} onValueChange={setKids} />
-                </View>
-
                 <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
                 {/* VIP Switch Card */}
@@ -182,19 +263,52 @@ export default function AddGuestScreen() {
                     </View>
                 </View>
 
-                {/* Meal Preferences Switch Card */}
-                <View style={[styles.card, { backgroundColor: colors.card }]}>
-                    <View style={styles.switchRow}>
-                        <MaterialCommunityIcons name="leaf" size={24} color={colors.success} />
-                        <ThemedText style={[styles.cardTitle, { color: colors.emphasis }]}>Vegetarian Meal</ThemedText>
-                        <Switch
-                            value={isVegetarian}
-                            onValueChange={setIsVegetarian}
-                            trackColor={{ false: colors.border, true: colors.primary }}
-                            thumbColor={colors.primaryContrast}
-                        />
+                {/* Dietary Preferences Section */}
+                {addedGuests.length > 0 && (
+                    <View style={styles.section}>
+                        <ThemedText style={labelStyle}>Dietary Preferences</ThemedText>
+                        <View style={[styles.card, { backgroundColor: colors.card, paddingVertical: 8 }]}>
+                            {addedGuests.map((guest, index) => (
+                                <View 
+                                    key={index} 
+                                    style={[
+                                        styles.dietaryRow, 
+                                        index !== addedGuests.length - 1 && { borderBottomWidth: 1, borderBottomColor: colors.border }
+                                    ]}
+                                >
+                                    <View style={styles.guestInfoCol}>
+                                        <ThemedText style={[styles.guestNameText, { color: colors.emphasis }]}>
+                                            {guest.title} {guest.name}
+                                        </ThemedText>
+                                    </View>
+                                    
+                                    {/* Dietary Toggle Button */}
+                                    <TouchableOpacity 
+                                        style={[
+                                            styles.dietaryToggleBtn, 
+                                            guest.isVegetarian 
+                                                ? { backgroundColor: colors.success + "20", borderColor: colors.success } 
+                                                : { backgroundColor: colors.inputBackground, borderColor: "transparent" }
+                                        ]}
+                                        onPress={() => toggleVegetarian(index)}
+                                    >
+                                        <MaterialCommunityIcons 
+                                            name="leaf" 
+                                            size={18} 
+                                            color={guest.isVegetarian ? colors.success : colors.placeholder} 
+                                        />
+                                        <ThemedText style={[
+                                            styles.dietaryToggleText,
+                                            { color: guest.isVegetarian ? colors.success : colors.placeholder }
+                                        ]}>
+                                            Veg
+                                        </ThemedText>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
                     </View>
-                </View>
+                )}
 
                 {/* Assign Table Card */}
                 <TouchableOpacity
@@ -240,6 +354,47 @@ export default function AddGuestScreen() {
                     onPress={() => { }}
                     style={styles.saveButton}
                 />
+
+                {/* Designation Modal */}
+                <Modal
+                    visible={showDesignationModal}
+                    transparent={true}
+                    animationType="fade"
+                    onRequestClose={() => setShowDesignationModal(false)}
+                >
+                    <TouchableOpacity 
+                        style={styles.modalOverlay} 
+                        activeOpacity={1} 
+                        onPress={() => setShowDesignationModal(false)}
+                    >
+                        <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                            <ThemedText style={[styles.modalTitle, { color: colors.emphasis }]}>Select Title</ThemedText>
+                            <View style={styles.designationGrid}>
+                                {DESIGNATIONS.map((title) => (
+                                    <TouchableOpacity
+                                        key={title}
+                                        style={[
+                                            styles.designationOption,
+                                            { backgroundColor: colors.inputBackground },
+                                            designation === title && { backgroundColor: colors.primary }
+                                        ]}
+                                        onPress={() => {
+                                            setDesignation(title);
+                                            setShowDesignationModal(false);
+                                        }}
+                                    >
+                                        <ThemedText style={[
+                                            styles.designationOptionText,
+                                            { color: designation === title ? colors.primaryContrast : colors.text }
+                                        ]}>
+                                            {title}
+                                        </ThemedText>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
             </ScrollView>
         </View>
     );
@@ -261,7 +416,6 @@ const styles = StyleSheet.create({
         height: 56,
         borderRadius: 16,
         padding: 4,
-        marginBottom: 28,
     },
     toggleButton: {
         flex: 1,
@@ -272,11 +426,6 @@ const styles = StyleSheet.create({
     toggleText: {
         fontSize: 16,
         fontWeight: '700',
-    },
-    stepperRow: {
-        flexDirection: 'row',
-        gap: 16,
-        marginBottom: 28,
     },
     divider: {
         height: 1,
@@ -347,5 +496,137 @@ const styles = StyleSheet.create({
         marginTop: 10,
         height: 60,
         borderRadius: 16,
+    },
+    nameInputRow: {
+        flexDirection: 'row',
+        gap: 12,
+        alignItems: 'center',
+    },
+    designationButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        height: 56,
+        minWidth: 85,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: 'transparent',
+    },
+    designationText: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginRight: 8,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24,
+    },
+    modalContent: {
+        width: '100%',
+        borderRadius: 24,
+        padding: 24,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+        elevation: 10,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    designationGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 12,
+        justifyContent: 'center',
+    },
+    designationOption: {
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        minWidth: '30%',
+        alignItems: 'center',
+    },
+    designationOptionText: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    inlineStepper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 12,
+        paddingHorizontal: 4,
+        height: 36,
+    },
+    stepperBtn: {
+        width: 32,
+        height: 32,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    stepperValue: {
+        fontSize: 16,
+        fontWeight: '700',
+        marginHorizontal: 8,
+        minWidth: 20,
+        textAlign: 'center',
+    },
+    addGuestBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 52,
+        borderRadius: 16,
+        borderWidth: 1.5,
+        borderStyle: 'dashed',
+        marginTop: 16,
+    },
+    addedGuestsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 10,
+        marginTop: 16,
+    },
+    guestChip: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 24,
+        gap: 8,
+    },
+    // Dietary Preferences Styles
+    dietaryRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 12,
+    },
+    guestInfoCol: {
+        flex: 1,
+    },
+    guestNameText: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    dietaryToggleBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 20,
+        borderWidth: 1,
+        gap: 6,
+    },
+    dietaryToggleText: {
+        fontSize: 14,
+        fontWeight: '700',
     },
 });
