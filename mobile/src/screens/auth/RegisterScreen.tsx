@@ -39,7 +39,7 @@ export default function RegisterScreen() {
         // Simulate register
         setTimeout(() => {
             setLoading(false);
-            router.push("/(onboard)/workspace" as any);
+            router.push("/(onboard)/selection" as any);
         }, 2000);
     };
 

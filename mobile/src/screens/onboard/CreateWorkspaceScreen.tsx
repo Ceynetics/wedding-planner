@@ -51,6 +51,16 @@ export default function CreateWorkspaceScreen() {
                     style={{ flex: 1 }}
                 >
                     <View style={styles.mainContent}>
+                        <View style={styles.navHeader}>
+                            <TouchableOpacity
+                                style={[styles.backButton, { backgroundColor: colors.card }]}
+                                onPress={() => router.back()}
+                                activeOpacity={0.7}
+                            >
+                                <Ionicons name="arrow-back" size={24} color={colors.primary} />
+                            </TouchableOpacity>
+                        </View>
+
                         <View style={styles.header}>
                             <ThemedText style={[styles.welcomeMsg, { color: colors.primary }]}>
                                 Welcome! Let's get started
@@ -102,52 +112,36 @@ export default function CreateWorkspaceScreen() {
                                 </View>
                             </View>
 
-                            <TextField
-                                label="Event Budget"
-                                placeholder="e.g : 100,000"
-                                value={budget}
-                                onChangeText={setBudget}
-                                keyboardType="numeric"
-                                leftIcon={<Ionicons name="wallet-outline" size={20} color={colors.secondary} />}
-                                containerStyle={styles.fieldMargin}
-                            />
-
-                            <View style={styles.partnersSection}>
-                                <ThemedText type="label" style={styles.fieldLabel}>
-                                    Partners & Roles
+                            <View style={styles.fieldMargin}>
+                                <ThemedText type="label" style={styles.fieldLabel}>Event Budget</ThemedText>
+                                <ThemedText style={[styles.fieldNote, { color: colors.secondary }]}>
+                                    Provide an initial budget estimate.
                                 </ThemedText>
-                                <View style={[styles.partnersCard, { backgroundColor: colors.card }]}>
-                                    <View style={styles.avatarsRow}>
-                                        <Image
-                                            source="https://i.pravatar.cc/150?u=1"
-                                            style={[styles.avatar, { borderColor: colors.card }]}
-                                        />
-                                        <Image
-                                            source="https://i.pravatar.cc/150?u=2"
-                                            style={[styles.avatar, { borderColor: colors.card }]}
-                                        />
-                                        <Image
-                                            source="https://i.pravatar.cc/150?u=3"
-                                            style={[styles.avatar, { borderColor: colors.card }]}
-                                        />
-                                        <TouchableOpacity style={[styles.addAvatarBtn, { borderColor: colors.primary + "30" }]}>
-                                            <Ionicons name="add" size={24} color={colors.primary} />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
+                                <TextField
+                                    placeholder="e.g : 100,000"
+                                    value={budget}
+                                    onChangeText={setBudget}
+                                    keyboardType="numeric"
+                                    leftIcon={<Ionicons name="wallet-outline" size={20} color={colors.secondary} />}
+                                    containerStyle={{ marginBottom: 0 }}
+                                />
                             </View>
 
-                            <View style={styles.inviteContainer}>
+                            <View style={styles.partnerSetupSection}>
+                                <ThemedText type="label" style={styles.fieldLabel}>
+                                    Invite your Partner
+                                </ThemedText>
+                                
                                 <View style={styles.inviteWrapper}>
                                     <TextField
-                                        placeholder="Invite Partner via Email"
+                                        placeholder="Partner's Email"
                                         value={inviteEmail}
                                         onChangeText={setInviteEmail}
                                         containerStyle={{ flex: 1, marginBottom: 0 }}
                                         inputContainerStyle={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
                                     />
                                     <TouchableOpacity style={[styles.inviteBtn, { backgroundColor: colors.primary }]}>
-                                        <Ionicons name="arrow-forward" size={24} color={colors.primaryContrast} />
+                                        <Ionicons name="send" size={20} color={colors.primaryContrast} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -164,7 +158,7 @@ export default function CreateWorkspaceScreen() {
                             >
                                 <Ionicons name="qr-code-outline" size={20} color={colors.primary} />
                                 <ThemedText style={[styles.shareText, { color: colors.primary }]}>
-                                    Share Pairing Code
+                                    Share Pairing QR
                                 </ThemedText>
                             </TouchableOpacity>
 
@@ -195,8 +189,23 @@ const styles = StyleSheet.create({
     mainContent: {
         flex: 1,
         paddingHorizontal: 24,
-        paddingTop: 30,
+        paddingTop: 10,
         paddingBottom: 20,
+    },
+    navHeader: {
+        marginBottom: 10,
+    },
+    backButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: "center",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     header: {
         alignItems: "center",
@@ -239,7 +248,7 @@ const styles = StyleSheet.create({
     fieldLabel: {
         fontSize: 14,
         fontWeight: "700",
-        marginBottom: 8,
+        marginBottom: 10,
         marginLeft: 4,
     },
     selector: {
@@ -254,35 +263,22 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "500",
     },
-    partnersSection: {
-        marginBottom: 20,
+    fieldNote: {
+        fontSize: 12,
+        marginBottom: 12,
+        marginLeft: 4,
+        opacity: 0.7,
+        marginTop: -10, // Aligns closely with the label
     },
-    partnersCard: {
-        borderRadius: 20,
-        padding: 16,
+    partnerSetupSection: {
+        marginBottom: 15,
     },
-    avatarsRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-    },
-    avatar: {
-        width: 52,
-        height: 52,
-        borderRadius: 26,
-        borderWidth: 2,
-    },
-    addAvatarBtn: {
-        width: 52,
-        height: 52,
-        borderRadius: 26,
-        borderStyle: "dashed",
-        borderWidth: 2,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    inviteContainer: {
-        marginBottom: 24,
+    partnerNote: {
+        fontSize: 12,
+        marginBottom: 16,
+        marginLeft: 4,
+        opacity: 0.7,
+        marginTop: -5
     },
     inviteWrapper: {
         flexDirection: "row",
@@ -310,7 +306,8 @@ const styles = StyleSheet.create({
     dividerText: {
         fontSize: 14,
         fontWeight: "600",
-        marginHorizontal: 16,
+        marginHorizontal: 12, // Equal spacing on both sides
+        textAlign: "center", // Text internal centering
     },
     shareBtn: {
         height: 56,
