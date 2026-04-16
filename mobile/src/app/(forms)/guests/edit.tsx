@@ -5,24 +5,20 @@ import {
     Switch,
     TouchableOpacity,
     View,
+    Modal,
 } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-
-// --- Modules & Components ---
 import { AddGuestHeader } from '@/components/guests/form/AddGuestHeader';
 import { TextField } from '@/components/TextField';
-import { Stepper } from '@/components/guests/form/Stepper';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ThemedText } from '@/components/ThemedText';
-import { TableSelectorModal } from '@/components/guests/form/TableSelectorModal';
-
-// --- Design System ---
 import { useAppTheme } from '@/context/ThemeContext';
 import { Colors } from '@/constants/Colors';
 
+import { TableSelectorModal } from '@/components/guests/form/TableSelectorModal';
+
 export default function EditGuestScreen() {
-    // Determine current theme settings dynamically
     const { theme } = useAppTheme();
     const colors = Colors[theme];
 
@@ -31,29 +27,57 @@ export default function EditGuestScreen() {
 
     // --- State Definition ---
     // Pre-loaded state mocks fetching an existing guest ("Joe Charles").
-    // Value assignments map perfectly to standard update endpoints.
-    const [name, setName] = useState('Joe Charles');
     const [side, setSide] = useState<'Bride' | 'Groom'>('Bride');
     const [groupType, setGroupType] = useState<'Family' | 'Individual'>('Family');
-    const [isVegetarian, setIsVegetarian] = useState(true); // Dietary preference
     const [category, setCategory] = useState('Family'); // Relationship category
-    const [phone, setPhone] = useState('555-0192');
-    const [email, setEmail] = useState('joe.charles@example.com');
-    const [adults, setAdults] = useState(2);
+    const [designation, setDesignation] = useState('Mr.'); // Title/Designation for new additions
+    const [showDesignationModal, setShowDesignationModal] = useState(false);
+    const [guestName, setGuestName] = useState("");
+    
+    // Simulate fetched existing group guests
+    const [addedGuests, setAddedGuests] = useState<Array<{ title: string, name: string, isVegetarian?: boolean }>>([
+        { title: 'Mr.', name: 'Joe Charles', isVegetarian: true }
+    ]);
+    
     const [kids, setKids] = useState(1);
     const [isVip, setIsVip] = useState(true);
-    const [notes, setNotes] = useState('Vegetarian Preferences');
-    
-    // Extracted Modal View tracking state
+    const [phone, setPhone] = useState('555-0192');
+    const [email, setEmail] = useState('joe.charles@example.com');
     const [showTableModal, setShowTableModal] = useState(false);
     const [selectedTable, setSelectedTable] = useState<{ id: string; name: string } | null>({
         id: "1",
         name: "Table 1"
     });
+    const [notes, setNotes] = useState('Vegetarian Preferences');
 
-    // We maintain dynamic theming elements inline here instead of StyleSheet.create
-    // to natively bind them against active light/dark mode changes.
-    const dynamicLabelStyle = {
+    const DESIGNATIONS = ['Mr.', 'Mrs.', 'Ms.', 'Miss', 'Dr.', 'Prof.', 'Rev.'];
+
+    const handleAddGuest = () => {
+        if (guestName.trim()) {
+            // Include default isVegetarian: false when adding a new guest
+            setAddedGuests([...addedGuests, { title: designation, name: guestName.trim(), isVegetarian: false }]);
+            setGuestName(""); // Reset input field after adding
+        }
+    };
+
+    const handleRemoveGuest = (indexToRemove: number) => {
+        setAddedGuests(addedGuests.filter((_, index) => index !== indexToRemove));
+    };
+
+    const toggleVegetarian = (index: number) => {
+        const newGuests = [...addedGuests];
+        newGuests[index].isVegetarian = !newGuests[index].isVegetarian;
+        setAddedGuests(newGuests);
+    };
+
+    // Central data submission handler
+    const handleUpdateGuest = () => {
+        console.log("Submitting Guest updates:", {
+            id, addedGuests, side, category, phone, email, groupType, kids, isVip, selectedTable, notes
+        });
+    };
+
+    const labelStyle = {
         color: colors.emphasis,
         opacity: 1,
         fontWeight: '700' as const,
@@ -61,68 +85,19 @@ export default function EditGuestScreen() {
         fontSize: 16
     };
 
-    // Central data submission handler
-    const handleUpdateGuest = () => {
-        console.log("Submitting Guest updates:", {
-            id, name, side, category, isVegetarian, phone, email, groupType, adults, kids, isVip, selectedTable, notes
-        });
-    };
-
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            {/* Disable default header entirely, favoring custom layout component */}
             <Stack.Screen options={{ headerShown: false }} />
             <AddGuestHeader />
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
-                keyboardShouldPersistTaps="handled" // Enhances UX by retaining scroll fluidity while keyboard is up
+                keyboardShouldPersistTaps="handled"
             >
-                {/* 1. Guest Identification */}
-                <TextField
-                    label="Guest Name"
-                    placeholder="e.g : Joe Charles"
-                    value={name}
-                    onChangeText={setName}
-                    labelStyle={dynamicLabelStyle}
-                />
-
-                {/* 2. Affiliation Toggle (Bride vs Groom) */}
-                <View style={[styles.toggleContainer, { backgroundColor: colors.inputBackground }]}>
-                    <TouchableOpacity
-                        onPress={() => setSide('Bride')}
-                        style={[
-                            styles.toggleButton,
-                            side === 'Bride' && { backgroundColor: colors.primary }
-                        ]}
-                    >
-                        <ThemedText style={[
-                            styles.toggleText,
-                            { color: side === 'Bride' ? colors.primaryContrast : colors.placeholder }
-                        ]}>
-                            Bride
-                        </ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => setSide('Groom')}
-                        style={[
-                            styles.toggleButton,
-                            side === 'Groom' && { backgroundColor: colors.primary }
-                        ]}
-                    >
-                        <ThemedText style={[
-                            styles.toggleText,
-                            { color: side === 'Groom' ? colors.primaryContrast : colors.placeholder }
-                        ]}>
-                            Groom
-                        </ThemedText>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Relationship Category (Family, Colleague, Work, Club, Friend) */}
+                {/* Relationship Category */}
                 <View style={styles.section}>
-                    <ThemedText style={dynamicLabelStyle}>Relationship</ThemedText>
+                    <ThemedText style={labelStyle}>Relationship</ThemedText>
                     <ScrollView 
                         horizontal 
                         showsHorizontalScrollIndicator={false}
@@ -149,29 +124,129 @@ export default function EditGuestScreen() {
                     </ScrollView>
                 </View>
 
-                {/* 3. Direct Contact Info Fields */}
+                {/* Guest Side */}
                 <View style={styles.section}>
-                    <ThemedText style={dynamicLabelStyle}>Contact Details</ThemedText>
+                    <ThemedText style={labelStyle}>Guest Side</ThemedText>
+                    <View style={[styles.toggleContainer, { backgroundColor: colors.inputBackground }]}>
+                        <TouchableOpacity
+                            onPress={() => setSide('Bride')}
+                            style={[
+                                styles.toggleButton,
+                                side === 'Bride' && { backgroundColor: colors.primary }
+                            ]}
+                        >
+                            <ThemedText style={[
+                                styles.toggleText,
+                                { color: side === 'Bride' ? colors.primaryContrast : colors.placeholder }
+                            ]}>Bride</ThemedText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => setSide('Groom')}
+                            style={[
+                                styles.toggleButton,
+                                side === 'Groom' && { backgroundColor: colors.primary }
+                            ]}
+                        >
+                            <ThemedText style={[
+                                styles.toggleText,
+                                { color: side === 'Groom' ? colors.primaryContrast : colors.placeholder }
+                            ]}>Groom</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Guest Name Section */}
+                <View style={styles.section}>
+                    <ThemedText style={labelStyle}>Guest Name</ThemedText>
+                    <View style={styles.nameInputRow}>
+                        <TouchableOpacity
+                            style={[styles.designationButton, { backgroundColor: colors.inputBackground }]}
+                            onPress={() => setShowDesignationModal(true)}
+                        >
+                            <ThemedText style={styles.designationText}>{designation}</ThemedText>
+                            <Ionicons name="chevron-down" size={16} color={colors.secondary} />
+                        </TouchableOpacity>
+                        
+                        <View style={{ flex: 1 }}>
+                            <TextField
+                                placeholder="e.g : Joe Charles"
+                                containerStyle={{ marginBottom: 0 }}
+                                value={guestName}
+                                onChangeText={setGuestName}
+                            />
+                        </View>
+                    </View>
+
+                    {/* Add Guest Action Button */}
+                    <TouchableOpacity 
+                        style={[styles.addGuestBtn, { borderColor: colors.primary + "60" }]}
+                        onPress={handleAddGuest}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="add" size={20} color={colors.primary} />
+                        <ThemedText style={{ color: colors.primary, fontWeight: '700', marginLeft: 8 }}>
+                            Add to Group
+                        </ThemedText>
+                    </TouchableOpacity>
+
+                    {/* Display Added Guests */}
+                    {addedGuests.length > 0 && (
+                        <View style={styles.addedGuestsContainer}>
+                            {addedGuests.map((guest, index) => (
+                                <View key={index} style={[styles.guestChip, { backgroundColor: colors.inputBackground }]}>
+                                    <ThemedText style={{ fontWeight: '600', color: colors.text }}>
+                                        {guest.title} {guest.name}
+                                    </ThemedText>
+                                    <TouchableOpacity onPress={() => handleRemoveGuest(index)}>
+                                        <Ionicons name="close-circle" size={20} color={colors.secondary} />
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                </View>
+
+                {/* Kids Counter Card */}
+                <View style={[styles.card, { backgroundColor: colors.card }]}>
+                    <View style={styles.switchRow}>
+                        <MaterialCommunityIcons name="baby-carriage" size={24} color={colors.primary} />
+                        <ThemedText style={[styles.cardTitle, { color: colors.emphasis }]}>Kids Attending</ThemedText>
+                        
+                        <View style={[styles.inlineStepper, { backgroundColor: colors.inputBackground }]}>
+                            <TouchableOpacity onPress={() => setKids(Math.max(0, kids - 1))} style={styles.stepperBtn}>
+                                <Ionicons name="remove" size={18} color={colors.emphasis} />
+                            </TouchableOpacity>
+                            <ThemedText style={[styles.stepperValue, { color: colors.emphasis }]}>{kids}</ThemedText>
+                            <TouchableOpacity onPress={() => setKids(kids + 1)} style={styles.stepperBtn}>
+                                <Ionicons name="add" size={18} color={colors.emphasis} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+
+                {/* Contact Details */}
+                <View style={styles.section}>
+                    <ThemedText style={labelStyle}>Contact Details</ThemedText>
                     <TextField
                         placeholder="Phone"
-                        value={phone}
-                        onChangeText={setPhone}
                         leftIcon={<Ionicons name="call" size={20} color={colors.secondary} />}
                         keyboardType="phone-pad"
+                        value={phone}
+                        onChangeText={setPhone}
                     />
                     <TextField
                         placeholder="Email"
-                        value={email}
-                        onChangeText={setEmail}
                         leftIcon={<Ionicons name="mail" size={20} color={colors.secondary} />}
                         keyboardType="email-address"
                         autoCapitalize="none"
+                        value={email}
+                        onChangeText={setEmail}
                     />
                 </View>
 
-                {/* 4. Family or Individual Flag Modifier */}
+                {/* Group Toggle */}
                 <View style={styles.section}>
-                    <ThemedText style={dynamicLabelStyle}>Group</ThemedText>
+                    <ThemedText style={labelStyle}>Group</ThemedText>
                     <View style={[styles.toggleContainer, { backgroundColor: colors.inputBackground }]}>
                         <TouchableOpacity
                             onPress={() => setGroupType('Family')}
@@ -183,9 +258,7 @@ export default function EditGuestScreen() {
                             <ThemedText style={[
                                 styles.toggleText,
                                 { color: groupType === 'Family' ? colors.primaryContrast : colors.placeholder }
-                            ]}>
-                                Family
-                            </ThemedText>
+                            ]}>Family</ThemedText>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => setGroupType('Individual')}
@@ -197,22 +270,61 @@ export default function EditGuestScreen() {
                             <ThemedText style={[
                                 styles.toggleText,
                                 { color: groupType === 'Individual' ? colors.primaryContrast : colors.placeholder }
-                            ]}>
-                                Individual
-                            </ThemedText>
+                            ]}>Individual</ThemedText>
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                {/* 5. Headcount Trackers via Stepper Inputs */}
-                <View style={styles.stepperRow}>
-                    <Stepper label="Adults" value={adults} onValueChange={setAdults} />
-                    <Stepper label="Kids" value={kids} onValueChange={setKids} />
-                </View>
+                {/* Dietary Preferences Section */}
+                {addedGuests.length > 0 && (
+                    <View style={styles.section}>
+                        <ThemedText style={labelStyle}>Dietary Preferences</ThemedText>
+                        <View style={[styles.card, { backgroundColor: colors.card, paddingVertical: 8 }]}>
+                            {addedGuests.map((guest, index) => (
+                                <View 
+                                    key={index} 
+                                    style={[
+                                        styles.dietaryRow, 
+                                        index !== addedGuests.length - 1 && { borderBottomWidth: 1, borderBottomColor: colors.border }
+                                    ]}
+                                >
+                                    <View style={styles.guestInfoCol}>
+                                        <ThemedText style={[styles.guestNameText, { color: colors.emphasis }]}>
+                                            {guest.title} {guest.name}
+                                        </ThemedText>
+                                    </View>
+                                    
+                                    {/* Dietary Toggle Button */}
+                                    <TouchableOpacity 
+                                        style={[
+                                            styles.dietaryToggleBtn, 
+                                            guest.isVegetarian 
+                                                ? { backgroundColor: colors.success + "20", borderColor: colors.success } 
+                                                : { backgroundColor: colors.inputBackground, borderColor: "transparent" }
+                                        ]}
+                                        onPress={() => toggleVegetarian(index)}
+                                    >
+                                        <MaterialCommunityIcons 
+                                            name="leaf" 
+                                            size={18} 
+                                            color={guest.isVegetarian ? colors.success : colors.placeholder} 
+                                        />
+                                        <ThemedText style={[
+                                            styles.dietaryToggleText,
+                                            { color: guest.isVegetarian ? colors.success : colors.placeholder }
+                                        ]}>
+                                            Veg
+                                        </ThemedText>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
+                )}
 
                 <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-                {/* 6. Settings Switches and Special Permissions */}
+                {/* VIP Switch Card */}
                 <View style={[styles.card, { backgroundColor: colors.card }]}>
                     <View style={styles.switchRow}>
                         <MaterialCommunityIcons name="crown" size={24} color={colors.warning} />
@@ -226,25 +338,10 @@ export default function EditGuestScreen() {
                     </View>
                 </View>
 
-                {/* Dietary Settings Switch */}
-                <View style={[styles.card, { backgroundColor: colors.card }]}>
-                    <View style={styles.switchRow}>
-                        <MaterialCommunityIcons name="leaf" size={24} color={colors.success} />
-                        <ThemedText style={[styles.cardTitle, { color: colors.emphasis }]}>Vegetarian Meal</ThemedText>
-                        <Switch
-                            value={isVegetarian}
-                            onValueChange={setIsVegetarian}
-                            trackColor={{ false: colors.border, true: colors.primary }}
-                            thumbColor={colors.primaryContrast}
-                        />
-                    </View>
-                </View>
-
-                {/* 7. Table and Seating Sub-Form Mapping */}
+                {/* Assign Table Card */}
                 <TouchableOpacity
                     style={[styles.card, styles.interactiveCard, { backgroundColor: colors.card }]}
                     onPress={() => setShowTableModal(true)}
-                    activeOpacity={0.7}
                 >
                     <View style={styles.cardHeader}>
                         <View style={[styles.iconContainer, { backgroundColor: colors.inputBackground }]}>
@@ -257,7 +354,6 @@ export default function EditGuestScreen() {
                     </View>
                 </TouchableOpacity>
 
-                {/* Table Picker Overlay rendering */}
                 <TableSelectorModal
                     visible={showTableModal}
                     onClose={() => setShowTableModal(false)}
@@ -268,7 +364,7 @@ export default function EditGuestScreen() {
                     selectedTableId={selectedTable?.id}
                 />
 
-                {/* 8. Additional Comments field handling free-text metadata */}
+                {/* Special Notes */}
                 <View style={styles.section}>
                     <TextField
                         label="Special Notes (Optional)"
@@ -277,25 +373,63 @@ export default function EditGuestScreen() {
                         onChangeText={setNotes}
                         multiline
                         numberOfLines={4}
-                        labelStyle={dynamicLabelStyle}
+                        labelStyle={labelStyle}
                         inputContainerStyle={styles.textAreaContainer}
                         style={styles.textArea}
                     />
                 </View>
 
-                {/* 9. Final Update Commit Action Button */}
                 <PrimaryButton
                     title="Update Guest"
                     onPress={handleUpdateGuest}
                     style={styles.saveButton}
                 />
+
+                {/* Designation Modal */}
+                <Modal
+                    visible={showDesignationModal}
+                    transparent={true}
+                    animationType="fade"
+                    onRequestClose={() => setShowDesignationModal(false)}
+                >
+                    <TouchableOpacity 
+                        style={styles.modalOverlay} 
+                        activeOpacity={1} 
+                        onPress={() => setShowDesignationModal(false)}
+                    >
+                        <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                            <ThemedText style={[styles.modalTitle, { color: colors.emphasis }]}>Select Title</ThemedText>
+                            <View style={styles.designationGrid}>
+                                {DESIGNATIONS.map((title) => (
+                                    <TouchableOpacity
+                                        key={title}
+                                        style={[
+                                            styles.designationOption,
+                                            { backgroundColor: colors.inputBackground },
+                                            designation === title && { backgroundColor: colors.primary }
+                                        ]}
+                                        onPress={() => {
+                                            setDesignation(title);
+                                            setShowDesignationModal(false);
+                                        }}
+                                    >
+                                        <ThemedText style={[
+                                            styles.designationOptionText,
+                                            { color: designation === title ? colors.primaryContrast : colors.text }
+                                        ]}>
+                                            {title}
+                                        </ThemedText>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
             </ScrollView>
         </View>
     );
 }
 
-// Ensure strict adherence to separation of structural logic and UI styling components.
-// Colors remain completely isolated from standard sizing, padding, and alignments.
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -312,7 +446,6 @@ const styles = StyleSheet.create({
         height: 56,
         borderRadius: 16,
         padding: 4,
-        marginBottom: 28,
     },
     toggleButton: {
         flex: 1,
@@ -323,11 +456,6 @@ const styles = StyleSheet.create({
     toggleText: {
         fontSize: 16,
         fontWeight: '700',
-    },
-    stepperRow: {
-        flexDirection: 'row',
-        gap: 16,
-        marginBottom: 28,
     },
     divider: {
         height: 1,
@@ -398,5 +526,137 @@ const styles = StyleSheet.create({
         marginTop: 10,
         height: 60,
         borderRadius: 16,
+    },
+    nameInputRow: {
+        flexDirection: 'row',
+        gap: 12,
+        alignItems: 'center',
+    },
+    designationButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        height: 56,
+        minWidth: 85,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: 'transparent',
+    },
+    designationText: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginRight: 8,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24,
+    },
+    modalContent: {
+        width: '100%',
+        borderRadius: 24,
+        padding: 24,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+        elevation: 10,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    designationGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 12,
+        justifyContent: 'center',
+    },
+    designationOption: {
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        minWidth: '30%',
+        alignItems: 'center',
+    },
+    designationOptionText: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    inlineStepper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 12,
+        paddingHorizontal: 4,
+        height: 36,
+    },
+    stepperBtn: {
+        width: 32,
+        height: 32,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    stepperValue: {
+        fontSize: 16,
+        fontWeight: '700',
+        marginHorizontal: 8,
+        minWidth: 20,
+        textAlign: 'center',
+    },
+    addGuestBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 52,
+        borderRadius: 16,
+        borderWidth: 1.5,
+        borderStyle: 'dashed',
+        marginTop: 16,
+    },
+    addedGuestsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 10,
+        marginTop: 16,
+    },
+    guestChip: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 24,
+        gap: 8,
+    },
+    // Dietary Preferences Styles
+    dietaryRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 12,
+    },
+    guestInfoCol: {
+        flex: 1,
+    },
+    guestNameText: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    dietaryToggleBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 20,
+        borderWidth: 1,
+        gap: 6,
+    },
+    dietaryToggleText: {
+        fontSize: 14,
+        fontWeight: '700',
     },
 });

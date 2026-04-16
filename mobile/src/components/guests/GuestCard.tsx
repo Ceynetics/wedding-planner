@@ -2,8 +2,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useAppTheme } from "@/context/ThemeContext";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Image, StyleSheet, TouchableOpacity, View, TextInput } from "react-native";
 
 export type GuestStatus = "Pending" | "Confirmed" | "Not Invited";
 export type GuestSide = "Bride" | "Groom";
@@ -22,6 +22,8 @@ export interface Guest {
     phone: string;
     email: string;
     hasInvitationSent?: boolean;
+    groupType?: 'Family' | 'Individual';
+    familyName?: string;
 }
 
 interface GuestCardProps {
@@ -30,7 +32,6 @@ interface GuestCardProps {
     onDelete?: () => void;
     onCall?: () => void;
     onMail?: () => void;
-    onShareInvitation?: () => void;
 }
 
 export function GuestCard({
@@ -38,11 +39,17 @@ export function GuestCard({
     onEdit,
     onDelete,
     onCall,
-    onMail,
-    onShareInvitation
+    onMail
 }: GuestCardProps) {
     const { theme } = useAppTheme();
     const colors = Colors[theme];
+    
+    // Toggle for expanded internal view
+    const [isExpanded, setIsExpanded] = useState(false);
+    
+    // Card Generation Form State
+    const [cardGenMode, setCardGenMode] = useState<'Family' | 'Individual'>(guest.groupType || 'Individual');
+    const [familyNameOnCard, setFamilyNameOnCard] = useState(guest.familyName || '');
 
     const getStatusColors = (status: GuestStatus) => {
         switch (status) {
@@ -69,7 +76,11 @@ export function GuestCard({
     const sideColors = getSideColors(guest.side);
 
     return (
-        <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <TouchableOpacity 
+            activeOpacity={0.85} 
+            onPress={() => setIsExpanded(!isExpanded)}
+            style={[styles.card, { backgroundColor: colors.card }]}
+        >
             {/* Top Row: Avatar, Name, VIP, Status */}
             <View style={styles.header}>
                 <Image source={{ uri: guest.avatar }} style={styles.avatar} />
@@ -118,44 +129,84 @@ export function GuestCard({
                 </View>
             </View>
 
-            {/* Invitation Action (Optional) - if Guest not invited */}
-            {onShareInvitation && (
-                <TouchableOpacity
-                    onPress={onShareInvitation}
-                    style={[styles.shareInvitationButton, { backgroundColor: colors.primary }]}
-                >
-                    <ThemedText style={styles.shareInvitationText}>
-                        Share Invitation
-                    </ThemedText>
-                </TouchableOpacity>
+            {/* Expanded Detailed View */}
+            {isExpanded && (
+                <View style={styles.expandedContent}>
+                    {/* Private Contact Data */}
+                    <View style={styles.contactDataBox}>
+                        <View style={styles.contactDataRow}>
+                            <Ionicons name="call" size={14} color={colors.secondary} />
+                            <ThemedText style={styles.contactDataText}>{guest.phone || "No phone provided"}</ThemedText>
+                        </View>
+                        <View style={styles.contactDataRow}>
+                            <Ionicons name="mail" size={14} color={colors.secondary} />
+                            <ThemedText style={styles.contactDataText}>{guest.email || "No email provided"}</ThemedText>
+                        </View>
+                    </View>
+
+                    {/* Invitation Card Generator */}
+                    <View style={[styles.genCardBox, { backgroundColor: theme === 'light' ? colors.background : colors.background + '80' }]}>
+                        <ThemedText style={[styles.genCardTitle, { color: colors.emphasis }]}>Print Settings</ThemedText>
+                        
+                        <View style={[styles.genOptionRow, { backgroundColor: colors.inputBackground }]}>
+                            <TouchableOpacity
+                                onPress={() => setCardGenMode('Family')}
+                                style={[styles.genModeBtn, cardGenMode === 'Family' && { backgroundColor: colors.primary }]}
+                            >
+                                <ThemedText style={[styles.genModeText, { color: cardGenMode === 'Family' ? colors.primaryContrast : colors.placeholder }]}>Family Card</ThemedText>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setCardGenMode('Individual')}
+                                style={[styles.genModeBtn, cardGenMode === 'Individual' && { backgroundColor: colors.primary }]}
+                            >
+                                <ThemedText style={[styles.genModeText, { color: cardGenMode === 'Individual' ? colors.primaryContrast : colors.placeholder }]}>Individual Card</ThemedText>
+                            </TouchableOpacity>
+                        </View>
+
+                        {cardGenMode === 'Family' && (
+                            <TextInput
+                                placeholder="Family Name on Card (e.g. The Smiths)"
+                                placeholderTextColor={colors.placeholder}
+                                value={familyNameOnCard}
+                                onChangeText={setFamilyNameOnCard}
+                                style={[styles.genInput, { color: colors.text, borderColor: colors.border, backgroundColor: colors.inputBackground }]}
+                            />
+                        )}
+
+                        <TouchableOpacity style={[styles.genSubmitBtn, { borderColor: colors.primary }]}>
+                            <MaterialCommunityIcons name="file-document-outline" size={18} color={colors.primary} />
+                            <ThemedText style={{ color: colors.primary, fontWeight: '700', marginLeft: 6 }}>Generate</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Bottom Actions Row (Moved inside expanded view) */}
+                    <View style={[styles.actionsRow, { borderTopColor: colors.border }]}>
+                        <View style={styles.contactActions}>
+                            <TouchableOpacity onPress={onCall} style={styles.iconAction}>
+                                <Ionicons name="call-outline" size={20} color={colors.secondary} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={onMail} style={styles.iconAction}>
+                                <Ionicons name="mail-outline" size={20} color={colors.secondary} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.editActions}>
+                            <TouchableOpacity onPress={onDelete} style={styles.iconAction}>
+                                <Ionicons name="trash-outline" size={20} color={colors.statusError} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={onEdit}
+                                style={[styles.editButton, { backgroundColor: colors.primary + '15' }]}
+                            >
+                                <ThemedText style={[styles.editText, { color: colors.primary }]}>
+                                    Edit
+                                </ThemedText>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
             )}
-
-            {/* Bottom Actions Row */}
-            <View style={[styles.actionsRow, { borderTopColor: colors.border }]}>
-                <View style={styles.contactActions}>
-                    <TouchableOpacity onPress={onCall} style={styles.iconAction}>
-                        <Ionicons name="call-outline" size={20} color={colors.secondary} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onMail} style={styles.iconAction}>
-                        <Ionicons name="mail-outline" size={20} color={colors.secondary} />
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.editActions}>
-                    <TouchableOpacity onPress={onDelete} style={styles.iconAction}>
-                        <Ionicons name="trash-outline" size={20} color={colors.secondary} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={onEdit}
-                        style={[styles.editButton, { backgroundColor: colors.primary + '15' }]}
-                    >
-                        <ThemedText style={[styles.editText, { color: colors.primary }]}>
-                            Edit
-                        </ThemedText>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 
@@ -245,18 +296,6 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         opacity: 0.7,
     },
-    shareInvitationButton: {
-        height: 44,
-        borderRadius: 12,
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 16,
-    },
-    shareInvitationText: {
-        color: "#FFFFFF",
-        fontSize: 15,
-        fontWeight: "700",
-    },
     actionsRow: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -284,5 +323,67 @@ const styles = StyleSheet.create({
     editText: {
         fontSize: 14,
         fontWeight: "700",
+    },
+    // Expanded Content Styles
+    expandedContent: {
+        marginTop: 4,
+    },
+    contactDataBox: {
+        paddingHorizontal: 4,
+        marginBottom: 16,
+        gap: 8,
+    },
+    contactDataRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    contactDataText: {
+        fontSize: 13,
+        opacity: 0.8,
+        fontWeight: '500',
+    },
+    genCardBox: {
+        borderRadius: 16,
+        padding: 12,
+        marginBottom: 16,
+    },
+    genCardTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        marginBottom: 12,
+    },
+    genOptionRow: {
+        flexDirection: 'row',
+        borderRadius: 12,
+        padding: 4,
+        marginBottom: 12,
+    },
+    genModeBtn: {
+        flex: 1,
+        borderRadius: 8,
+        paddingVertical: 8,
+        alignItems: 'center',
+    },
+    genModeText: {
+        fontSize: 13,
+        fontWeight: '600',
+    },
+    genInput: {
+        height: 44,
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        fontSize: 14,
+        marginBottom: 12,
+    },
+    genSubmitBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 44,
+        borderRadius: 12,
+        borderWidth: 1.5,
+        borderStyle: 'dashed',
     },
 });

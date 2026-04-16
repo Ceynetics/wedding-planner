@@ -135,7 +135,7 @@ export function TaskCategorySection({ category, onCategoryChange }: TaskCategory
                             onPress={handleAddCategory}
                             activeOpacity={0.8}
                         >
-                            <ThemedText style={[styles.modalAddBtnText, { color: colors.primaryContrast }]}>Add Category</ThemedText>
+                            <ThemedText style={[styles.modalAddBtnText, { color: colors.primaryContrast }]}>Add</ThemedText>
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>
